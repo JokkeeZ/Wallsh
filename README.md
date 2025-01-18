@@ -21,6 +21,6 @@ dotnet run
 - [GtkSharp](https://github.com/GtkSharp/GtkSharp)
 
 # License
-Wallsh is licensed under the [MIT License](https://github.com/JokkeeZ/Wallsh/blob/main/LICENSE), the same as **Avalonia** and **Community Toolkit**.
+Wallsh is licensed under the [MIT License](https://github.com/JokkeeZ/Wallsh/blob/master/LICENSE), the same as **Avalonia** and **Community Toolkit**.
 
 This application also uses **GtkSharp** and it's related components, which are licensed under the [LGPL v2.0 License](https://github.com/GtkSharp/GtkSharp/blob/develop/LICENSE).
