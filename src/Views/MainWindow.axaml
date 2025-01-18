@@ -1,0 +1,251 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Wallsh.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wallhaven="clr-namespace:Wallsh.Models.Wallhaven"
+        xmlns:models="clr-namespace:Wallsh.Models"
+        SizeToContent="WidthAndHeight"
+        CanResize="False"
+        MaxWidth="500" MaxHeight="835"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="795"
+        x:Class="Wallsh.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/Wallsh.ico"
+        Title="Wallsh">
+    
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+    
+    
+    <Grid Margin="10 0 10 10" RowDefinitions="Auto,10,Auto,10,Auto,10,Auto,10,Auto">
+        <Border BorderThickness="1" BorderBrush="Gray" Padding="10" CornerRadius="5" Grid.Row="2">
+            <StackPanel>
+                <TextBlock Text="Time Between Changes" FontWeight="Bold" Margin="0,0,0,5"/>
+                
+                <WrapPanel>
+                    <StackPanel>
+                        <TextBlock Margin="0 5" Text="Hour(s):"/>
+                        <NumericUpDown Value="{Binding Hours}" Increment="1" 
+                                       FormatString="0"
+                                       Width="110"
+                                       Minimum="0" Maximum="24"/>
+                    </StackPanel>
+                    
+                    <StackPanel Margin="10 0 0 0">
+                        <TextBlock Margin="0 5" Text="Minute(s):"/>
+                        <NumericUpDown Value="{Binding Minutes}" Increment="1" 
+                                       FormatString="0"
+                                       Width="110"
+                                       Minimum="0" Maximum="60"/>
+                    </StackPanel>
+                    
+                    <StackPanel Margin="10 0 0 0">
+                        <TextBlock Margin="0 5" Text="Second(s):"/>
+                        <NumericUpDown Value="{Binding Seconds}" Increment="1" 
+                                       FormatString="0"
+                                       Width="110"
+                                       Minimum="0" Maximum="60"/>
+                    </StackPanel>
+                </WrapPanel>  
+                
+                <StackPanel>
+                    <TextBlock Text="Wallpapers folder" FontWeight="Bold" Margin="0 10 0 5"/>
+                    <DockPanel>
+                        <TextBox Name="FolderPathTextBox" 
+                                 Margin="0 0 5 0"
+                                 Width="340"
+                                 Text="{Binding WallpapersDirectory}"/>
+                        <Button Name="BrowseButton" 
+                                Content="Browse" 
+                                Click="BrowseFolderClick"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"/>
+                    </DockPanel>
+                </StackPanel>
+                
+                <TextBlock Text="Wallpaper adjustment" FontWeight="Bold" Margin="0 10 0 5"/>
+                <DockPanel>
+                    <ComboBox x:Name="WallpaperAdjustments"
+                              SelectedIndex="0"
+                              MaxDropDownHeight="300"
+                              Width="340"
+                              SelectedItem="{Binding WallpaperAdjustment}"
+                              Margin="0 0 5 0">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Name="SaveButton" 
+                            Content="Save Settings" 
+                            Command="{Binding SaveConfiguration}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"/>
+                </DockPanel>
+            </StackPanel>
+        </Border>
+        
+        <Expander Padding="10" CornerRadius="5" Grid.Row="4">
+            <Expander.Header>
+                <RelativePanel>
+                    <CheckBox VerticalAlignment="Center" 
+                              Name="LocalRotationCheckBox"
+                              IsCheckedChanged="LocalRotationIsCheckedChanged"
+                              IsChecked="{Binding Service, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperService.Local}}"
+                              Content="Use local wallpapers"/>
+                </RelativePanel>
+            </Expander.Header>
+            <StackPanel>
+                <TextBlock>Maybe some settings later</TextBlock>
+            </StackPanel>
+        </Expander>
+
+        <Expander Padding="10" CornerRadius="5" Grid.Row="6">
+            <Expander.Header>
+                <RelativePanel>
+                    <CheckBox VerticalAlignment="Center" 
+                              Name="WallhavenRotationCheckBox"
+                              IsCheckedChanged="WallhavenRotationIsCheckedChanged"
+                              IsChecked="{Binding Service, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperService.Wallhaven}}"
+                              Content="Use wallhaven.cc wallpapers"/>
+                </RelativePanel>
+            </Expander.Header>
+            <StackPanel IsEnabled="{Binding Service, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperService.Wallhaven}}">
+                <TextBlock Text="API key" FontWeight="Bold" Margin="0 0 0 5"/>
+                <TextBox Name="WallhavenApiKey" 
+                         Width="340" 
+                         TextChanged="WallhavenApiKeyTextChanged"
+                         Text="{Binding ApiKey}"
+                         HorizontalAlignment="Left"
+                         Margin="0 0 5 0"/>
+                
+                <TextBlock Text="Ratios" FontWeight="Bold" Margin="0 10 0 5"/>
+                
+                <DockPanel>
+                    <RadioButton 
+                        IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.RatioUltrawide}}"
+                        GroupName="Ratios" 
+                        IsCheckedChanged="RatioIsCheckedChanged"
+                        Content="Ultrawide"
+                        Width="95"
+                        Margin="0 0 0 0"/>
+                    <RadioButton 
+                        IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.Ratio16X9}}"
+                        GroupName="Ratios" 
+                        IsCheckedChanged="RatioIsCheckedChanged"
+                        Content="16:9"
+                        Width="70"
+                        Margin="15 0 0 0"/>
+                    <RadioButton 
+                        IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.Ratio16X10}}"
+                        IsCheckedChanged="RatioIsCheckedChanged"
+                        GroupName="Ratios" 
+                        Content="16:10"
+                        Width="70"
+                        Margin="15 0 0 0"/>
+                    <RadioButton 
+                        IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.Ratio4X3}}"
+                        IsCheckedChanged="RatioIsCheckedChanged"
+                        GroupName="Ratios"
+                        Content="4:3"
+                        Width="70"
+                        Margin="15 0 0 0"/>
+                    <RadioButton 
+                        IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.Ratio5X4}}"
+                        IsCheckedChanged="RatioIsCheckedChanged"
+                        GroupName="Ratios" 
+                        Content="5:4"
+                        Margin="15 0 0 0"/>
+                </DockPanel>
+                
+                <TextBlock Text="Sorting" FontWeight="Bold" Margin="0 10 0 5"/>
+                
+                <WrapPanel>
+                    <RadioButton GroupName="Sorting"
+                                 IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenSorting.Top}}"
+                                 Margin="0 0 0 0"
+                                 Width="95"
+                                 Content="Top"/>
+                    <RadioButton GroupName="Sorting"
+                                 IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenSorting.Date}}"
+                                 Margin="15 0 0 0"
+                                 Width="70" 
+                                 Content="Date"/>
+                    <RadioButton GroupName="Sorting"
+                                 IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenSorting.Views}}"
+                                 Margin="15 0 0 0"
+                                 Width="70" 
+                                 Content="Views"/>
+                    <RadioButton GroupName="Sorting" 
+                                 IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenSorting.Random}}"
+                                 Margin="15 0 0 0"
+                                 Content="Random"/>
+                </WrapPanel>
+                
+                <TextBlock Text="Minimum resolution" FontWeight="Bold" Margin="0 10 0 5"/>
+                
+                <ComboBox x:Name="WallhavenResolutions"
+                          Width="340" 
+                          SelectedItem="{Binding Resolution}"
+                          Margin="0 0 5 0">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                
+                <TextBlock Text="Categories" FontWeight="Bold" Margin="0 10 0 5"/>
+                <WrapPanel>
+                    <CheckBox Margin="0 0 15 0"
+                              Width="100"
+                              IsChecked="{Binding CategoryGeneral}">
+                        General
+                    </CheckBox>
+                    <CheckBox Margin="0 0 15 0"
+                              Width="100"
+                              IsChecked="{Binding CategoryAnime}">
+                        Anime
+                    </CheckBox>
+                    <CheckBox Margin="0 0 15 0"
+                              Width="100"
+                              IsChecked="{Binding CategoryPeople}">
+                        People
+                    </CheckBox>
+                </WrapPanel>
+                
+                <TextBlock Text="Purity" FontWeight="Bold" Margin="0 10 0 5"/>
+                <WrapPanel>
+                    <CheckBox Margin="0 0 15 0"
+                              Width="100"
+                              IsChecked="{Binding PuritySfw}"
+                              Content="SFW"/>
+                    <CheckBox Margin="0 0 15 0"
+                              Width="100"
+                              IsChecked="{Binding PuritySketchy}"
+                              Content="Sketchy"/>
+                    <CheckBox Margin="0 0 15 0"
+                              Name="PurityNsfw"
+                              Width="100"
+                              IsChecked="{Binding PurityNsfw}"
+                              Content="NSFW"/>
+                </WrapPanel>
+            </StackPanel>   
+        </Expander>
+        
+        <DockPanel Grid.Row="8">
+            <TextBlock 
+                Name="InfoTextBlock"
+                Text="{Binding InfoText}"
+                PropertyChanged="InfoTextChanged"
+                Foreground="{Binding InfoTextBrush}"
+                VerticalAlignment="Center">
+            </TextBlock>
+        </DockPanel>
+    </Grid>
+</Window>
