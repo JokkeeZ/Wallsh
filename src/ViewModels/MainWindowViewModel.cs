@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Wallsh.Models;
 using Wallsh.Models.Wallhaven;
 using Wallsh.Services;
@@ -12,6 +12,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly WallpaperChanger _wallpaperChanger;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanEnableNsfw))]
     private string? _apiKey;
 
     [ObservableProperty]
@@ -27,7 +28,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private int _hours;
 
     [ObservableProperty]
-    private string _infoText = string.Empty;
+    private string? _infoText;
 
     [ObservableProperty]
     private IBrush _infoTextBrush = Brushes.Black;
@@ -66,9 +67,6 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string? _wallpapersDirectory;
 
-    public static List<string> Adjustments => ["none", "scaled", "zoom", "wallpaper"];
-    public List<string> AvailableResolutions => WallhavenConfiguration.Resolutions[Ratio];
-    
     public MainWindowViewModel()
     {
         _wallpaperChanger = new();
@@ -98,6 +96,27 @@ public partial class MainWindowViewModel : ViewModelBase
         _wallpaperChanger.Toggle(cfg.Service != WallpaperService.None);
     }
 
+    public bool CanEnableNsfw => !string.IsNullOrWhiteSpace(ApiKey);
+
+    public static List<string> Adjustments => ["none", "scaled", "zoom", "wallpaper"];
+    public List<string> AvailableResolutions => WallhavenConfiguration.Resolutions[Ratio];
+
+    partial void OnApiKeyChanged(string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+            PurityNsfw = false;
+    }
+
+    partial void OnInfoTextChanged(string? value)
+    {
+        if (!string.IsNullOrEmpty(value))
+        {
+            Task.Run(async () => await Task.Delay(TimeSpan.FromSeconds(5)));
+            InfoText = string.Empty;
+        }
+    }
+
+    [RelayCommand]
     public void SaveConfiguration()
     {
         if (!ValidateConfiguration())

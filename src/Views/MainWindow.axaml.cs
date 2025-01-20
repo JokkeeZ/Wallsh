@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
@@ -7,36 +6,7 @@ namespace Wallsh.Views;
 
 public partial class MainWindow : Window
 {
-    public MainWindow()
-    {
-        InitializeComponent();
-    }
-
-    private void LocalRotationIsCheckedChanged(object? sender, RoutedEventArgs e)
-    {
-        var checkBox = (CheckBox)sender!;
-
-        if (checkBox.IsChecked.HasValue && checkBox.IsChecked.Value)
-            WallhavenRotationCheckBox.IsChecked = false;
-    }
-
-    private void WallhavenRotationIsCheckedChanged(object? sender, RoutedEventArgs e)
-    {
-        var checkBox = (CheckBox)sender!;
-
-        if (checkBox.IsChecked.HasValue && checkBox.IsChecked.Value)
-            LocalRotationCheckBox.IsChecked = false;
-    }
-
-    private void WallhavenApiKeyTextChanged(object? sender, TextChangedEventArgs e)
-    {
-        var textBox = (TextBox)sender!;
-
-        PurityNsfw.IsEnabled = !string.IsNullOrEmpty(textBox.Text);
-
-        if (!PurityNsfw.IsEnabled)
-            PurityNsfw.IsChecked = false;
-    }
+    public MainWindow() => InitializeComponent();
 
     private async void BrowseFolderClick(object? sender, RoutedEventArgs e)
     {
@@ -63,11 +33,5 @@ public partial class MainWindow : Window
         {
             Console.WriteLine(ex.Message);
         }
-    }
-
-    private async void InfoTextChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
-    {
-        await Task.Delay(5000);
-        InfoTextBlock.Text = string.Empty;
     }
 }
