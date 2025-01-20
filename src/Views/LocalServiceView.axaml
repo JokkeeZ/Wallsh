@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="clr-namespace:Wallsh.Models"
+             xmlns:vm="clr-namespace:Wallsh.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Wallsh.Views.LocalServiceView"
+             x:DataType="vm:MainWindowViewModel">
+    <Expander HorizontalAlignment="Stretch">
+        <Expander.Header>
+            <RadioButton VerticalAlignment="Center"
+                         GroupName="SelectedServiceGroup"
+                         IsChecked="{Binding Service, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperService.Local}}"
+                         Content="Use local wallpapers" />
+        </Expander.Header>
+        <StackPanel>
+            <TextBlock>Maybe some settings later</TextBlock>
+        </StackPanel>
+    </Expander>
+</UserControl>
