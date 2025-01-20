@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
@@ -9,16 +8,12 @@ public class EnumToBooleanConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-		if (value != null && parameter != null)
-		{
-        	return value.Equals(parameter);
-		}
+        if (value != null && parameter != null)
+            return value.Equals(parameter);
 
-		return false;
+        return false;
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        return value?.Equals(true) == true ? parameter : BindingOperations.DoNothing;
-    }
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value?.Equals(true) == true ? parameter : BindingOperations.DoNothing;
 }

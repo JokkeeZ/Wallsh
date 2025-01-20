@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Wallsh.Models;
 using Wallsh.Models.Wallhaven;
@@ -10,35 +8,69 @@ namespace Wallsh.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    [ObservableProperty] private string _infoText = string.Empty;
-    [ObservableProperty] private IBrush _infoTextBrush = Brushes.Black;
-    [ObservableProperty] private int _hours;
-    [ObservableProperty] private int _minutes;
-    [ObservableProperty] private int _seconds;
-    [ObservableProperty] private string? _wallpapersDirectory;
-    [ObservableProperty] private string? _wallpaperAdjustment;
-    [ObservableProperty] private string? _resolution;
-    [ObservableProperty] private string? _apiKey;
-    [ObservableProperty] private bool _categoryGeneral;
-    [ObservableProperty] private bool _categoryAnime;
-    [ObservableProperty] private bool _categoryPeople;
-    [ObservableProperty] private bool _puritySfw;
-    [ObservableProperty] private bool _puritySketchy;
-    [ObservableProperty] private bool _purityNsfw;
-
-    [ObservableProperty] private WallhavenSorting _sorting;
-    [ObservableProperty] private WallhavenRatio _ratio;
-    [ObservableProperty] private WallpaperService _service;
-    
     private readonly WallpaperChanger _wallpaperChanger;
-    
+
+    [ObservableProperty]
+    private string? _apiKey;
+
+    [ObservableProperty]
+    private bool _categoryAnime;
+
+    [ObservableProperty]
+    private bool _categoryGeneral;
+
+    [ObservableProperty]
+    private bool _categoryPeople;
+
+    [ObservableProperty]
+    private int _hours;
+
+    [ObservableProperty]
+    private string _infoText = string.Empty;
+
+    [ObservableProperty]
+    private IBrush _infoTextBrush = Brushes.Black;
+
+    [ObservableProperty]
+    private int _minutes;
+
+    [ObservableProperty]
+    private bool _purityNsfw;
+
+    [ObservableProperty]
+    private bool _puritySfw;
+
+    [ObservableProperty]
+    private bool _puritySketchy;
+
+    [ObservableProperty]
+    private WallhavenRatio _ratio;
+
+    [ObservableProperty]
+    private string? _resolution;
+
+    [ObservableProperty]
+    private int _seconds;
+
+    [ObservableProperty]
+    private WallpaperService _service;
+
+    [ObservableProperty]
+    private WallhavenSorting _sorting;
+
+    [ObservableProperty]
+    private string? _wallpaperAdjustment;
+
+    [ObservableProperty]
+    private string? _wallpapersDirectory;
+
     public MainWindowViewModel()
     {
         _wallpaperChanger = new();
         var cfg = _wallpaperChanger.Config;
 
         Service = _wallpaperChanger.Config.Service;
-        
+
         WallpapersDirectory = cfg.WallpapersDirectory;
         Hours = cfg.Hours;
         Minutes = cfg.Minutes;
@@ -56,23 +88,19 @@ public partial class MainWindowViewModel : ViewModelBase
         Sorting = cfg.Wallhaven.Sorting;
 
         if (string.IsNullOrEmpty(WallpaperAdjustment))
-        {
             WallpaperAdjustment = WallpaperChanger.GetWallpaperAdjustment();
-        }
-        
+
         _wallpaperChanger.Toggle(cfg.Service != WallpaperService.None);
     }
 
     public void SaveConfiguration()
     {
         if (!ValidateConfiguration())
-        {
             return;
-        }
-        
+
         _wallpaperChanger.Toggle(false);
         _wallpaperChanger.SetService(Service);
-        
+
         _wallpaperChanger.Config.WallpapersDirectory = WallpapersDirectory!;
         _wallpaperChanger.Config.Hours = Hours;
         _wallpaperChanger.Config.Minutes = Minutes;
@@ -88,26 +116,20 @@ public partial class MainWindowViewModel : ViewModelBase
         _wallpaperChanger.Config.Wallhaven.PuritySketchy = PuritySketchy;
         _wallpaperChanger.Config.Wallhaven.PurityNsfw = PurityNsfw;
         _wallpaperChanger.Config.Wallhaven.Sorting = Sorting;
-        
+
         if (WallpaperAdjustment is not null)
-        {
             _wallpaperChanger.Config.WallpaperAdjustment = WallpaperChanger.GetWallpaperAdjustment();
-        }
 
         if (_wallpaperChanger.Config.Service != WallpaperService.None)
-        {
             _wallpaperChanger.UpdateInterval(Hours, Minutes, Seconds);
-        }
-        
+
         if (AppConfiguration.ToFile(_wallpaperChanger.Config))
         {
             UpdateInfoText("Settings saved!", Brushes.Green);
             _wallpaperChanger.Toggle(_wallpaperChanger.Config.Service != WallpaperService.None);
         }
         else
-        {
             UpdateInfoText("Failed to save settings!", Brushes.Red);
-        }
     }
 
     private bool ValidateConfiguration()
@@ -146,10 +168,11 @@ public partial class MainWindowViewModel : ViewModelBase
             UpdateInfoText("Wallpaper folder does not exist.", Brushes.Red);
             return false;
         }
-        
+
         if (Service == WallpaperService.Local)
         {
-            if (Directory.GetFiles(WallpapersDirectory).Length != 0) return true;
+            if (Directory.GetFiles(WallpapersDirectory).Length != 0)
+                return true;
             UpdateInfoText("Wallpaper folder is empty.", Brushes.Red);
             return false;
         }
@@ -159,10 +182,10 @@ public partial class MainWindowViewModel : ViewModelBase
             UpdateInfoText("Wallpaper resolution cannot be empty.", Brushes.Red);
             return false;
         }
-        
+
         return true;
     }
-    
+
     private void UpdateInfoText(string text, IImmutableSolidColorBrush brush)
     {
         InfoTextBrush = brush;

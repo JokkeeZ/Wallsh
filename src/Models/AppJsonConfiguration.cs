@@ -1,4 +1,3 @@
-using System;
 using Wallsh.Models.Wallhaven;
 
 namespace Wallsh.Models;

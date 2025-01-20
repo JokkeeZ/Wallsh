@@ -12,32 +12,37 @@ public class WallhavenConfiguration
     public bool PuritySfw { get; set; } = true;
     public bool PuritySketchy { get; set; }
     public bool PurityNsfw { get; set; }
-    
+
     public string PurityToString()
     {
         var str = new[] { '0', '0', '0' };
 
-        if (PuritySfw) str[0] = '1';
-        if (PuritySketchy) str[1] = '1';
-        if (PurityNsfw) str[2] = '1';
+        if (PuritySfw)
+            str[0] = '1';
+        if (PuritySketchy)
+            str[1] = '1';
+        if (PurityNsfw)
+            str[2] = '1';
 
         return new(str);
     }
-    
+
     public string CategoriesToString()
     {
         var str = new[] { '0', '0', '0' };
 
-        if (General) str[0] = '1';
-        if (Anime) str[1] = '1';
-        if (People) str[2] = '1';
+        if (General)
+            str[0] = '1';
+        if (Anime)
+            str[1] = '1';
+        if (People)
+            str[2] = '1';
 
         return new(str);
     }
 
-    public string RatioToString()
-    {
-        return Ratio switch
+    public string RatioToString() =>
+        Ratio switch
         {
             WallhavenRatio.RatioUltrawide => "Ultrawide",
             WallhavenRatio.Ratio16X9 => "16x9",
@@ -46,11 +51,9 @@ public class WallhavenConfiguration
             WallhavenRatio.Ratio4X3 => "4x3",
             _ => throw new("Unknown ratio")
         };
-    }
 
-    public string SortingToString()
-    {
-        return Sorting switch
+    public string SortingToString() =>
+        Sorting switch
         {
             WallhavenSorting.Top => "toplist",
             WallhavenSorting.Views => "views",
@@ -58,5 +61,4 @@ public class WallhavenConfiguration
             WallhavenSorting.Date => "date_added",
             _ => throw new("Unknown sorting")
         };
-    }
 }

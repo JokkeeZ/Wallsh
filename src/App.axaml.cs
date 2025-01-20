@@ -1,8 +1,7 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
-using System.Linq;
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Wallsh.ViewModels;
 using Wallsh.Views;
@@ -12,11 +11,8 @@ namespace Wallsh;
 public class App : Application
 {
     public static readonly TrayCommandHandler CommandHandler = new();
-    
-    public override void Initialize()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
+
+    public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
     public override void OnFrameworkInitializationCompleted()
     {
@@ -27,7 +23,7 @@ public class App : Application
             DisableAvaloniaDataAnnotationValidation();
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = new MainWindowViewModel()
             };
 
             desktop.MainWindow.Closing += Closing;
@@ -42,10 +38,10 @@ public class App : Application
 
         if (e.CloseReason != WindowCloseReason.WindowClosing)
             return;
-        
-        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) 
+
+        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
             return;
-            
+
         desktop.MainWindow?.Hide();
     }
 
@@ -57,8 +53,6 @@ public class App : Application
 
         // remove each entry found
         foreach (var plugin in dataValidationPluginsToRemove)
-        {
             BindingPlugins.DataValidators.Remove(plugin);
-        }
     }
 }

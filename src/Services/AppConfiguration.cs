@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Text.Json;
 using Wallsh.Models;
 
@@ -17,7 +15,7 @@ public static class AppConfiguration
 
         return Path.Combine(wallshConfig, "config.json");
     }
-    
+
     public static AppJsonConfiguration FromFile()
     {
         if (!File.Exists(GetConfigurationPath()))

@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
 using GLib;
 
 namespace Wallsh.Services;
@@ -24,7 +21,7 @@ public static class GnomeWallpaperHandler
             Console.WriteLine("No wallpapers found");
             return;
         }
-        
+
         var nextWallpaper = wallpapers[Random.Shared.Next(wallpapers.Length)];
         Console.WriteLine($"{Path.GetFileName(currentWallpaper)} -> {nextWallpaper.Name}");
         SetWallpaper(nextWallpaper.FullName);
@@ -52,12 +49,12 @@ public static class GnomeWallpaperHandler
     {
         if (!OperatingSystem.IsLinux())
             return false;
-        
+
         var de = Environment.GetEnvironmentVariable("XDG_CURRENT_DESKTOP");
 
         return de is not null && de.Contains("GNOME");
     }
-    
+
     public static void SetWallpaper(string path)
     {
         using var settings = new Settings(SchemaId);

@@ -17,7 +17,7 @@ public class TrayCommandHandler
     private static void OpenWallpapersFolderFromTray()
     {
         var cfg = AppConfiguration.FromFile();
-        
+
         Process.Start(new ProcessStartInfo
         {
             FileName = cfg.WallpapersDirectory,
@@ -25,35 +25,35 @@ public class TrayCommandHandler
         });
     }
 
-    private static void OpenWebsiteFromTray()
-    {
+    private static void OpenWebsiteFromTray() =>
         Process.Start(new ProcessStartInfo
         {
             FileName = "https://github.com/JokkeeZ/Wallsh",
             UseShellExecute = true
         });
-    }
 
     private static void ShowAppFromTray()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime
-            { MainWindow: not null } desktop) return;
-        
+            {
+                MainWindow: not null
+            } desktop)
+            return;
+
         if (!desktop.MainWindow.IsVisible)
-        {
             desktop.MainWindow.Show();
-        }
         else
-        {
             desktop.MainWindow.Activate();
-        }
     }
-    
+
     private static void ExitAppFromTray()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime
-                { MainWindow: not null } desktop) return;
-        
+            {
+                MainWindow: not null
+            } desktop)
+            return;
+
         desktop.Shutdown();
     }
 }

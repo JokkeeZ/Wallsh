@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 using Wallsh.Models;
 using Wallsh.Models.Wallhaven;
 
@@ -20,14 +14,12 @@ public static class WallhavenRequest
             ["purity"] = cfg.PurityToString(),
             ["sorting"] = cfg.SortingToString(),
             ["atleast"] = cfg.Resolution,
-            ["ratios"] = cfg.RatioToString(),
+            ["ratios"] = cfg.RatioToString()
         };
 
         if (cfg.ApiKey is not null)
-        {
             qParams.Add("apikey", cfg.ApiKey);
-        }
-        
+
         var uri = new UriBuilder
         {
             Scheme = "http",
@@ -38,7 +30,7 @@ public static class WallhavenRequest
 
         return uri.Uri;
     }
-    
+
     public static async Task<WallhavenApiResponse?> RequestWallpapersAsync(WallhavenConfiguration cfg)
     {
         var uri = BuildRequestUri(cfg);
@@ -46,7 +38,7 @@ public static class WallhavenRequest
 
         using var http = new HttpClient();
         var response = await http.GetAsync(uri.AbsoluteUri);
-        
+
         if (!response.IsSuccessStatusCode)
         {
             Console.WriteLine($"[WallhavenRequest] - {response.StatusCode}");
@@ -54,10 +46,8 @@ public static class WallhavenRequest
         }
 
         if (response.Content.Headers.ContentType?.MediaType == "application/json")
-        {
             return await response.Content.ReadFromJsonAsync<WallhavenApiResponse>();
-        }
-        
+
         Console.WriteLine("[WallhavenRequest] - Invalid content type");
         return null;
     }
@@ -71,11 +61,11 @@ public static class WallhavenRequest
             Console.WriteLine("[WallhavenRequest][DownloadWallPaperAsync] - FileName is null or empty");
             return null;
         }
-        
+
         // Create downloads folder if it does not already exist.
         var downloadsFolder = Path.Combine(cfg.WallpapersDirectory, "downloads");
         Directory.CreateDirectory(downloadsFolder);
-        
+
         using var client = new HttpClient();
         await using var s = await client.GetStreamAsync(wpInfo.Path);
         await using var fs = new FileStream(Path.Combine(downloadsFolder, fileName), FileMode.OpenOrCreate);

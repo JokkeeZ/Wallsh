@@ -4,39 +4,39 @@
              xmlns:local="using:Wallsh"
              xmlns:models="clr-namespace:Wallsh.Models"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+    <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
-     <Application.Resources>
-         <models:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
-     </Application.Resources>
-             
+    <Application.Resources>
+        <models:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+    </Application.Resources>
+
     <TrayIcon.Icons>
-         <TrayIcons>
-             <TrayIcon Icon="/Assets/Wallsh.ico" 
-                       ToolTipText="Wallsh - Wallpaper Slideshow Handler">
-                 <TrayIcon.Menu>
-                     <NativeMenu>
-                         <NativeMenuItem Header="Wallsh" IsEnabled="False" Icon="/Assets/Wallsh.ico"></NativeMenuItem>
-                         <NativeMenuItemSeparator/>
-                         <NativeMenuItem Header="Show" 
-                                         Command="{Binding ToggleApp, Source={x:Static local:App.CommandHandler}}"/>
-                         <NativeMenuItem Header="Open website" 
-                                         Command="{Binding OpenWebsite, Source={x:Static local:App.CommandHandler}}"/>
-                         <NativeMenuItem Header="Open wallpapers folder" 
-                                         Command="{Binding OpenWallpapersFolder, Source={x:Static local:App.CommandHandler}}"/>
-                         <NativeMenuItemSeparator/>
-                         <NativeMenuItem Header="Quit" 
-                                         Command="{Binding ExitApp, Source={x:Static local:App.CommandHandler}}"/>
-                     </NativeMenu>
-                 </TrayIcon.Menu>
-             </TrayIcon>
-         </TrayIcons>
+        <TrayIcons>
+            <TrayIcon Icon="/Assets/Wallsh.ico"
+                      ToolTipText="Wallsh - Wallpaper Slideshow Handler">
+                <TrayIcon.Menu>
+                    <NativeMenu>
+                        <NativeMenuItem Header="Wallsh" IsEnabled="False" Icon="/Assets/Wallsh.ico" />
+                        <NativeMenuItemSeparator />
+                        <NativeMenuItem Header="Show"
+                                        Command="{Binding ToggleApp, Source={x:Static local:App.CommandHandler}}" />
+                        <NativeMenuItem Header="Open website"
+                                        Command="{Binding OpenWebsite, Source={x:Static local:App.CommandHandler}}" />
+                        <NativeMenuItem Header="Open wallpapers folder"
+                                        Command="{Binding OpenWallpapersFolder, Source={x:Static local:App.CommandHandler}}" />
+                        <NativeMenuItemSeparator />
+                        <NativeMenuItem Header="Quit"
+                                        Command="{Binding ExitApp, Source={x:Static local:App.CommandHandler}}" />
+                    </NativeMenu>
+                </TrayIcon.Menu>
+            </TrayIcon>
+        </TrayIcons>
     </TrayIcon.Icons>
-             
+
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <local:ViewLocator />
     </Application.DataTemplates>
-  
+
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>

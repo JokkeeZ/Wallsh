@@ -1,32 +1,31 @@
-using System;
-using System.Collections.Generic;
 using System.Timers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Wallsh.Models;
 using Wallsh.Services.Wallhaven;
+using Timer = System.Timers.Timer;
 
 namespace Wallsh.Services;
 
 public class WallpaperChanger : ObservableObject
 {
-    private readonly Timer _timer;
-
     private readonly Dictionary<WallpaperService, IWallpaperChangerService> _services = new()
     {
         [WallpaperService.Local] = new LocalWallpaperService(),
         [WallpaperService.Wallhaven] = new WallhavenWallpaperService()
     };
-    
-    public AppJsonConfiguration Config { get; }
-    
+
+    private readonly Timer _timer;
+
     public WallpaperChanger()
     {
         Config = AppConfiguration.FromFile();
-        
+
         _timer = new(new TimeSpan(0, Config.Hours, Config.Minutes, Config.Seconds));
         _timer.Elapsed += OnTimerElapsed;
         _timer.AutoReset = true;
     }
+
+    public AppJsonConfiguration Config { get; }
 
     private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
     {
@@ -37,7 +36,7 @@ public class WallpaperChanger : ObservableObject
                 Console.WriteLine($"[WallpaperChangerService] No service for type {Config.Service}");
                 return;
             }
-            
+
             service.OnChange(this, Config);
             Console.WriteLine($"[WallpaperChangerService]: Timer - {e.SignalTime}");
         }
@@ -52,7 +51,7 @@ public class WallpaperChanger : ObservableObject
         Config.Service = service;
         Console.WriteLine($"[WallpaperChangerService]: Service set to: {service}");
     }
-    
+
     public void Toggle(bool state)
     {
         _timer.Enabled = state;
@@ -62,15 +61,13 @@ public class WallpaperChanger : ObservableObject
     public void UpdateInterval(int hours, int minutes, int seconds)
     {
         Toggle(false);
-        _timer.Interval = new TimeSpan(0, hours, minutes,seconds).TotalMilliseconds;
+        _timer.Interval = new TimeSpan(0, hours, minutes, seconds).TotalMilliseconds;
         Console.WriteLine($"[WallpaperChangerService][{Config.Service}]: Interval - {hours}h  {minutes}m {seconds}s");
     }
 
-    public static string GetWallpaperAdjustment()
-    {
+    public static string GetWallpaperAdjustment() =>
         // TODO: Other platforms
-        return GnomeWallpaperHandler.IsGnome() 
-            ? GnomeWallpaperHandler.GetCurrentAdjustment() 
+        GnomeWallpaperHandler.IsGnome()
+            ? GnomeWallpaperHandler.GetCurrentAdjustment()
             : string.Empty;
-    }
 }
