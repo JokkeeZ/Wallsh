@@ -45,12 +45,7 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
                 return;
             }
 
-            var now = DateTime.Now
-                .AddHours(Config.Interval.Hour)
-                .AddMinutes(Config.Interval.Minute)
-                .AddSeconds(Config.Interval.Second);
-
-            Messenger.Send(new TimerUpdatedMessage(new(now.Hour, now.Minute, now.Second)));
+            Messenger.Send(new TimerUpdatedMessage(Config.Interval));
             service.OnChange(this, Config);
             Console.WriteLine($"[WallpaperChanger]: Timer - {e.SignalTime}");
         }

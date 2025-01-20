@@ -168,6 +168,6 @@ public partial class MainWindowViewModel : ViewModelBase,
             .AddMinutes(time.Minute)
             .AddSeconds(time.Second);
 
-        AppTitle = $"Wallsh - Next change: {nextChangeTime.ToLongTimeString()}";
+        AppTitle = $"Wallsh -- Next update ~{nextChangeTime.ToLongTimeString()}";
     }
 }
