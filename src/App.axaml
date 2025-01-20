@@ -19,14 +19,14 @@
                         <NativeMenuItem Header="Wallsh" IsEnabled="False" Icon="/Assets/Wallsh.ico" />
                         <NativeMenuItemSeparator />
                         <NativeMenuItem Header="Show"
-                                        Command="{Binding ToggleApp, Source={x:Static local:App.CommandHandler}}" />
+                                        Command="{x:Static local:App.ShowAppFromTray}" />
                         <NativeMenuItem Header="Open website"
-                                        Command="{Binding OpenWebsite, Source={x:Static local:App.CommandHandler}}" />
+                                        Command="{x:Static local:App.OpenWebsiteFromTray}" />
                         <NativeMenuItem Header="Open wallpapers folder"
-                                        Command="{Binding OpenWallpapersFolder, Source={x:Static local:App.CommandHandler}}" />
+                                        Command="{x:Static local:App.OpenWallpapersFolderFromTray}" />
                         <NativeMenuItemSeparator />
                         <NativeMenuItem Header="Quit"
-                                        Command="{Binding ExitApp, Source={x:Static local:App.CommandHandler}}" />
+                                        Command="{x:Static local:App.ExitAppFromTray}" />
                     </NativeMenu>
                 </TrayIcon.Menu>
             </TrayIcon>

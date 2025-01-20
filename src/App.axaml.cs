@@ -1,8 +1,12 @@
+using System.Diagnostics;
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using CommunityToolkit.Mvvm.Input;
+using Wallsh.Services;
 using Wallsh.ViewModels;
 using Wallsh.Views;
 
@@ -10,8 +14,6 @@ namespace Wallsh;
 
 public class App : Application
 {
-    public static readonly TrayCommandHandler CommandHandler = new();
-
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
     public override void OnFrameworkInitializationCompleted()
@@ -55,4 +57,50 @@ public class App : Application
         foreach (var plugin in dataValidationPluginsToRemove)
             BindingPlugins.DataValidators.Remove(plugin);
     }
+
+    public static ICommand OpenWallpapersFolderFromTray =>
+        new RelayCommand(() =>
+        {
+            var cfg = AppConfiguration.FromFile();
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = cfg.WallpapersDirectory,
+                UseShellExecute = true
+            });
+        });
+
+    public static ICommand OpenWebsiteFromTray =>
+        new RelayCommand(() =>
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = "https://github.com/JokkeeZ/Wallsh",
+            UseShellExecute = true
+        }));
+
+    public static ICommand ShowAppFromTray =>
+        new RelayCommand(() =>
+        {
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime
+                {
+                    MainWindow: not null
+                } desktop)
+                return;
+
+            if (!desktop.MainWindow.IsVisible)
+                desktop.MainWindow.Show();
+            else
+                desktop.MainWindow.Activate();
+        });
+
+    public static ICommand ExitAppFromTray => new RelayCommand(() =>
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime
+            {
+                MainWindow: not null
+            } desktop)
+            return;
+
+        desktop.Shutdown();
+    });
 }
