@@ -18,7 +18,7 @@ public class WallhavenConfiguration
     public bool People { get; set; }
     public WallhavenRatio Ratio { get; set; } = WallhavenRatio.Ratio16X9;
     public WallhavenSorting Sorting { get; set; } = WallhavenSorting.Random;
-    public string Resolution { get; set; } = "1920x1080";
+    public string? Resolution { get; set; } = "1920x1080";
     public bool PuritySfw { get; set; } = true;
     public bool PuritySketchy { get; set; }
     public bool PurityNsfw { get; set; }

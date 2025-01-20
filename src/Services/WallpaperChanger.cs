@@ -1,73 +1,116 @@
 using System.Timers;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using Wallsh.Messages;
 using Wallsh.Models;
 using Wallsh.Services.Wallhaven;
 using Timer = System.Timers.Timer;
 
 namespace Wallsh.Services;
 
-public class WallpaperChanger : ObservableObject
+public class WallpaperChanger : ObservableRecipient, IDisposable
 {
-    private readonly Dictionary<WallpaperService, IWallpaperChangerService> _services = new()
+    private readonly Dictionary<WallpaperHandler, IWallpaperHandler> _services = new()
     {
-        [WallpaperService.Local] = new LocalWallpaperService(),
-        [WallpaperService.Wallhaven] = new WallhavenWallpaperService()
+        [WallpaperHandler.Local] = new LocalHandler(),
+        [WallpaperHandler.Wallhaven] = new WallhavenHandler()
     };
 
     private readonly Timer _timer;
 
-    public WallpaperChanger()
+    public WallpaperChanger(AppJsonConfiguration cfg)
     {
-        Config = AppConfiguration.FromFile();
+        Config = cfg;
 
-        _timer = new(new TimeSpan(0, Config.Hours, Config.Minutes, Config.Seconds));
+        _timer = new(cfg.Interval.ToTimeSpan());
         _timer.Elapsed += OnTimerElapsed;
         _timer.AutoReset = true;
     }
 
-    public AppJsonConfiguration Config { get; }
+    public AppJsonConfiguration Config { get; set; }
+
+    public void Dispose()
+    {
+        _timer.Dispose();
+        GC.SuppressFinalize(this);
+    }
 
     private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
     {
         try
         {
-            if (!_services.TryGetValue(Config.Service, out var service))
+            if (!_services.TryGetValue(Config.Handler, out var service))
             {
-                Console.WriteLine($"[WallpaperChangerService] No service for type {Config.Service}");
+                Console.WriteLine($"[WallpaperChanger] No service for type {Config.Handler}");
                 return;
             }
 
+            var now = DateTime.Now
+                .AddHours(Config.Interval.Hour)
+                .AddMinutes(Config.Interval.Minute)
+                .AddSeconds(Config.Interval.Second);
+
+            Messenger.Send(new TimerUpdatedMessage(new(now.Hour, now.Minute, now.Second)));
             service.OnChange(this, Config);
-            Console.WriteLine($"[WallpaperChangerService]: Timer - {e.SignalTime}");
+            Console.WriteLine($"[WallpaperChanger]: Timer - {e.SignalTime}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[WallpaperChangerService]: Exception: {ex}");
+            Console.WriteLine($"[WallpaperChanger]: Exception: {ex}");
         }
     }
 
-    public void SetService(WallpaperService service)
+    public void Stop()
     {
-        Config.Service = service;
-        Console.WriteLine($"[WallpaperChangerService]: Service set to: {service}");
+        _timer.Stop();
+        Console.WriteLine($"[WallpaperChanger][{Config.Handler}]: Stopped.");
     }
 
-    public void Toggle(bool state)
+    public void Start()
     {
-        _timer.Enabled = state;
-        Console.WriteLine($"[WallpaperChangerService][{Config.Service}]: Enabled = {state}");
+        if (Config.Handler == WallpaperHandler.None)
+        {
+            Console.WriteLine($"[WallpaperChanger][{Config.Handler}]: No handler configured.");
+            return;
+        }
+
+        _timer.Start();
+        Console.WriteLine($"[WallpaperChanger][{Config.Handler}]: Started.");
     }
 
-    public void UpdateInterval(int hours, int minutes, int seconds)
+    public void SetInterval(TimeOnly time)
     {
-        Toggle(false);
-        _timer.Interval = new TimeSpan(0, hours, minutes, seconds).TotalMilliseconds;
-        Console.WriteLine($"[WallpaperChangerService][{Config.Service}]: Interval - {hours}h  {minutes}m {seconds}s");
+        _timer.Interval = time.ToTimeSpan().TotalMilliseconds;
+        Console.WriteLine(
+            $"[WallpaperChanger][{Config.Handler}]: Interval - {time.Hour}h  {time.Minute}m {time.Second}s");
     }
 
-    public static string GetWallpaperAdjustment() =>
-        // TODO: Other platforms
-        GnomeWallpaperHandler.IsGnome()
-            ? GnomeWallpaperHandler.GetCurrentAdjustment()
-            : string.Empty;
+    public static string GetWallpaperAdjustment()
+    {
+        if (OperatingSystem.IsLinux())
+        {
+            if (GnomeWallpaperHandler.IsGnome())
+                return GnomeWallpaperHandler.GetCurrentAdjustment();
+        }
+        else if (OperatingSystem.IsWindows())
+        {
+            // TODO: Windows support
+        }
+
+        throw new NotImplementedException("Your operating system is not supported.");
+    }
+
+    public void SetWallpaperAdjustment()
+    {
+        if (OperatingSystem.IsLinux())
+        {
+            if (GnomeWallpaperHandler.IsGnome())
+                GnomeWallpaperHandler.SetAdjustment(Config.WallpaperAdjustment);
+        }
+        else if (OperatingSystem.IsWindows())
+        {
+            // TODO: Windows support
+            throw new NotImplementedException("Your operating system is not supported.");
+        }
+    }
 }

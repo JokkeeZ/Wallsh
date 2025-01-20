@@ -2,11 +2,11 @@ using Wallsh.Models;
 
 namespace Wallsh.Services;
 
-public class LocalWallpaperService : IWallpaperChangerService
+public class LocalHandler : IWallpaperHandler
 {
     public void OnChange(WallpaperChanger changer, AppJsonConfiguration cfg)
     {
         if (GnomeWallpaperHandler.IsGnome())
-            GnomeWallpaperHandler.SetLocalRandomWallpaper(cfg.WallpapersDirectory);
+            GnomeWallpaperHandler.SetLocalRandomWallpaper(cfg.WallpapersFolder);
     }
 }

@@ -2,7 +2,7 @@ using Wallsh.Models;
 
 namespace Wallsh.Services.Wallhaven;
 
-public class WallhavenWallpaperService : IWallpaperChangerService
+public class WallhavenHandler : IWallpaperHandler
 {
     public void OnChange(WallpaperChanger changer, AppJsonConfiguration cfg)
     {
@@ -12,8 +12,8 @@ public class WallhavenWallpaperService : IWallpaperChangerService
         var wallpapers = task.Result;
         if (wallpapers is null)
         {
-            cfg.Service = WallpaperService.None;
-            changer.Toggle(false);
+            cfg.Handler = WallpaperHandler.None;
+            changer.Stop();
             return;
         }
 
@@ -25,8 +25,8 @@ public class WallhavenWallpaperService : IWallpaperChangerService
         var wallpaperPath = requestTask.Result;
         if (wallpaperPath is null)
         {
-            cfg.Service = WallpaperService.None;
-            changer.Toggle(false);
+            cfg.Handler = WallpaperHandler.None;
+            changer.Stop();
             return;
         }
 

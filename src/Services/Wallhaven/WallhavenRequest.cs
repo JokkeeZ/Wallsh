@@ -13,7 +13,7 @@ public static class WallhavenRequest
             ["categories"] = cfg.CategoriesToString(),
             ["purity"] = cfg.PurityToString(),
             ["sorting"] = cfg.SortingToString(),
-            ["atleast"] = cfg.Resolution,
+            ["atleast"] = cfg.Resolution ?? "1920x1080",
             ["ratios"] = cfg.RatioToString()
         };
 
@@ -63,7 +63,7 @@ public static class WallhavenRequest
         }
 
         // Create downloads folder if it does not already exist.
-        var downloadsFolder = Path.Combine(cfg.WallpapersDirectory, "downloads");
+        var downloadsFolder = Path.Combine(cfg.WallpapersFolder, "downloads");
         Directory.CreateDirectory(downloadsFolder);
 
         using var client = new HttpClient();

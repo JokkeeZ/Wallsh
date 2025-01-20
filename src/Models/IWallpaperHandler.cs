@@ -2,7 +2,7 @@ using Wallsh.Services;
 
 namespace Wallsh.Models;
 
-public interface IWallpaperChangerService
+public interface IWallpaperHandler
 {
     void OnChange(WallpaperChanger changer, AppJsonConfiguration cfg);
 }

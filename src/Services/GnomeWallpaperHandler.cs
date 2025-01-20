@@ -39,19 +39,18 @@ public static class GnomeWallpaperHandler
         return settings.GetString("picture-options");
     }
 
-    public static void SetAdjustment(string adjustment)
+    public static void SetAdjustment(string? adjustment)
     {
+        if (adjustment == null)
+            return;
+
         using var settings = new Settings(SchemaId);
         settings.SetString("picture-options", adjustment);
     }
 
     public static bool IsGnome()
     {
-        if (!OperatingSystem.IsLinux())
-            return false;
-
         var de = Environment.GetEnvironmentVariable("XDG_CURRENT_DESKTOP");
-
         return de is not null && de.Contains("GNOME");
     }
 

@@ -1,218 +1,173 @@
-﻿using Avalonia.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Wallsh.Messages;
 using Wallsh.Models;
-using Wallsh.Models.Wallhaven;
 using Wallsh.Services;
 
 namespace Wallsh.ViewModels;
 
-public partial class MainWindowViewModel : ViewModelBase
+public partial class MainWindowViewModel : ViewModelBase,
+    IRecipient<WallpaperHandlerChanged>,
+    IRecipient<TimerUpdatedMessage>
 {
+    private readonly AppJsonConfiguration _cfg;
     private readonly WallpaperChanger _wallpaperChanger;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanEnableNsfw))]
-    private string? _apiKey;
+    private string _appTitle = "Wallsh";
+
+    private WallpaperHandler _handler;
 
     [ObservableProperty]
-    private bool _categoryAnime;
-
-    [ObservableProperty]
-    private bool _categoryGeneral;
-
-    [ObservableProperty]
-    private bool _categoryPeople;
-
-    [ObservableProperty]
+    [NotifyPropertyChangedRecipients]
+    [NotifyPropertyChangedFor(nameof(Interval))]
     private int _hours;
 
     [ObservableProperty]
-    private string? _infoText;
-
-    [ObservableProperty]
-    private IBrush _infoTextBrush = Brushes.Black;
-
-    [ObservableProperty]
+    [NotifyPropertyChangedRecipients]
+    [NotifyPropertyChangedFor(nameof(Interval))]
     private int _minutes;
 
     [ObservableProperty]
-    private bool _purityNsfw;
-
-    [ObservableProperty]
-    private bool _puritySfw;
-
-    [ObservableProperty]
-    private bool _puritySketchy;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(AvailableResolutions))]
-    private WallhavenRatio _ratio;
-
-    [ObservableProperty]
-    private string? _resolution;
-
-    [ObservableProperty]
+    [NotifyPropertyChangedRecipients]
+    [NotifyPropertyChangedFor(nameof(Interval))]
     private int _seconds;
-
-    [ObservableProperty]
-    private WallpaperService _service;
-
-    [ObservableProperty]
-    private WallhavenSorting _sorting;
 
     [ObservableProperty]
     private string? _wallpaperAdjustment;
 
     [ObservableProperty]
-    private string? _wallpapersDirectory;
+    [NotifyPropertyChangedRecipients]
+    private string _wallpapersFolder;
 
     public MainWindowViewModel()
     {
-        _wallpaperChanger = new();
-        var cfg = _wallpaperChanger.Config;
+        Messenger.RegisterAll(this);
 
-        Service = _wallpaperChanger.Config.Service;
+        _cfg = AppJsonConfiguration.FromFile();
 
-        WallpapersDirectory = cfg.WallpapersDirectory;
-        Hours = cfg.Hours;
-        Minutes = cfg.Minutes;
-        Seconds = cfg.Seconds;
-        WallpaperAdjustment = cfg.WallpaperAdjustment;
-        Resolution = cfg.Wallhaven.Resolution;
-        ApiKey = cfg.Wallhaven.ApiKey;
-        CategoryGeneral = cfg.Wallhaven.General;
-        CategoryAnime = cfg.Wallhaven.Anime;
-        CategoryPeople = cfg.Wallhaven.People;
-        Ratio = cfg.Wallhaven.Ratio;
-        PuritySfw = cfg.Wallhaven.PuritySfw;
-        PuritySketchy = cfg.Wallhaven.PuritySketchy;
-        PurityNsfw = cfg.Wallhaven.PurityNsfw;
-        Sorting = cfg.Wallhaven.Sorting;
+        LocalViewModel = new(_cfg);
+        WallhavenViewModel = new(_cfg);
 
-        if (string.IsNullOrEmpty(WallpaperAdjustment))
-            WallpaperAdjustment = WallpaperChanger.GetWallpaperAdjustment();
+        _handler = _cfg.Handler;
+        _hours = _cfg.Interval.Hour;
+        _minutes = _cfg.Interval.Minute;
+        _seconds = _cfg.Interval.Second;
+        _wallpapersFolder = _cfg.WallpapersFolder;
+        _wallpaperAdjustment = _cfg.WallpaperAdjustment;
 
-        _wallpaperChanger.Toggle(cfg.Service != WallpaperService.None);
+        _wallpaperChanger = new(_cfg);
+
+        if (_handler != WallpaperHandler.None)
+        {
+            _wallpaperChanger.Start();
+            UpdateAppTitle(Interval);
+        }
     }
 
-    public bool CanEnableNsfw => !string.IsNullOrWhiteSpace(ApiKey);
+    public LocalViewModel LocalViewModel { get; }
+    public WallhavenViewModel WallhavenViewModel { get; }
+
+    public TimeOnly Interval => new(Hours, Minutes, Seconds);
 
     public static List<string> Adjustments => ["none", "scaled", "zoom", "wallpaper"];
-    public List<string> AvailableResolutions => WallhavenConfiguration.Resolutions[Ratio];
 
-    partial void OnApiKeyChanged(string? value)
-    {
-        if (string.IsNullOrEmpty(value))
-            PurityNsfw = false;
-    }
+    public void Receive(TimerUpdatedMessage message) => UpdateAppTitle(message.time);
 
-    partial void OnInfoTextChanged(string? value)
+    public void Receive(WallpaperHandlerChanged message) => _handler = message.Handler;
+
+    [RelayCommand(CanExecute = nameof(IsValidConfiguration))]
+    private void SaveConfiguration()
     {
-        if (!string.IsNullOrEmpty(value))
+        _wallpaperChanger.Stop();
+
+        _cfg.Handler = _handler;
+        _cfg.Interval = Interval;
+        _cfg.WallpapersFolder = WallpapersFolder;
+        _cfg.WallpaperAdjustment = WallpaperAdjustment;
+
+        // Wallhaven config
+        _cfg.Wallhaven.ApiKey = WallhavenViewModel.ApiKey;
+        _cfg.Wallhaven.General = WallhavenViewModel.CategoryGeneral;
+        _cfg.Wallhaven.Anime = WallhavenViewModel.CategoryAnime;
+        _cfg.Wallhaven.People = WallhavenViewModel.CategoryPeople;
+        _cfg.Wallhaven.Ratio = WallhavenViewModel.Ratio;
+        _cfg.Wallhaven.Sorting = WallhavenViewModel.Sorting;
+        _cfg.Wallhaven.Resolution = WallhavenViewModel.Resolution;
+        _cfg.Wallhaven.PuritySfw = WallhavenViewModel.PuritySfw;
+        _cfg.Wallhaven.PuritySketchy = WallhavenViewModel.PuritySketchy;
+        _cfg.Wallhaven.PurityNsfw = WallhavenViewModel.PurityNsfw;
+
+        _wallpaperChanger.Config = _cfg;
+        _wallpaperChanger.SetInterval(_cfg.Interval);
+
+        _wallpaperChanger.SetWallpaperAdjustment();
+
+        if (AppJsonConfiguration.ToFile(_cfg))
         {
-            Task.Run(async () => await Task.Delay(TimeSpan.FromSeconds(5)));
-            InfoText = string.Empty;
-        }
-    }
+            Console.WriteLine("Settings saved!");
 
-    [RelayCommand]
-    public void SaveConfiguration()
-    {
-        if (!ValidateConfiguration())
-            return;
-
-        _wallpaperChanger.Toggle(false);
-        _wallpaperChanger.SetService(Service);
-
-        _wallpaperChanger.Config.WallpapersDirectory = WallpapersDirectory!;
-        _wallpaperChanger.Config.Hours = Hours;
-        _wallpaperChanger.Config.Minutes = Minutes;
-        _wallpaperChanger.Config.Seconds = Seconds;
-        _wallpaperChanger.Config.WallpaperAdjustment = WallpaperAdjustment;
-        _wallpaperChanger.Config.Wallhaven.Resolution = Resolution!;
-        _wallpaperChanger.Config.Wallhaven.ApiKey = ApiKey;
-        _wallpaperChanger.Config.Wallhaven.General = CategoryGeneral;
-        _wallpaperChanger.Config.Wallhaven.Anime = CategoryAnime;
-        _wallpaperChanger.Config.Wallhaven.People = CategoryPeople;
-        _wallpaperChanger.Config.Wallhaven.Ratio = Ratio;
-        _wallpaperChanger.Config.Wallhaven.PuritySfw = PuritySfw;
-        _wallpaperChanger.Config.Wallhaven.PuritySketchy = PuritySketchy;
-        _wallpaperChanger.Config.Wallhaven.PurityNsfw = PurityNsfw;
-        _wallpaperChanger.Config.Wallhaven.Sorting = Sorting;
-
-        if (WallpaperAdjustment is not null)
-            _wallpaperChanger.Config.WallpaperAdjustment = WallpaperChanger.GetWallpaperAdjustment();
-
-        if (_wallpaperChanger.Config.Service != WallpaperService.None)
-            _wallpaperChanger.UpdateInterval(Hours, Minutes, Seconds);
-
-        if (AppConfiguration.ToFile(_wallpaperChanger.Config))
-        {
-            UpdateInfoText("Settings saved!", Brushes.Green);
-            _wallpaperChanger.Toggle(_wallpaperChanger.Config.Service != WallpaperService.None);
+            if (_handler != WallpaperHandler.None)
+            {
+                UpdateAppTitle(Interval);
+                _wallpaperChanger.Start();
+            }
         }
         else
-            UpdateInfoText("Failed to save settings!", Brushes.Red);
+            Console.WriteLine("Failed to save settings!");
     }
 
-    private bool ValidateConfiguration()
+    private bool IsValidConfiguration()
     {
-        var time = new TimeSpan(0, Hours, Minutes, Seconds);
-
-        if (time == TimeSpan.Zero)
+        if (Interval == TimeOnly.MinValue)
         {
-            UpdateInfoText("Interval cannot be zero.", Brushes.Red);
-            return false;
-        }
-
-        // NOTE:
-        // Wallhaven.cc allows 45 requests per minute, so request
-        // for every 2 seconds is easily on the safe side.
-        if (time.TotalSeconds <= 2 && Service == WallpaperService.Wallhaven)
-        {
-            UpdateInfoText("Interval needs to be at least 2 seconds.", Brushes.Red);
+            Console.WriteLine("Interval cannot be zero.");
             return false;
         }
 
         if (string.IsNullOrEmpty(WallpaperAdjustment))
         {
-            UpdateInfoText("Wallpaper adjustment cannot be empty.", Brushes.Red);
+            Console.WriteLine("Wallpaper adjustment cannot be empty.");
             return false;
         }
 
-        if (string.IsNullOrEmpty(WallpapersDirectory))
+        if (string.IsNullOrEmpty(WallpapersFolder))
         {
-            UpdateInfoText("Wallpaper folder cannot be empty.", Brushes.Red);
+            Console.WriteLine("Wallpaper folder cannot be empty.");
             return false;
         }
 
-        if (!Directory.Exists(WallpapersDirectory))
+        if (!Directory.Exists(WallpapersFolder))
         {
-            UpdateInfoText("Wallpaper folder does not exist.", Brushes.Red);
+            Console.WriteLine("Wallpaper folder does not exist.");
             return false;
         }
 
-        if (Service == WallpaperService.Local)
+        switch (_handler)
         {
-            if (Directory.GetFiles(WallpapersDirectory).Length != 0)
+            case WallpaperHandler.Local when !LocalViewModel.ValidateConfiguration():
+            case WallpaperHandler.Wallhaven when !WallhavenViewModel.ValidateConfiguration():
+                return false;
+            case WallpaperHandler.None:
+            default:
                 return true;
-            UpdateInfoText("Wallpaper folder is empty.", Brushes.Red);
-            return false;
         }
-
-        if (string.IsNullOrEmpty(Resolution))
-        {
-            UpdateInfoText("Wallpaper resolution cannot be empty.", Brushes.Red);
-            return false;
-        }
-
-        return true;
     }
 
-    private void UpdateInfoText(string text, IImmutableSolidColorBrush brush)
+    protected override void Broadcast<T>(T oldValue, T newValue, string? propertyName)
     {
-        InfoTextBrush = brush;
-        InfoText = text;
+        Messenger.Send(new IntervalChanged(Interval));
+        Messenger.Send(new WallpaperFolderChangedMessage(WallpapersFolder));
+    }
+
+    private void UpdateAppTitle(TimeOnly time)
+    {
+        var nextChangeTime = DateTime.Now
+            .AddHours(time.Hour)
+            .AddMinutes(time.Minute)
+            .AddSeconds(time.Second);
+
+        AppTitle = $"Wallsh - Next change: {nextChangeTime.ToLongTimeString()}";
     }
 }

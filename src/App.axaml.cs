@@ -6,7 +6,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Input;
-using Wallsh.Services;
+using Wallsh.Models;
 using Wallsh.ViewModels;
 using Wallsh.Views;
 
@@ -17,11 +17,11 @@ public class App : Application
     public static ICommand OpenWallpapersFolderFromTray =>
         new RelayCommand(() =>
         {
-            var cfg = AppConfiguration.FromFile();
+            var cfg = AppJsonConfiguration.FromFile();
 
             Process.Start(new ProcessStartInfo
             {
-                FileName = cfg.WallpapersDirectory,
+                FileName = cfg.WallpapersFolder,
                 UseShellExecute = true
             });
         });
