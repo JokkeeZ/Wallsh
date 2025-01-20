@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using System.Collections.ObjectModel;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Wallsh.Models;
 using Wallsh.Models.Wallhaven;
@@ -44,6 +45,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private bool _puritySketchy;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(AvailableResolutions))]
     private WallhavenRatio _ratio;
 
     [ObservableProperty]
@@ -64,6 +66,9 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string? _wallpapersDirectory;
 
+    public static List<string> Adjustments => ["none", "scaled", "zoom", "wallpaper"];
+    public List<string> AvailableResolutions => WallhavenConfiguration.Resolutions[Ratio];
+    
     public MainWindowViewModel()
     {
         _wallpaperChanger = new();

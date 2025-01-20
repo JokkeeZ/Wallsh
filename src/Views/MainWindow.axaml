@@ -69,10 +69,11 @@
 
                 <TextBlock Text="Wallpaper adjustment" FontWeight="Bold" Margin="0 10 0 5" />
                 <DockPanel>
-                    <ComboBox x:Name="WallpaperAdjustments"
+                    <ComboBox
                               SelectedIndex="0"
                               MaxDropDownHeight="300"
                               Width="340"
+                              ItemsSource="{Binding Adjustments}"
                               SelectedItem="{Binding WallpaperAdjustment}"
                               Margin="0 0 5 0">
                         <ComboBox.ItemTemplate>
@@ -131,34 +132,29 @@
                     <RadioButton
                         IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.RatioUltrawide}}"
                         GroupName="Ratios"
-                        IsCheckedChanged="RatioIsCheckedChanged"
                         Content="Ultrawide"
                         Width="95"
                         Margin="0 0 0 0" />
                     <RadioButton
                         IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.Ratio16X9}}"
                         GroupName="Ratios"
-                        IsCheckedChanged="RatioIsCheckedChanged"
                         Content="16:9"
                         Width="70"
                         Margin="15 0 0 0" />
                     <RadioButton
                         IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.Ratio16X10}}"
-                        IsCheckedChanged="RatioIsCheckedChanged"
                         GroupName="Ratios"
                         Content="16:10"
                         Width="70"
                         Margin="15 0 0 0" />
                     <RadioButton
                         IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.Ratio4X3}}"
-                        IsCheckedChanged="RatioIsCheckedChanged"
                         GroupName="Ratios"
                         Content="4:3"
                         Width="70"
                         Margin="15 0 0 0" />
                     <RadioButton
                         IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.Ratio5X4}}"
-                        IsCheckedChanged="RatioIsCheckedChanged"
                         GroupName="Ratios"
                         Content="5:4"
                         Margin="15 0 0 0" />
@@ -190,8 +186,9 @@
 
                 <TextBlock Text="Minimum resolution" FontWeight="Bold" Margin="0 10 0 5" />
 
-                <ComboBox x:Name="WallhavenResolutions"
+                <ComboBox
                           Width="340"
+                          ItemsSource="{Binding AvailableResolutions}"
                           SelectedItem="{Binding Resolution}"
                           Margin="0 0 5 0">
                     <ComboBox.ItemTemplate>
