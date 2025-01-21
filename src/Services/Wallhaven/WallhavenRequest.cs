@@ -63,7 +63,7 @@ public static class WallhavenRequest
         }
 
         // Create downloads folder if it does not already exist.
-        var downloadsFolder = Path.Combine(cfg.WallpapersFolder, "downloads");
+        var downloadsFolder = Path.Combine(cfg.WallpapersFolder, "wallhaven");
         Directory.CreateDirectory(downloadsFolder);
 
         using var client = new HttpClient();

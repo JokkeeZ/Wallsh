@@ -1,3 +1,4 @@
+using System.Resources;
 using Wallsh.Models;
 using Wallsh.Services;
 using Wallsh.Services.Wallhaven;
@@ -19,6 +20,20 @@ public class WallhavenHandler : IWallpaperHandler
         }
 
         var randomWallpaper = wallpapers.Data[Random.Shared.Next(wallpapers.Data.Count)];
+        var filePath = Path.Combine(changer.Config.WallpapersFolder,
+            "wallhaven",
+            randomWallpaper.Path?.Split('/').Last() ?? string.Empty);
+
+        Console.WriteLine(filePath);
+        
+        // File already exists, so we can re-use the
+        // same wallpaper that we have downloaded before
+        // at some point
+        if (File.Exists(filePath))
+        {
+            changer.WpEnvironment.SetWallpaperFromPath(filePath);
+            return;
+        }
 
         var requestTask = Task.Run(async () =>
             await WallhavenRequest.DownloadWallPaperAsync(cfg, randomWallpaper));
