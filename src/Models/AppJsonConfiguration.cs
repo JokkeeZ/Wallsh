@@ -12,7 +12,7 @@ public class AppJsonConfiguration
 
     public WallpaperHandler Handler { get; set; } = WallpaperHandler.None;
 
-    public TimeOnly Interval { get; set; } = new(0, 0, 10, 0);
+    public TimeOnly Interval { get; set; } = new(0, 10, 0, 0);
     public string WallpapersFolder { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
     public string? WallpaperAdjustment { get; set; } = string.Empty;
     public WallhavenConfiguration Wallhaven { get; init; } = new();
