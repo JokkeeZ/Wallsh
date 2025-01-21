@@ -8,8 +8,6 @@ public class GnomeWpEnvironment : IWpEnvironment
     private const string SchemaId = "org.gnome.desktop.background";
     public string[] SupportedFileExtensions => ["*.jpg", "*.png"];
 
-    public OSPlatform OsPlatform => OSPlatform.Linux;
-
     public string GetWallpaperAdjustment()
     {
         using var settings = new Settings(SchemaId);

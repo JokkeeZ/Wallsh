@@ -4,7 +4,6 @@ namespace Wallsh.Models;
 
 public interface IWpEnvironment
 {
-    OSPlatform OsPlatform { get; }
     string[] SupportedFileExtensions { get; }
     string GetWallpaperAdjustment();
     void SetWallpaperAdjustment(string? adjustment);
