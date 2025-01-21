@@ -1,3 +1,3 @@
 namespace Wallsh.Messages;
 
-public record TimerUpdatedMessage(TimeOnly time);
+public record TimerUpdatedMessage(TimeOnly Time);

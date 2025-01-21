@@ -41,6 +41,14 @@ public partial class MainWindowViewModel : ViewModelBase,
     [NotifyPropertyChangedRecipients]
     private string _wallpapersFolder;
 
+    public LocalViewModel LocalViewModel { get; }
+    public WallhavenViewModel WallhavenViewModel { get; }
+
+    public TimeOnly Interval => new(Hours, Minutes, Seconds);
+
+    public static List<string> Adjustments =>
+        ["none", "wallpaper", "centered", "scaled", "stretched", "zoom", "spanned"];
+
     public MainWindowViewModel()
     {
         Messenger.RegisterAll(this);
@@ -49,6 +57,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
         LocalViewModel = new(_cfg);
         WallhavenViewModel = new(_cfg);
+        _wallpaperChanger = new(_cfg);
 
         _handler = _cfg.Handler;
         _hours = _cfg.Interval.Hour;
@@ -57,7 +66,8 @@ public partial class MainWindowViewModel : ViewModelBase,
         _wallpapersFolder = _cfg.WallpapersFolder;
         _wallpaperAdjustment = _cfg.WallpaperAdjustment;
 
-        _wallpaperChanger = new(_cfg);
+        if (string.IsNullOrEmpty(_cfg.WallpaperAdjustment))
+            WallpaperAdjustment = _wallpaperChanger.WpEnvironment.GetWallpaperAdjustment();
 
         if (_handler != WallpaperHandler.None)
         {
@@ -66,20 +76,16 @@ public partial class MainWindowViewModel : ViewModelBase,
         }
     }
 
-    public LocalViewModel LocalViewModel { get; }
-    public WallhavenViewModel WallhavenViewModel { get; }
-
-    public TimeOnly Interval => new(Hours, Minutes, Seconds);
-
-    public static List<string> Adjustments => ["none", "scaled", "zoom", "wallpaper"];
-
-    public void Receive(TimerUpdatedMessage message) => UpdateAppTitle(message.time);
+    public void Receive(TimerUpdatedMessage message) => UpdateAppTitle(message.Time);
 
     public void Receive(WallpaperHandlerChanged message) => _handler = message.Handler;
 
-    [RelayCommand(CanExecute = nameof(IsValidConfiguration))]
+    [RelayCommand]
     private void SaveConfiguration()
     {
+        if (!IsValidConfiguration())
+            return;
+
         _wallpaperChanger.Stop();
 
         _cfg.Handler = _handler;
@@ -102,7 +108,7 @@ public partial class MainWindowViewModel : ViewModelBase,
         _wallpaperChanger.Config = _cfg;
         _wallpaperChanger.SetInterval(_cfg.Interval);
 
-        _wallpaperChanger.SetWallpaperAdjustment();
+        _wallpaperChanger.WpEnvironment.SetWallpaperAdjustment(_cfg.WallpaperAdjustment);
 
         if (AppJsonConfiguration.ToFile(_cfg))
         {

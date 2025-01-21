@@ -17,7 +17,7 @@ public static class WallhavenRequest
             ["ratios"] = cfg.RatioToString()
         };
 
-        if (cfg.ApiKey is not null)
+        if (!string.IsNullOrWhiteSpace(cfg.ApiKey))
             qParams.Add("apikey", cfg.ApiKey);
 
         var uri = new UriBuilder

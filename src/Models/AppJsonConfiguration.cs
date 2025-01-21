@@ -1,16 +1,20 @@
 using System.Text.Json;
 using Wallsh.Models.Wallhaven;
-using Wallsh.Services;
 
 namespace Wallsh.Models;
 
 public class AppJsonConfiguration
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        WriteIndented = true
+    };
+
     public WallpaperHandler Handler { get; set; } = WallpaperHandler.None;
 
     public TimeOnly Interval { get; set; } = new(0, 0, 10, 0);
     public string WallpapersFolder { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-    public string? WallpaperAdjustment { get; set; } = WallpaperChanger.GetWallpaperAdjustment();
+    public string? WallpaperAdjustment { get; set; } = string.Empty;
     public WallhavenConfiguration Wallhaven { get; init; } = new();
 
     private static string GetConfigurationPath()
@@ -48,7 +52,7 @@ public class AppJsonConfiguration
     {
         try
         {
-            var text = JsonSerializer.Serialize(jsonConfiguration);
+            var text = JsonSerializer.Serialize(jsonConfiguration, JsonOptions);
             File.WriteAllText(GetConfigurationPath(), text);
 
             return true;

@@ -1,9 +1,10 @@
 using System.Timers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Wallsh.Handlers;
 using Wallsh.Messages;
 using Wallsh.Models;
-using Wallsh.Services.Wallhaven;
+using Wallsh.Models.Environments;
 using Timer = System.Timers.Timer;
 
 namespace Wallsh.Services;
@@ -18,16 +19,28 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
 
     private readonly Timer _timer;
 
+    public IWpEnvironment WpEnvironment { get; } = null!;
+
+    public AppJsonConfiguration Config { get; set; }
+
     public WallpaperChanger(AppJsonConfiguration cfg)
     {
         Config = cfg;
 
         _timer = new(cfg.Interval.ToTimeSpan());
         _timer.Elapsed += OnTimerElapsed;
-        _timer.AutoReset = true;
-    }
 
-    public AppJsonConfiguration Config { get; set; }
+        if (OperatingSystem.IsLinux())
+        {
+            if (GnomeWpEnvironment.IsGnome())
+                WpEnvironment = new GnomeWpEnvironment();
+            else
+                throw new NotImplementedException("This environment is not supported.");
+        }
+        // TODO: Add Windows support.
+        else if (OperatingSystem.IsWindows())
+            throw new NotImplementedException("Windows is not supported.");
+    }
 
     public void Dispose()
     {
@@ -76,36 +89,6 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
     public void SetInterval(TimeOnly time)
     {
         _timer.Interval = time.ToTimeSpan().TotalMilliseconds;
-        Console.WriteLine(
-            $"[WallpaperChanger][{Config.Handler}]: Interval - {time.Hour}h  {time.Minute}m {time.Second}s");
-    }
-
-    public static string GetWallpaperAdjustment()
-    {
-        if (OperatingSystem.IsLinux())
-        {
-            if (GnomeWallpaperHandler.IsGnome())
-                return GnomeWallpaperHandler.GetCurrentAdjustment();
-        }
-        else if (OperatingSystem.IsWindows())
-        {
-            // TODO: Windows support
-        }
-
-        throw new NotImplementedException("Your operating system is not supported.");
-    }
-
-    public void SetWallpaperAdjustment()
-    {
-        if (OperatingSystem.IsLinux())
-        {
-            if (GnomeWallpaperHandler.IsGnome())
-                GnomeWallpaperHandler.SetAdjustment(Config.WallpaperAdjustment);
-        }
-        else if (OperatingSystem.IsWindows())
-        {
-            // TODO: Windows support
-            throw new NotImplementedException("Your operating system is not supported.");
-        }
+        Console.WriteLine($"[WallpaperChanger][{Config.Handler}]: Interval - {time:HH:mm:ss}s");
     }
 }

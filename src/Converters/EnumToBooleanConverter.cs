@@ -2,7 +2,7 @@ using System.Globalization;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 
-namespace Wallsh.Models;
+namespace Wallsh.Converters;
 
 public class EnumToBooleanConverter : IValueConverter
 {

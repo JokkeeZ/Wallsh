@@ -5,7 +5,7 @@ using Wallsh.Models;
 
 namespace Wallsh.ViewModels;
 
-public partial class LocalViewModel : ViewModelBase, IWpServiceConfigValidator,
+public partial class LocalViewModel : ViewModelBase, IWpHandlerConfigValidator,
     IRecipient<WallpaperFolderChangedMessage>
 {
     [ObservableProperty]

@@ -1,6 +1,6 @@
 namespace Wallsh.Models;
 
-public interface IWpServiceConfigValidator
+public interface IWpHandlerConfigValidator
 {
     bool ValidateConfiguration();
 }

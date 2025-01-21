@@ -1,6 +1,8 @@
 using Wallsh.Models;
+using Wallsh.Services;
+using Wallsh.Services.Wallhaven;
 
-namespace Wallsh.Services.Wallhaven;
+namespace Wallsh.Handlers;
 
 public class WallhavenHandler : IWallpaperHandler
 {
@@ -9,10 +11,9 @@ public class WallhavenHandler : IWallpaperHandler
         var task = Task.Run(async () =>
             await WallhavenRequest.RequestWallpapersAsync(cfg.Wallhaven));
 
-        var wallpapers = task.Result;
+        var wallpapers = task.GetAwaiter().GetResult();
         if (wallpapers is null)
         {
-            cfg.Handler = WallpaperHandler.None;
             changer.Stop();
             return;
         }
@@ -22,15 +23,13 @@ public class WallhavenHandler : IWallpaperHandler
         var requestTask = Task.Run(async () =>
             await WallhavenRequest.DownloadWallPaperAsync(cfg, randomWallpaper));
 
-        var wallpaperPath = requestTask.Result;
+        var wallpaperPath = requestTask.GetAwaiter().GetResult();
         if (wallpaperPath is null)
         {
-            cfg.Handler = WallpaperHandler.None;
             changer.Stop();
             return;
         }
 
-        if (GnomeWallpaperHandler.IsGnome())
-            GnomeWallpaperHandler.SetWallpaper(wallpaperPath);
+        changer.WpEnvironment.SetWallpaperFromPath(wallpaperPath);
     }
 }

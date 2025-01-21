@@ -70,7 +70,7 @@
             <ComboBox
                 Width="340"
                 ItemsSource="{Binding AvailableResolutions}"
-                SelectedItem="{Binding Resolution}">
+                SelectedItem="{Binding Path=Resolution}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding}" />

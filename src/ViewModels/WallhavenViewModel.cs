@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Wallsh.Messages;
@@ -6,11 +7,14 @@ using Wallsh.Models.Wallhaven;
 
 namespace Wallsh.ViewModels;
 
-public partial class WallhavenViewModel : ViewModelBase, IWpServiceConfigValidator, IRecipient<IntervalChanged>
+public partial class WallhavenViewModel : ViewModelBase, IWpHandlerConfigValidator, IRecipient<IntervalChanged>
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanEnableNsfw))]
     private string? _apiKey;
+
+    [ObservableProperty]
+    private ObservableCollection<string> _availableResolutions;
 
     [ObservableProperty]
     private bool _categoryAnime;
@@ -36,8 +40,6 @@ public partial class WallhavenViewModel : ViewModelBase, IWpServiceConfigValidat
     private bool _puritySketchy;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(AvailableResolutions))]
-    [NotifyPropertyChangedFor(nameof(Resolution))]
     private WallhavenRatio _ratio;
 
     [ObservableProperty]
@@ -45,6 +47,8 @@ public partial class WallhavenViewModel : ViewModelBase, IWpServiceConfigValidat
 
     [ObservableProperty]
     private WallhavenSorting _sorting;
+
+    public bool CanEnableNsfw => !string.IsNullOrWhiteSpace(ApiKey);
 
     public WallhavenViewModel(AppJsonConfiguration cfg)
     {
@@ -63,11 +67,9 @@ public partial class WallhavenViewModel : ViewModelBase, IWpServiceConfigValidat
         PurityNsfw = cfg.Wallhaven.PurityNsfw;
         PuritySfw = cfg.Wallhaven.PuritySfw;
         PuritySketchy = cfg.Wallhaven.PuritySketchy;
+
+        AvailableResolutions = new(WallhavenConfiguration.Resolutions[Ratio]);
     }
-
-    public List<string> AvailableResolutions => WallhavenConfiguration.Resolutions[Ratio];
-
-    public bool CanEnableNsfw => !string.IsNullOrWhiteSpace(ApiKey);
 
     public void Receive(IntervalChanged message) => _interval = message.Interval;
 
@@ -92,6 +94,23 @@ public partial class WallhavenViewModel : ViewModelBase, IWpServiceConfigValidat
     {
         if (string.IsNullOrEmpty(value))
             PurityNsfw = false;
+    }
+
+    partial void OnRatioChanged(WallhavenRatio value)
+    {
+        AvailableResolutions = new(WallhavenConfiguration.Resolutions[value]);
+
+        if (string.IsNullOrEmpty(Resolution) || !AvailableResolutions.Contains(Resolution))
+            Resolution = AvailableResolutions[0];
+    }
+
+    partial void OnAvailableResolutionsChanged(ObservableCollection<string> value)
+    {
+        if (string.IsNullOrEmpty(Resolution))
+        {
+            Resolution = value[0];
+            Console.WriteLine($"New resolution set to: {Resolution}");
+        }
     }
 
     partial void OnIsActiveHandlerChanged(bool value) =>
