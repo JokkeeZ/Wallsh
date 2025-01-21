@@ -1,8 +1,14 @@
-# Wallsh
+<div align="center">
+    <img width="100" height="100" src="https://github.com/JokkeeZ/Wallsh/blob/master/src/Assets/Wallsh.svg"/>
+    <h1>Wallsh</h1>
+</div>
+
 Wallsh is a cross-platform C# application for slideshow wallpapers. Optionally downloads and sets wallpapers from different services, such as wallhaven.cc. See currently supported services [below](#supported-services).
 
 > [!WARNING]
-> Currently supports only GNOME Desktop environment. Tested in Ubuntu 24.04.
+> Currently only tested in GNOME desktop environment. (Ubuntu 24.04)
+> 
+> **No Windows support yet.**
 
 # Supported services
 - [wallhaven.cc](https://wallhaven.cc)
