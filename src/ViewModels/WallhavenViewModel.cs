@@ -31,6 +31,7 @@ public partial class WallhavenViewModel : ViewModelBase, IWpHandlerConfigValidat
     private bool _isActiveHandler;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanEnableNsfw))]
     private bool _purityNsfw;
 
     [ObservableProperty]
@@ -48,7 +49,7 @@ public partial class WallhavenViewModel : ViewModelBase, IWpHandlerConfigValidat
     [ObservableProperty]
     private WallhavenSorting _sorting;
 
-    public bool CanEnableNsfw => !string.IsNullOrWhiteSpace(ApiKey);
+    public bool CanEnableNsfw => !string.IsNullOrWhiteSpace(ApiKey) && ApiKey?.Length == 32;
 
     public WallhavenViewModel(AppJsonConfiguration cfg)
     {
@@ -92,7 +93,8 @@ public partial class WallhavenViewModel : ViewModelBase, IWpHandlerConfigValidat
 
     partial void OnApiKeyChanged(string? value)
     {
-        if (string.IsNullOrEmpty(value))
+        // wallhaven.cc api key seems to always be 32 chars.
+        if (string.IsNullOrEmpty(value) || value?.Length != 32)
             PurityNsfw = false;
     }
 
