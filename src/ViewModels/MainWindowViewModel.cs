@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Controls.Notifications;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Wallsh.Messages;
@@ -25,9 +26,18 @@ public partial class MainWindowViewModel : ViewModelBase,
     private int _hours;
 
     [ObservableProperty]
+    private bool _isNotificationVisible;
+
+    [ObservableProperty]
     [NotifyPropertyChangedRecipients]
     [NotifyPropertyChangedFor(nameof(Interval))]
     private int _minutes;
+
+    [ObservableProperty]
+    private string? _notificationText;
+
+    [ObservableProperty]
+    private NotificationType _notificationType;
 
     [ObservableProperty]
     [NotifyPropertyChangedRecipients]
@@ -81,9 +91,9 @@ public partial class MainWindowViewModel : ViewModelBase,
     public void Receive(WallpaperHandlerChanged message) => _handler = message.Handler;
 
     [RelayCommand]
-    private void SaveConfiguration()
+    private async Task SaveConfiguration()
     {
-        if (!IsValidConfiguration())
+        if (!await IsValidConfiguration())
             return;
 
         _wallpaperChanger.Stop();
@@ -112,7 +122,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
         if (AppJsonConfiguration.ToFile(_cfg))
         {
-            Console.WriteLine("Settings saved!");
+            await CreateNotification("Settings saved!", NotificationType.Success);
 
             if (_handler != WallpaperHandler.None)
             {
@@ -121,50 +131,85 @@ public partial class MainWindowViewModel : ViewModelBase,
             }
         }
         else
-            Console.WriteLine("Failed to save settings!");
+            await CreateNotification("Failed to save settings!", NotificationType.Error);
     }
 
-    private bool IsValidConfiguration()
+    private async Task<bool> IsValidConfiguration()
     {
         if (Interval == TimeOnly.MinValue)
         {
-            Console.WriteLine("Interval cannot be zero.");
+            await CreateNotification("Interval cannot be 00:00:00.", NotificationType.Warning);
             return false;
         }
 
         if (string.IsNullOrEmpty(WallpaperAdjustment))
         {
-            Console.WriteLine("Wallpaper adjustment cannot be empty.");
+            await CreateNotification("Wallpaper adjustment cannot be empty.", NotificationType.Error);
             return false;
         }
 
         if (string.IsNullOrEmpty(WallpapersFolder))
         {
-            Console.WriteLine("Wallpaper folder cannot be empty.");
+            await CreateNotification("Wallpaper folder cannot be empty.", NotificationType.Error);
             return false;
         }
 
         if (!Directory.Exists(WallpapersFolder))
         {
-            Console.WriteLine("Wallpaper folder does not exist.");
+            await CreateNotification("Wallpaper folder does not exist.", NotificationType.Error);
             return false;
         }
 
         switch (_handler)
         {
-            case WallpaperHandler.Local when !LocalViewModel.ValidateConfiguration():
-            case WallpaperHandler.Wallhaven when !WallhavenViewModel.ValidateConfiguration():
-                return false;
+            case WallpaperHandler.Local:
+            {
+                {
+                    var (success, message) = LocalViewModel.ValidateConfiguration();
+
+                    if (!success)
+                    {
+                        await CreateNotification(message, NotificationType.Error);
+                        return false;
+                    }
+                }
+                break;
+            }
+            case WallpaperHandler.Wallhaven:
+            {
+                {
+                    var (success, message) = WallhavenViewModel.ValidateConfiguration();
+
+                    if (!success)
+                    {
+                        await CreateNotification(message, NotificationType.Error);
+                        return false;
+                    }
+                }
+                break;
+            }
             case WallpaperHandler.None:
             default:
                 return true;
         }
+
+        return true;
     }
 
     protected override void Broadcast<T>(T oldValue, T newValue, string? propertyName)
     {
         Messenger.Send(new IntervalChanged(Interval));
         Messenger.Send(new WallpaperFolderChangedMessage(WallpapersFolder));
+    }
+
+    private async Task CreateNotification(string message, NotificationType type)
+    {
+        NotificationType = type;
+        NotificationText = message;
+        IsNotificationVisible = true;
+
+        await Task.Delay(TimeSpan.FromSeconds(5));
+        IsNotificationVisible = false;
     }
 
     private void UpdateAppTitle(TimeOnly time)

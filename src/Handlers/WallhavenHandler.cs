@@ -1,4 +1,3 @@
-using System.Resources;
 using Wallsh.Models;
 using Wallsh.Services;
 using Wallsh.Services.Wallhaven;
@@ -24,8 +23,6 @@ public class WallhavenHandler : IWallpaperHandler
             "wallhaven",
             randomWallpaper.Path?.Split('/').Last() ?? string.Empty);
 
-        Console.WriteLine(filePath);
-        
         // File already exists, so we can re-use the
         // same wallpaper that we have downloaded before
         // at some point

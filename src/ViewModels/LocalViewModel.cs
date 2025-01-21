@@ -23,23 +23,17 @@ public partial class LocalViewModel : ViewModelBase, IWpHandlerConfigValidator,
 
     public void Receive(WallpaperFolderChangedMessage message) => _wallpapersFolder = message.WallpapersFolder;
 
-    public bool ValidateConfiguration()
+    public (bool Success, string Message) ValidateConfiguration()
     {
         if (string.IsNullOrWhiteSpace(_wallpapersFolder))
-        {
-            Console.WriteLine("WallpapersFolder is empty.");
-            return false;
-        }
+            return (false, "Wallpapers folder cannot be empty.");
 
         // Folder must contain wallpapers inorder to
         // use local handler.
         if (Directory.GetFiles(_wallpapersFolder).Length == 0)
-        {
-            Console.WriteLine("WallpapersFolder is empty.");
-            return false;
-        }
+            return (false, "Wallpapers folder does not contain any files.");
 
-        return true;
+        return (true, string.Empty);
     }
 
     partial void OnIsActiveHandlerChanged(bool value) =>

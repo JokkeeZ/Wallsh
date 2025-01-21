@@ -74,21 +74,17 @@ public partial class WallhavenViewModel : ViewModelBase, IWpHandlerConfigValidat
 
     public void Receive(IntervalChanged message) => _interval = message.Interval;
 
-    public bool ValidateConfiguration()
+    public (bool Success, string Message) ValidateConfiguration()
     {
         // Wallhaven.cc allows 45 requests per minute, so request
         // for every 2 seconds is easily on the safe side.
         if (_interval.ToTimeSpan().TotalSeconds < 2)
-        {
-            Console.WriteLine("Interval needs to be at least 2 seconds.");
-            return false;
-        }
+            return (false, "Wallhaven interval needs to be at least 2 seconds.");
 
         if (!string.IsNullOrEmpty(Resolution))
-            return true;
+            return (true, string.Empty);
 
-        Console.WriteLine("Wallpaper resolution cannot be empty.");
-        return false;
+        return (false, "Wallpaper resolution cannot be empty.");
     }
 
     partial void OnApiKeyChanged(string? value)
@@ -109,10 +105,7 @@ public partial class WallhavenViewModel : ViewModelBase, IWpHandlerConfigValidat
     partial void OnAvailableResolutionsChanged(ObservableCollection<string> value)
     {
         if (string.IsNullOrEmpty(Resolution))
-        {
             Resolution = value[0];
-            Console.WriteLine($"New resolution set to: {Resolution}");
-        }
     }
 
     partial void OnIsActiveHandlerChanged(bool value) =>

@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace Wallsh.Models;
 
 public interface IWpEnvironment

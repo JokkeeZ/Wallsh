@@ -20,8 +20,16 @@
     </Design.DataContext>
 
 
-    <Grid Margin="10 0 10 10" RowDefinitions="Auto,10,Auto,10,Auto,10,Auto">
-        <Border BorderThickness="1" BorderBrush="Gray" Padding="10" CornerRadius="5" Grid.Row="2">
+    <Grid RowDefinitions="Auto,0,Auto,10,Auto,10,Auto">
+        <StackPanel Grid.Row="1" ZIndex="1">
+            <NotificationCard NotificationType="{Binding NotificationType}" IsVisible="{Binding IsNotificationVisible}"
+                              Width="{Binding $parent.Width}" Height="60">
+                <DockPanel Margin="10 10 10 10" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding NotificationText}" />
+                </DockPanel>
+            </NotificationCard>
+        </StackPanel>
+        <Border Margin="10 10 10 0" BorderThickness="1" BorderBrush="Gray" Padding="10" CornerRadius="5" Grid.Row="2">
             <StackPanel Spacing="5">
                 <TextBlock Text="Time Between Changes" FontWeight="Bold" />
 
@@ -87,8 +95,7 @@
                 </StackPanel>
             </StackPanel>
         </Border>
-
-        <views:LocalView Grid.Row="4" DataContext="{Binding LocalViewModel}" />
-        <views:WallhavenView Grid.Row="6" DataContext="{Binding WallhavenViewModel}" />
+        <views:LocalView Grid.Row="4" Margin="10 0 10 0" DataContext="{Binding LocalViewModel}" />
+        <views:WallhavenView Grid.Row="6" Margin="10 0 10 10" DataContext="{Binding WallhavenViewModel}" />
     </Grid>
 </Window>

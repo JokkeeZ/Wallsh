@@ -2,5 +2,5 @@ namespace Wallsh.Models;
 
 public interface IWpHandlerConfigValidator
 {
-    bool ValidateConfiguration();
+    (bool Success, string Message) ValidateConfiguration();
 }
