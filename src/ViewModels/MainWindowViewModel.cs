@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls.Notifications;
+﻿using System.Reflection;
+using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -117,6 +118,11 @@ public partial class MainWindowViewModel : ViewModelBase,
         _cfg.Wallhaven.PuritySketchy = WallhavenViewModel.PuritySketchy;
         _cfg.Wallhaven.PurityNsfw = WallhavenViewModel.PurityNsfw;
 
+        // Bing config
+        _cfg.Bing.Resolution = BingViewModel.Resolution;
+        _cfg.Bing.NumberOfWallpapers = BingViewModel.NumberOfWallpapers;
+        _cfg.Bing.Orientation = BingViewModel.Orientation;
+
         _wallpaperChanger.Config = _cfg;
         _wallpaperChanger.SetInterval(_cfg.Interval);
 
@@ -225,6 +231,7 @@ public partial class MainWindowViewModel : ViewModelBase,
             .AddMinutes(time.Minute)
             .AddSeconds(time.Second);
 
-        AppTitle = $"Wallsh -- Next update ~{nextChangeTime.ToLongTimeString()}";
+        var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(2);
+        AppTitle = $"Wallsh {version} | WP Change: {nextChangeTime.ToLongTimeString()}";
     }
 }
