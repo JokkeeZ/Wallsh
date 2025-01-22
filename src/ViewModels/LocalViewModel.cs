@@ -5,23 +5,23 @@ using Wallsh.Models;
 
 namespace Wallsh.ViewModels;
 
-public partial class LocalViewModel : ViewModelBase, IWpHandlerConfigValidator,
-    IRecipient<WallpaperFolderChangedMessage>
+public partial class LocalViewModel : ViewModelBase, IWpChangerConfigValidator,
+    IRecipient<WallpaperFolderUpdatedMessage>
 {
     [ObservableProperty]
     private bool _isActiveHandler;
 
     private string? _wallpapersFolder;
 
-    public LocalViewModel(AppJsonConfiguration cfg)
+    public LocalViewModel(AppConfiguration cfg)
     {
         Messenger.RegisterAll(this);
 
         _wallpapersFolder = cfg.WallpapersFolder;
-        IsActiveHandler = cfg.Handler == WallpaperHandler.Local;
+        IsActiveHandler = cfg.ChangerType == WallpaperChangerType.Local;
     }
 
-    public void Receive(WallpaperFolderChangedMessage message) => _wallpapersFolder = message.WallpapersFolder;
+    public void Receive(WallpaperFolderUpdatedMessage message) => _wallpapersFolder = message.WallpapersFolder;
 
     public (bool Success, string Message) ValidateConfiguration()
     {
@@ -37,7 +37,7 @@ public partial class LocalViewModel : ViewModelBase, IWpHandlerConfigValidator,
     }
 
     partial void OnIsActiveHandlerChanged(bool value) =>
-        Messenger.Send(new WallpaperHandlerChanged(value
-            ? WallpaperHandler.Local
-            : WallpaperHandler.None));
+        Messenger.Send(new WallpaperChangerUpdatedMessage(value
+            ? WallpaperChangerType.Local
+            : WallpaperChangerType.None));
 }

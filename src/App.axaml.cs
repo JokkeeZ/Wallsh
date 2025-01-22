@@ -17,7 +17,7 @@ public class App : Application
     public static ICommand OpenWallpapersFolderFromTray =>
         new RelayCommand(() =>
         {
-            var cfg = AppJsonConfiguration.FromFile();
+            var cfg = AppConfiguration.FromFile();
 
             Process.Start(new ProcessStartInfo
             {

@@ -17,7 +17,7 @@
         <StackPanel IsEnabled="{Binding IsActiveHandler}" Spacing="5">
 
             <TextBlock Text="Orientation (Landscape/Portrait)" FontWeight="Bold" />
-            <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel Orientation="Horizontal" Spacing="30">
                 <RadioButton GroupName="Orientation"
                              IsChecked="{Binding Orientation, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static avalonia:ScreenOrientation.Landscape}}"
                              Content="Landscape" />

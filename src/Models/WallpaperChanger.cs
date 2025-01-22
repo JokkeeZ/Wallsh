@@ -1,29 +1,30 @@
 using System.Timers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using Wallsh.Handlers;
+using Wallsh.Changers;
 using Wallsh.Messages;
 using Wallsh.Models.Environments;
+using Wallsh.Models.Environments.Linux;
 using Timer = System.Timers.Timer;
 
 namespace Wallsh.Models;
 
 public class WallpaperChanger : ObservableRecipient, IDisposable
 {
-    private readonly Dictionary<WallpaperHandler, IWpService> _services = new()
+    private readonly Dictionary<WallpaperChangerType, IWallpaperChanger> _services = new()
     {
-        [WallpaperHandler.Local] = new LocalHandler(),
-        [WallpaperHandler.Wallhaven] = new WallhavenHandler(),
-        [WallpaperHandler.Bing] = new BingHandler()
+        [WallpaperChangerType.Local] = new LocalWallpaperChanger(),
+        [WallpaperChangerType.Wallhaven] = new WallhavenWallpaperChanger(),
+        [WallpaperChangerType.Bing] = new BingWallpaperChanger()
     };
 
     private readonly Timer _timer;
 
     public IWpEnvironment WpEnvironment { get; } = null!;
 
-    public AppJsonConfiguration Config { get; set; }
+    public AppConfiguration Config { get; set; }
 
-    public WallpaperChanger(AppJsonConfiguration cfg)
+    public WallpaperChanger(AppConfiguration cfg)
     {
         Config = cfg;
 
@@ -52,9 +53,9 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
     {
         try
         {
-            if (!_services.TryGetValue(Config.Handler, out var service))
+            if (!_services.TryGetValue(Config.ChangerType, out var service))
             {
-                Console.WriteLine($"[WallpaperChanger] No service for type {Config.Handler}");
+                Console.WriteLine($"[WallpaperChanger] No service for type {Config.ChangerType}");
                 return;
             }
 
@@ -70,31 +71,34 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
     public void Stop()
     {
         _timer.Stop();
-        Console.WriteLine($"[WallpaperChanger][{Config.Handler}]: Stopped.");
+        Console.WriteLine($"[WallpaperChanger][{Config.ChangerType}]: Stopped.");
     }
 
     public void Start()
     {
-        if (Config.Handler == WallpaperHandler.None)
+        if (Config.ChangerType == WallpaperChangerType.None)
         {
-            Console.WriteLine($"[WallpaperChanger][{Config.Handler}]: No handler configured.");
+            Console.WriteLine($"[WallpaperChanger][{Config.ChangerType}]: No handler configured.");
             return;
         }
 
-        if (_services.TryGetValue(Config.Handler, out var service))
+        if (_services.TryGetValue(Config.ChangerType, out var service))
         {
-            Console.WriteLine($"[WallpaperChanger] Resetting {Config.Handler} before starting.");
+            Console.WriteLine($"[WallpaperChanger] Resetting {Config.ChangerType} before starting.");
             service.Reset(this);
+            
+            if (Config.ChangerType != WallpaperChangerType.Local)
+                Directory.CreateDirectory(GetChangerDownloadFolderPath());
         }
 
         _timer.Start();
-        Console.WriteLine($"[WallpaperChanger][{Config.Handler}]: Started.");
+        Console.WriteLine($"[WallpaperChanger][{Config.ChangerType}]: Started.");
     }
 
     public void SetInterval(TimeOnly time)
     {
         _timer.Interval = time.ToTimeSpan().TotalMilliseconds;
-        Console.WriteLine($"[WallpaperChanger][{Config.Handler}]: Interval - {time:HH:mm:ss}");
+        Console.WriteLine($"[WallpaperChanger][{Config.ChangerType}]: Interval - {time:HH:mm:ss}");
     }
 
     public string GetRandomWallpaperFromDisk(string folder)
@@ -109,5 +113,10 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
 
         var randomFromDisk = wallpapers[Random.Shared.Next(wallpapers.Length)];
         return randomFromDisk.FullName;
+    }
+
+    public string GetChangerDownloadFolderPath()
+    {
+        return Path.Combine(Config.WallpapersFolder, Config.ChangerType.ToString());
     }
 }

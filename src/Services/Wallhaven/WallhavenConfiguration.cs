@@ -25,33 +25,19 @@ public class WallhavenConfiguration
 
     public int Page { get; set; } = 1;
 
-    public string PurityToString()
-    {
-        var str = new[] { '0', '0', '0' };
+    public string PurityToString() =>
+        string.Join(string.Empty,
+            PuritySfw ? '1' : '0',
+            PuritySketchy ? '1' : '0',
+            PurityNsfw ? '1' : '0'
+        );
 
-        if (PuritySfw)
-            str[0] = '1';
-        if (PuritySketchy)
-            str[1] = '1';
-        if (PurityNsfw)
-            str[2] = '1';
-
-        return new(str);
-    }
-
-    public string CategoriesToString()
-    {
-        var str = new[] { '0', '0', '0' };
-
-        if (General)
-            str[0] = '1';
-        if (Anime)
-            str[1] = '1';
-        if (People)
-            str[2] = '1';
-
-        return new(str);
-    }
+    public string CategoriesToString() =>
+        string.Join(string.Empty,
+            General ? '1' : '0',
+            Anime ? '1' : '0',
+            People ? '1' : '0'
+        );
 
     public string RatioToString() =>
         Ratio switch

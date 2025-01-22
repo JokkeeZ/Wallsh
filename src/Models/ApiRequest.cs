@@ -4,7 +4,7 @@ namespace Wallsh.Models;
 
 public abstract class ApiRequest<TConfig> where TConfig : class, new()
 {
-    public abstract UriBuilder BuildRequestUri(TConfig cfg);
+    protected abstract UriBuilder BuildRequestUri(TConfig cfg);
 
     public async Task<string?> DownloadWallpaperAsync(string folder, string fileName, string fileUri)
     {

@@ -4,7 +4,7 @@ namespace Wallsh.Services.Bing;
 
 public class BingRequest : ApiRequest<BingConfiguration>
 {
-    public override UriBuilder BuildRequestUri(BingConfiguration cfg)
+    protected override UriBuilder BuildRequestUri(BingConfiguration cfg)
     {
         var qParams = new Dictionary<string, string>
         {

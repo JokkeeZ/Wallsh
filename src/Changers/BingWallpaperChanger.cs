@@ -1,19 +1,15 @@
 using Wallsh.Models;
 using Wallsh.Services.Bing;
 
-namespace Wallsh.Handlers;
+namespace Wallsh.Changers;
 
-public class BingHandler : IWpService
+public class BingWallpaperChanger : IWallpaperChanger
 {
     private BingResponse? _latestResponse;
 
     public async Task OnChange(WallpaperChanger changer)
     {
         var bingRequest = new BingRequest();
-
-        // Create downloads folder if it does not already exist.
-        var folder = Path.Combine(changer.Config.WallpapersFolder, "bing");
-        Directory.CreateDirectory(folder);
 
         var timeDiff = DateTime.Now - changer.Config.Bing.LastFetchTime;
 
@@ -35,6 +31,8 @@ public class BingHandler : IWpService
             changer.Config.Bing.LastFetchTime = DateTime.Now;
         }
 
+        var folder = changer.GetChangerDownloadFolderPath();
+        
         var notOnDisk = new List<BingWallpaperImage>();
         foreach (var wp in _latestResponse.Images)
         {

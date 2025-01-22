@@ -8,7 +8,7 @@ using Wallsh.Services.Bing;
 
 namespace Wallsh.ViewModels;
 
-public partial class BingViewModel : ViewModelBase, IWpHandlerConfigValidator
+public partial class BingViewModel : ViewModelBase, IWpChangerConfigValidator
 {
     [ObservableProperty]
     private ObservableCollection<string> _availableResolutions;
@@ -25,10 +25,10 @@ public partial class BingViewModel : ViewModelBase, IWpHandlerConfigValidator
     [ObservableProperty]
     private string _resolution;
 
-    public BingViewModel(AppJsonConfiguration cfg)
+    public BingViewModel(AppConfiguration cfg)
     {
         Messenger.RegisterAll(this);
-        IsActiveHandler = cfg.Handler == WallpaperHandler.Bing;
+        IsActiveHandler = cfg.ChangerType == WallpaperChangerType.Bing;
 
         Resolution = cfg.Bing.Resolution;
         Orientation = cfg.Bing.Orientation;
@@ -39,7 +39,6 @@ public partial class BingViewModel : ViewModelBase, IWpHandlerConfigValidator
 
     public (bool Success, string Message) ValidateConfiguration() => (true, string.Empty);
 
-
     partial void OnOrientationChanged(ScreenOrientation value)
     {
         AvailableResolutions = new(BingConfiguration.Resolutions[value]);
@@ -49,7 +48,7 @@ public partial class BingViewModel : ViewModelBase, IWpHandlerConfigValidator
     }
 
     partial void OnIsActiveHandlerChanged(bool value) =>
-        Messenger.Send(new WallpaperHandlerChanged(value
-            ? WallpaperHandler.Bing
-            : WallpaperHandler.None));
+        Messenger.Send(new WallpaperChangerUpdatedMessage(value
+            ? WallpaperChangerType.Bing
+            : WallpaperChangerType.None));
 }

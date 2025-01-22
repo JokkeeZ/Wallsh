@@ -7,7 +7,9 @@ using Wallsh.Services.Wallhaven;
 
 namespace Wallsh.ViewModels;
 
-public partial class WallhavenViewModel : ViewModelBase, IWpHandlerConfigValidator, IRecipient<IntervalChanged>
+public partial class WallhavenViewModel : ViewModelBase,
+    IWpChangerConfigValidator,
+    IRecipient<IntervalUpdatedMessage>
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanEnableNsfw))]
@@ -51,12 +53,12 @@ public partial class WallhavenViewModel : ViewModelBase, IWpHandlerConfigValidat
 
     public bool CanEnableNsfw => !string.IsNullOrWhiteSpace(ApiKey) && ApiKey?.Length == 32;
 
-    public WallhavenViewModel(AppJsonConfiguration cfg)
+    public WallhavenViewModel(AppConfiguration cfg)
     {
         Messenger.RegisterAll(this);
 
         _interval = cfg.Interval;
-        IsActiveHandler = cfg.Handler == WallpaperHandler.Wallhaven;
+        IsActiveHandler = cfg.ChangerType == WallpaperChangerType.Wallhaven;
 
         Sorting = cfg.Wallhaven.Sorting;
         Resolution = cfg.Wallhaven.Resolution;
@@ -72,7 +74,7 @@ public partial class WallhavenViewModel : ViewModelBase, IWpHandlerConfigValidat
         AvailableResolutions = new(WallhavenConfiguration.Resolutions[Ratio]);
     }
 
-    public void Receive(IntervalChanged message) => _interval = message.Interval;
+    public void Receive(IntervalUpdatedMessage message) => _interval = message.Interval;
 
     public (bool Success, string Message) ValidateConfiguration()
     {
@@ -90,7 +92,7 @@ public partial class WallhavenViewModel : ViewModelBase, IWpHandlerConfigValidat
     partial void OnApiKeyChanged(string? value)
     {
         // wallhaven.cc api key seems to always be 32 chars.
-        if (string.IsNullOrEmpty(value) || value?.Length != 32)
+        if (string.IsNullOrEmpty(value) || value.Length != 32)
             PurityNsfw = false;
     }
 
@@ -109,7 +111,7 @@ public partial class WallhavenViewModel : ViewModelBase, IWpHandlerConfigValidat
     }
 
     partial void OnIsActiveHandlerChanged(bool value) =>
-        Messenger.Send(new WallpaperHandlerChanged(value
-            ? WallpaperHandler.Wallhaven
-            : WallpaperHandler.None));
+        Messenger.Send(new WallpaperChangerUpdatedMessage(value
+            ? WallpaperChangerType.Wallhaven
+            : WallpaperChangerType.None));
 }

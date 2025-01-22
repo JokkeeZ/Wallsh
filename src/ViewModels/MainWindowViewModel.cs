@@ -1,5 +1,8 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
+using Avalonia.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -9,16 +12,16 @@ using Wallsh.Models;
 namespace Wallsh.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase,
-    IRecipient<WallpaperHandlerChanged>,
+    IRecipient<WallpaperChangerUpdatedMessage>,
     IRecipient<TimerUpdatedMessage>
 {
-    private readonly AppJsonConfiguration _cfg;
+    private readonly AppConfiguration _cfg;
     private readonly WallpaperChanger _wallpaperChanger;
 
     [ObservableProperty]
     private string _appTitle = "Wallsh";
 
-    private WallpaperHandler _handler;
+    private WallpaperChangerType _changerType;
 
     [ObservableProperty]
     [NotifyPropertyChangedRecipients]
@@ -63,14 +66,14 @@ public partial class MainWindowViewModel : ViewModelBase,
     {
         Messenger.RegisterAll(this);
 
-        _cfg = AppJsonConfiguration.FromFile();
+        _cfg = AppConfiguration.FromFile();
 
         LocalViewModel = new(_cfg);
         WallhavenViewModel = new(_cfg);
         BingViewModel = new(_cfg);
         _wallpaperChanger = new(_cfg);
 
-        _handler = _cfg.Handler;
+        _changerType = _cfg.ChangerType;
         _hours = _cfg.Interval.Hour;
         _minutes = _cfg.Interval.Minute;
         _seconds = _cfg.Interval.Second;
@@ -82,7 +85,7 @@ public partial class MainWindowViewModel : ViewModelBase,
         if (string.IsNullOrEmpty(_cfg.WallpaperAdjustment))
             WallpaperAdjustment = _wallpaperChanger.WpEnvironment.GetWallpaperAdjustment();
 
-        if (_handler != WallpaperHandler.None)
+        if (_changerType != WallpaperChangerType.None)
         {
             _wallpaperChanger.Start();
             UpdateAppTitle(Interval);
@@ -91,8 +94,8 @@ public partial class MainWindowViewModel : ViewModelBase,
 
     public void Receive(TimerUpdatedMessage message) => UpdateAppTitle(message.Time);
 
-    public void Receive(WallpaperHandlerChanged message) => _handler = message.Handler;
-
+    public void Receive(WallpaperChangerUpdatedMessage message) => _changerType = message.ChangerType;
+    
     [RelayCommand]
     private async Task SaveConfiguration()
     {
@@ -101,7 +104,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
         _wallpaperChanger.Stop();
 
-        _cfg.Handler = _handler;
+        _cfg.ChangerType = _changerType;
         _cfg.Interval = Interval;
         _cfg.WallpapersFolder = WallpapersFolder;
         _cfg.WallpaperAdjustment = WallpaperAdjustment;
@@ -128,11 +131,11 @@ public partial class MainWindowViewModel : ViewModelBase,
 
         _wallpaperChanger.WpEnvironment.SetWallpaperAdjustment(_cfg.WallpaperAdjustment);
 
-        if (AppJsonConfiguration.ToFile(_cfg))
+        if (AppConfiguration.ToFile(_cfg))
         {
             await CreateNotification("Settings saved!", NotificationType.Success);
 
-            if (_handler != WallpaperHandler.None)
+            if (_changerType != WallpaperChangerType.None)
             {
                 UpdateAppTitle(Interval);
                 _wallpaperChanger.Start();
@@ -168,9 +171,9 @@ public partial class MainWindowViewModel : ViewModelBase,
             return false;
         }
 
-        switch (_handler)
+        switch (_changerType)
         {
-            case WallpaperHandler.Local:
+            case WallpaperChangerType.Local:
             {
                 var (success, message) = LocalViewModel.ValidateConfiguration();
                 if (!success)
@@ -180,7 +183,7 @@ public partial class MainWindowViewModel : ViewModelBase,
                 }
             }
             break;
-            case WallpaperHandler.Wallhaven:
+            case WallpaperChangerType.Wallhaven:
             {
                 var (success, message) = WallhavenViewModel.ValidateConfiguration();
                 if (!success)
@@ -190,7 +193,7 @@ public partial class MainWindowViewModel : ViewModelBase,
                 }
             }
             break;
-            case WallpaperHandler.Bing:
+            case WallpaperChangerType.Bing:
             {
                 var (success, message) = BingViewModel.ValidateConfiguration();
                 if (!success)
@@ -200,7 +203,7 @@ public partial class MainWindowViewModel : ViewModelBase,
                 }
             }
             break;
-            case WallpaperHandler.None:
+            case WallpaperChangerType.None:
             default:
                 return true;
         }
@@ -210,8 +213,8 @@ public partial class MainWindowViewModel : ViewModelBase,
 
     protected override void Broadcast<T>(T oldValue, T newValue, string? propertyName)
     {
-        Messenger.Send(new IntervalChanged(Interval));
-        Messenger.Send(new WallpaperFolderChangedMessage(WallpapersFolder));
+        Messenger.Send(new IntervalUpdatedMessage(Interval));
+        Messenger.Send(new WallpaperFolderUpdatedMessage(WallpapersFolder));
     }
 
     private async Task CreateNotification(string message, NotificationType type)

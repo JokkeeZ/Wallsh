@@ -1,6 +1,6 @@
 namespace Wallsh.Models;
 
-public enum WallpaperHandler
+public enum WallpaperChangerType
 {
     None,
     Local,

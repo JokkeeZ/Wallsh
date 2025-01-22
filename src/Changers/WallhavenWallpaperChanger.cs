@@ -1,19 +1,15 @@
 using Wallsh.Models;
 using Wallsh.Services.Wallhaven;
 
-namespace Wallsh.Handlers;
+namespace Wallsh.Changers;
 
-public class WallhavenHandler : IWpService
+public class WallhavenWallpaperChanger : IWallpaperChanger
 {
     private WallhavenApiResponse? _latestResponse;
 
     public async Task OnChange(WallpaperChanger changer)
     {
         var wallhavenRequest = new WallhavenRequest();
-
-        // Create downloads folder if it does not already exist.
-        var folder = Path.Combine(changer.Config.WallpapersFolder, "wallhaven");
-        Directory.CreateDirectory(folder);
 
         // Request wallpapers if there is no stored wallpaper urls
         if (_latestResponse is null)
@@ -31,6 +27,8 @@ public class WallhavenHandler : IWpService
             _latestResponse = response;
         }
 
+        var folder = changer.GetChangerDownloadFolderPath();
+        
         var notOnDisk = new List<WallhavenWallpaperInfo>();
         foreach (var wp in _latestResponse.Data)
         {

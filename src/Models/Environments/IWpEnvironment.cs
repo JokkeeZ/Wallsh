@@ -1,4 +1,4 @@
-namespace Wallsh.Models;
+namespace Wallsh.Models.Environments;
 
 public interface IWpEnvironment
 {

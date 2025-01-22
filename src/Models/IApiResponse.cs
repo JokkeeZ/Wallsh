@@ -1,5 +1,3 @@
 namespace Wallsh.Models;
 
-public interface IApiResponse
-{
-}
+public interface IApiResponse;

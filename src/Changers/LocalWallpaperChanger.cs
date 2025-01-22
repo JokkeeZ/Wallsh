@@ -1,8 +1,8 @@
 using Wallsh.Models;
 
-namespace Wallsh.Handlers;
+namespace Wallsh.Changers;
 
-public class LocalHandler : IWpService
+public class LocalWallpaperChanger : IWallpaperChanger
 {
     public async Task OnChange(WallpaperChanger changer)
     {

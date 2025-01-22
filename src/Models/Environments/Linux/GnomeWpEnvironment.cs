@@ -1,6 +1,6 @@
 using GLib;
 
-namespace Wallsh.Models.Environments;
+namespace Wallsh.Models.Environments.Linux;
 
 public class GnomeWpEnvironment : IWpEnvironment
 {
