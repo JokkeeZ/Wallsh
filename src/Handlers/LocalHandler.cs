@@ -24,4 +24,6 @@ public class LocalHandler : IWallpaperHandler
         var nextWallpaper = wallpapers[Random.Shared.Next(wallpapers.Length)];
         changer.WpEnvironment.SetWallpaperFromPath(nextWallpaper.FullName);
     }
+
+    public void Reset(WallpaperChanger changer) => Console.WriteLine("Local reset");
 }

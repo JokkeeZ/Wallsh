@@ -82,6 +82,12 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
             return;
         }
 
+        if (_services.TryGetValue(Config.Handler, out var service))
+        {
+            Console.WriteLine($"[WallpaperChanger] Resetting {Config.Handler} before starting.");
+            service.Reset(this);
+        }
+        
         _timer.Start();
         Console.WriteLine($"[WallpaperChanger][{Config.Handler}]: Started.");
     }
@@ -89,7 +95,7 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
     public void SetInterval(TimeOnly time)
     {
         _timer.Interval = time.ToTimeSpan().TotalMilliseconds;
-        Console.WriteLine($"[WallpaperChanger][{Config.Handler}]: Interval - {time:HH:mm:ss}s");
+        Console.WriteLine($"[WallpaperChanger][{Config.Handler}]: Interval - {time:HH:mm:ss}");
     }
 
     public string GetRandomWallpaperFromDisk(string folder)

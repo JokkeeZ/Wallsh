@@ -75,4 +75,10 @@ public class WallhavenHandler : IWallpaperHandler
             $"[WallhavenHandler][DOWNLOAD]: Setting wallpaper. ({_latestResponse.Data.Count - notOnDisk.Count}/{_latestResponse.Data.Count})");
         changer.WpEnvironment.SetWallpaperFromPath(wallpaperPath);
     }
+
+    public void Reset(WallpaperChanger changer)
+    {
+        changer.Config.Wallhaven.Page = 1;
+        _latestResponse = null;
+    }
 }
