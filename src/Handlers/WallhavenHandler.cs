@@ -7,15 +7,19 @@ public class WallhavenHandler : IWpService
 {
     private WallhavenApiResponse? _latestResponse;
 
-    public void OnChange(WallpaperChanger changer)
+    public async Task OnChange(WallpaperChanger changer)
     {
+        var wallhavenRequest = new WallhavenRequest();
+        
+        // Create downloads folder if it does not already exist.
+        var downloadsFolder = Path.Combine(changer.Config.WallpapersFolder, "wallhaven");
+        Directory.CreateDirectory(downloadsFolder);
+        
         // Request wallpapers if there is no stored wallpaper urls
         if (_latestResponse is null)
         {
-            var task = Task.Run(async () =>
-                await WallhavenRequest.RequestWallpapersAsync(changer.Config.Wallhaven));
+            var response = await wallhavenRequest.RequestWallpapersAsync(changer.Config.Wallhaven);
 
-            var response = task.GetAwaiter().GetResult();
             if (response is null)
             {
                 changer.Stop();
@@ -58,11 +62,9 @@ public class WallhavenHandler : IWpService
         }
 
         var randomWallpaper = notOnDisk[Random.Shared.Next(notOnDisk.Count)];
+        var wpName = randomWallpaper.Path!.Split('/').Last();
 
-        var requestTask = Task.Run(async () =>
-            await WallhavenRequest.DownloadWallPaperAsync(changer.Config.WallpapersFolder, randomWallpaper));
-
-        var wallpaperPath = requestTask.GetAwaiter().GetResult();
+        var wallpaperPath = await wallhavenRequest.DownloadWallpaperAsync(folder, wpName, randomWallpaper.Path);
         if (wallpaperPath is null)
         {
             changer.Stop();

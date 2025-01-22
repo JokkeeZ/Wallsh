@@ -4,7 +4,7 @@ namespace Wallsh.Handlers;
 
 public class LocalHandler : IWpService
 {
-    public void OnChange(WallpaperChanger changer)
+    public async Task OnChange(WallpaperChanger changer)
     {
         var currentWallpaper = changer.WpEnvironment.GetCurrentWallpaperPath();
 

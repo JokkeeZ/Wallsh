@@ -59,7 +59,7 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
             }
 
             Messenger.Send(new TimerUpdatedMessage(Config.Interval));
-            service.OnChange(this);
+            Task.Run(async () => await service.OnChange(this));
         }
         catch (Exception ex)
         {
