@@ -3,19 +3,19 @@
     <h1>Wallsh</h1>
 </div>
 
-Wallsh is a cross-platform C# application for slideshow wallpapers. Optionally downloads and sets wallpapers from different services, such as wallhaven.cc and Bing image of the day. See currently supported services [below](#supported-services).
+Wallsh is a cross-platform C# application for slideshow wallpapers. Optionally downloads and sets wallpapers from different sources, such as wallhaven.cc and Bing image of the day. See currently supported sources [below](#supported-sources).
 
-> [!WARNING]
-> Currently only tested in GNOME desktop environment. (Ubuntu 24.04)
-> 
-> **No Windows support yet.**
+> [!CAUTION]
+> Currently only tested in GNOME (Ubuntu 24.04) and Windows 11.
 
-# Supported services
+# Supported sources
 - [wallhaven.cc](https://wallhaven.cc)
 - [Microsoft Bing](https://www.bing.com)
 
 # Build and Run Wallsh
-You need to have [.NET 9.0](https://dotnet.microsoft.com/en-us/download) installed on your system before building Wallsh.
+> [!IMPORTANT]
+> You need to have [.NET 9.0](https://dotnet.microsoft.com/en-us/download) installed on your system before building Wallsh.
+
 ```sh
 git clone https://github.com/JokkeeZ/Wallsh.git
 cd Wallsh/src
