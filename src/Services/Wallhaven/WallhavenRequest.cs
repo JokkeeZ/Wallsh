@@ -1,6 +1,6 @@
 using System.Net.Http.Json;
 
-namespace Wallsh.Models.Wallhaven;
+namespace Wallsh.Services.Wallhaven;
 
 public static class WallhavenRequest
 {

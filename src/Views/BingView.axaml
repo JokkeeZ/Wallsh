@@ -12,7 +12,7 @@
             <RadioButton VerticalAlignment="Center"
                          GroupName="SelectedServiceGroup"
                          IsChecked="{Binding IsActiveHandler}"
-                         Content="Use Bing daily wallpapers" />
+                         Content="Bing daily wallpapers" />
         </Expander.Header>
         <StackPanel IsEnabled="{Binding IsActiveHandler}" Spacing="5">
 

@@ -1,10 +1,9 @@
 using Wallsh.Models;
-using Wallsh.Models.Wallhaven;
-using Wallsh.Services;
+using Wallsh.Services.Wallhaven;
 
 namespace Wallsh.Handlers;
 
-public class WallhavenHandler : IWallpaperHandler
+public class WallhavenHandler : IWpService
 {
     private WallhavenApiResponse? _latestResponse;
 

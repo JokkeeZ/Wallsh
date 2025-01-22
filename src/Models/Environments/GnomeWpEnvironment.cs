@@ -6,6 +6,7 @@ public class GnomeWpEnvironment : IWpEnvironment
 {
     private const string SchemaId = "org.gnome.desktop.background";
     public string[] SupportedFileExtensions => ["*.jpg", "*.png"];
+    public string[] WallpaperAdjustments => ["none", "wallpaper", "centered", "scaled", "stretched", "zoom", "spanned"];
 
     public string GetWallpaperAdjustment()
     {

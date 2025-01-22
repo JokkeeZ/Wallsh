@@ -1,4 +1,4 @@
-namespace Wallsh.Models.Wallhaven;
+namespace Wallsh.Services.Wallhaven;
 
 public enum WallhavenRatio
 {

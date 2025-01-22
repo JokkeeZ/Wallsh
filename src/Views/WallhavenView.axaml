@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Wallsh.ViewModels"
-             xmlns:wallhaven="clr-namespace:Wallsh.Models.Wallhaven"
+             xmlns:wallhaven1="clr-namespace:Wallsh.Services.Wallhaven"
              mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="795"
              x:Class="Wallsh.Views.WallhavenView"
              x:DataType="vm:WallhavenViewModel">
@@ -27,23 +27,23 @@
 
             <StackPanel Orientation="Horizontal" Spacing="10">
                 <RadioButton
-                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.RatioUltrawide}}"
+                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.RatioUltrawide}}"
                     GroupName="WallhavenRatioGroup"
                     Content="Ultrawide" />
                 <RadioButton
-                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.Ratio16X9}}"
+                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.Ratio16X9}}"
                     GroupName="WallhavenRatioGroup"
                     Content="16:9" />
                 <RadioButton
-                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.Ratio16X10}}"
+                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.Ratio16X10}}"
                     GroupName="WallhavenRatioGroup"
                     Content="16:10" />
                 <RadioButton
-                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.Ratio4X3}}"
+                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.Ratio4X3}}"
                     GroupName="WallhavenRatioGroup"
                     Content="4:3" />
                 <RadioButton
-                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenRatio.Ratio5X4}}"
+                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.Ratio5X4}}"
                     GroupName="WallhavenRatioGroup"
                     Content="5:4" />
             </StackPanel>
@@ -52,16 +52,16 @@
 
             <StackPanel Orientation="Horizontal" Spacing="10">
                 <RadioButton GroupName="Sorting"
-                             IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenSorting.Top}}"
+                             IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenSorting.Top}}"
                              Content="Top" />
                 <RadioButton GroupName="Sorting"
-                             IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenSorting.Date}}"
+                             IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenSorting.Date}}"
                              Content="Date" />
                 <RadioButton GroupName="Sorting"
-                             IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenSorting.Views}}"
+                             IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenSorting.Views}}"
                              Content="Views" />
                 <RadioButton GroupName="Sorting"
-                             IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven:WallhavenSorting.Random}}"
+                             IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenSorting.Random}}"
                              Content="Random" />
             </StackPanel>
 

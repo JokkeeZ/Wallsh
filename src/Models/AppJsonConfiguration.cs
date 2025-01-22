@@ -1,6 +1,6 @@
 using System.Text.Json;
-using Wallsh.Models.Bing;
-using Wallsh.Models.Wallhaven;
+using Wallsh.Services.Bing;
+using Wallsh.Services.Wallhaven;
 
 namespace Wallsh.Models;
 

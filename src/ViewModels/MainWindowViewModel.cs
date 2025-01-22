@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Wallsh.Messages;
 using Wallsh.Models;
-using Wallsh.Services;
 
 namespace Wallsh.ViewModels;
 
@@ -57,8 +56,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
     public TimeOnly Interval => new(Hours, Minutes, Seconds);
 
-    public static List<string> Adjustments =>
-        ["none", "wallpaper", "centered", "scaled", "stretched", "zoom", "spanned"];
+    public string[] Adjustments { get; }
 
     public MainWindowViewModel()
     {
@@ -78,6 +76,8 @@ public partial class MainWindowViewModel : ViewModelBase,
         _wallpapersFolder = _cfg.WallpapersFolder;
         _wallpaperAdjustment = _cfg.WallpaperAdjustment;
 
+        Adjustments = _wallpaperChanger.WpEnvironment.WallpaperAdjustments;
+        
         if (string.IsNullOrEmpty(_cfg.WallpaperAdjustment))
             WallpaperAdjustment = _wallpaperChanger.WpEnvironment.GetWallpaperAdjustment();
 
@@ -166,30 +166,34 @@ public partial class MainWindowViewModel : ViewModelBase,
         {
             case WallpaperHandler.Local:
             {
+                var (success, message) = LocalViewModel.ValidateConfiguration();
+                if (!success)
                 {
-                    var (success, message) = LocalViewModel.ValidateConfiguration();
-
-                    if (!success)
-                    {
-                        await CreateNotification(message, NotificationType.Error);
-                        return false;
-                    }
+                    await CreateNotification(message, NotificationType.Error);
+                    return false;
                 }
-                break;
             }
+            break;
             case WallpaperHandler.Wallhaven:
             {
+                var (success, message) = WallhavenViewModel.ValidateConfiguration();
+                if (!success)
                 {
-                    var (success, message) = WallhavenViewModel.ValidateConfiguration();
-
-                    if (!success)
-                    {
-                        await CreateNotification(message, NotificationType.Error);
-                        return false;
-                    }
+                    await CreateNotification(message, NotificationType.Error);
+                    return false;
                 }
-                break;
             }
+            break;
+            case WallpaperHandler.Bing:
+            {
+                var (success, message) = BingViewModel.ValidateConfiguration();
+                if (!success)
+                {
+                    await CreateNotification(message, NotificationType.Error);
+                    return false;
+                }
+            }
+            break;
             case WallpaperHandler.None:
             default:
                 return true;

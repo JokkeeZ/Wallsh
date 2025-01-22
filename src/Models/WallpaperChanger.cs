@@ -3,15 +3,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Wallsh.Handlers;
 using Wallsh.Messages;
-using Wallsh.Models;
 using Wallsh.Models.Environments;
 using Timer = System.Timers.Timer;
 
-namespace Wallsh.Services;
+namespace Wallsh.Models;
 
 public class WallpaperChanger : ObservableRecipient, IDisposable
 {
-    private readonly Dictionary<WallpaperHandler, IWallpaperHandler> _services = new()
+    private readonly Dictionary<WallpaperHandler, IWpService> _services = new()
     {
         [WallpaperHandler.Local] = new LocalHandler(),
         [WallpaperHandler.Wallhaven] = new WallhavenHandler(),
@@ -87,7 +86,7 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
             Console.WriteLine($"[WallpaperChanger] Resetting {Config.Handler} before starting.");
             service.Reset(this);
         }
-        
+
         _timer.Start();
         Console.WriteLine($"[WallpaperChanger][{Config.Handler}]: Started.");
     }

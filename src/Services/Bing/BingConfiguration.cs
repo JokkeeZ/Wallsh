@@ -1,6 +1,6 @@
 using Avalonia.Platform;
 
-namespace Wallsh.Models.Bing;
+namespace Wallsh.Services.Bing;
 
 public class BingConfiguration
 {

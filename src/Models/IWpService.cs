@@ -1,8 +1,6 @@
-using Wallsh.Services;
-
 namespace Wallsh.Models;
 
-public interface IWallpaperHandler
+public interface IWpService
 {
     void OnChange(WallpaperChanger changer);
 

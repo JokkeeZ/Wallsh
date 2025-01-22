@@ -28,4 +28,8 @@
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1"/>
         <PackageReference Include="GioSharp" Version="3.24.24.95"/>
     </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Services\"/>
+    </ItemGroup>
 </Project>

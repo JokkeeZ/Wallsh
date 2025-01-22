@@ -1,9 +1,8 @@
 using Wallsh.Models;
-using Wallsh.Services;
 
 namespace Wallsh.Handlers;
 
-public class LocalHandler : IWallpaperHandler
+public class LocalHandler : IWpService
 {
     public void OnChange(WallpaperChanger changer)
     {

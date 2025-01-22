@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Wallsh.Models.Wallhaven;
+namespace Wallsh.Services.Wallhaven;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class WallhavenApiResponse

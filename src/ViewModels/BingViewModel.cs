@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Wallsh.Messages;
 using Wallsh.Models;
-using Wallsh.Models.Bing;
+using Wallsh.Services.Bing;
 
 namespace Wallsh.ViewModels;
 
