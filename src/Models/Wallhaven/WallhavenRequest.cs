@@ -1,8 +1,6 @@
 using System.Net.Http.Json;
-using Wallsh.Models;
-using Wallsh.Models.Wallhaven;
 
-namespace Wallsh.Services.Wallhaven;
+namespace Wallsh.Models.Wallhaven;
 
 public static class WallhavenRequest
 {
@@ -13,7 +11,8 @@ public static class WallhavenRequest
             ["categories"] = cfg.CategoriesToString(),
             ["purity"] = cfg.PurityToString(),
             ["sorting"] = cfg.SortingToString(),
-            ["atleast"] = cfg.Resolution ?? "1920x1080",
+            ["atleast"] = cfg.Resolution,
+            ["page"] = cfg.Page.ToString(),
             ["ratios"] = cfg.RatioToString()
         };
 
@@ -52,7 +51,7 @@ public static class WallhavenRequest
         return null;
     }
 
-    public static async Task<string?> DownloadWallPaperAsync(AppJsonConfiguration cfg, WallhavenWallpaperInfo wpInfo)
+    public static async Task<string?> DownloadWallPaperAsync(string folder, WallhavenWallpaperInfo wpInfo)
     {
         var fileName = wpInfo.Path?.Split('/').Last();
 
@@ -63,7 +62,7 @@ public static class WallhavenRequest
         }
 
         // Create downloads folder if it does not already exist.
-        var downloadsFolder = Path.Combine(cfg.WallpapersFolder, "wallhaven");
+        var downloadsFolder = Path.Combine(folder, "wallhaven");
         Directory.CreateDirectory(downloadsFolder);
 
         using var client = new HttpClient();

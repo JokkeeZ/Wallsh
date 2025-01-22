@@ -14,7 +14,8 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
     private readonly Dictionary<WallpaperHandler, IWallpaperHandler> _services = new()
     {
         [WallpaperHandler.Local] = new LocalHandler(),
-        [WallpaperHandler.Wallhaven] = new WallhavenHandler()
+        [WallpaperHandler.Wallhaven] = new WallhavenHandler(),
+        [WallpaperHandler.Bing] = new BingHandler()
     };
 
     private readonly Timer _timer;
@@ -59,8 +60,7 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
             }
 
             Messenger.Send(new TimerUpdatedMessage(Config.Interval));
-            service.OnChange(this, Config);
-            Console.WriteLine($"[WallpaperChanger]: Timer - {e.SignalTime}");
+            service.OnChange(this);
         }
         catch (Exception ex)
         {
@@ -90,5 +90,19 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
     {
         _timer.Interval = time.ToTimeSpan().TotalMilliseconds;
         Console.WriteLine($"[WallpaperChanger][{Config.Handler}]: Interval - {time:HH:mm:ss}s");
+    }
+
+    public string GetRandomWallpaperFromDisk(string folder)
+    {
+        var currentWallpaper = WpEnvironment.GetCurrentWallpaperPath();
+
+        var directory = new DirectoryInfo(folder);
+        var wallpapers = WpEnvironment.SupportedFileExtensions
+            .SelectMany(directory.EnumerateFiles)
+            .Where(wp => wp.FullName != currentWallpaper)
+            .ToArray();
+
+        var randomFromDisk = wallpapers[Random.Shared.Next(wallpapers.Length)];
+        return randomFromDisk.FullName;
     }
 }

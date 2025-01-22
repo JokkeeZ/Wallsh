@@ -6,8 +6,8 @@
         xmlns:views="clr-namespace:Wallsh.Views"
         SizeToContent="WidthAndHeight"
         CanResize="False"
-        MaxWidth="500" MaxHeight="835"
-        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="795"
+        MaxWidth="500"
+        mc:Ignorable="d" d:DesignWidth="500"
         x:Class="Wallsh.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/Wallsh.ico"
@@ -20,7 +20,7 @@
     </Design.DataContext>
 
 
-    <Grid RowDefinitions="Auto,0,Auto,10,Auto,10,Auto">
+    <Grid RowDefinitions="Auto,0,Auto,10,Auto,10,Auto,10,Auto">
         <StackPanel Grid.Row="1" ZIndex="1">
             <NotificationCard NotificationType="{Binding NotificationType}" IsVisible="{Binding IsNotificationVisible}"
                               Width="{Binding $parent.Width}" Height="60">
@@ -96,6 +96,7 @@
             </StackPanel>
         </Border>
         <views:LocalView Grid.Row="4" Margin="10 0 10 0" DataContext="{Binding LocalViewModel}" />
-        <views:WallhavenView Grid.Row="6" Margin="10 0 10 10" DataContext="{Binding WallhavenViewModel}" />
+        <views:WallhavenView Grid.Row="6" Margin="10 0 10 0" DataContext="{Binding WallhavenViewModel}" />
+        <views:BingView Grid.Row="8" Margin="10 0 10 10" DataContext="{Binding BingViewModel}" />
     </Grid>
 </Window>

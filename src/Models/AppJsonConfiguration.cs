@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Wallsh.Models.Bing;
 using Wallsh.Models.Wallhaven;
 
 namespace Wallsh.Models;
@@ -16,6 +17,7 @@ public class AppJsonConfiguration
     public string WallpapersFolder { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
     public string? WallpaperAdjustment { get; set; } = string.Empty;
     public WallhavenConfiguration Wallhaven { get; init; } = new();
+    public BingConfiguration Bing { get; init; } = new();
 
     private static string GetConfigurationPath()
     {

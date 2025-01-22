@@ -53,6 +53,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
     public LocalViewModel LocalViewModel { get; }
     public WallhavenViewModel WallhavenViewModel { get; }
+    public BingViewModel BingViewModel { get; }
 
     public TimeOnly Interval => new(Hours, Minutes, Seconds);
 
@@ -67,6 +68,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
         LocalViewModel = new(_cfg);
         WallhavenViewModel = new(_cfg);
+        BingViewModel = new(_cfg);
         _wallpaperChanger = new(_cfg);
 
         _handler = _cfg.Handler;

@@ -4,5 +4,6 @@ public enum WallpaperHandler
 {
     None,
     Local,
-    Wallhaven
+    Wallhaven,
+    Bing
 }

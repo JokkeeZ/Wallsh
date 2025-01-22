@@ -44,7 +44,7 @@ public partial class WallhavenViewModel : ViewModelBase, IWpHandlerConfigValidat
     private WallhavenRatio _ratio;
 
     [ObservableProperty]
-    private string? _resolution;
+    private string _resolution;
 
     [ObservableProperty]
     private WallhavenSorting _sorting;

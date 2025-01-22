@@ -11,7 +11,7 @@
             <RadioButton VerticalAlignment="Center"
                          GroupName="SelectedServiceGroup"
                          IsChecked="{Binding IsActiveHandler}"
-                         Content="Use local wallpapers" />
+                         Content="Local wallpapers" />
         </Expander.Header>
         <StackPanel IsEnabled="{Binding IsActiveHandler}">
             <TextBlock>Maybe some settings later</TextBlock>

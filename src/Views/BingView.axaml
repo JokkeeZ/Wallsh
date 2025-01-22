@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Wallsh.ViewModels"
+             xmlns:avalonia="clr-namespace:Avalonia.Platform;assembly=Avalonia.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Wallsh.Views.BingView"
+             x:DataType="vm:BingViewModel">
+    <Expander HorizontalAlignment="Stretch">
+        <Expander.Header>
+            <RadioButton VerticalAlignment="Center"
+                         GroupName="SelectedServiceGroup"
+                         IsChecked="{Binding IsActiveHandler}"
+                         Content="Use Bing daily wallpapers" />
+        </Expander.Header>
+        <StackPanel IsEnabled="{Binding IsActiveHandler}" Spacing="5">
+
+            <TextBlock Text="Orientation (Landscape/Portrait)" FontWeight="Bold" />
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <RadioButton GroupName="Orientation"
+                             IsChecked="{Binding Orientation, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static avalonia:ScreenOrientation.Landscape}}"
+                             Content="Landscape" />
+                <RadioButton GroupName="Orientation"
+                             IsChecked="{Binding Orientation, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static avalonia:ScreenOrientation.Portrait}}"
+                             Content="Portrait" />
+            </StackPanel>
+
+            <TextBlock Text="Resolution" FontWeight="Bold" />
+            <ComboBox
+                Width="340"
+                ItemsSource="{Binding AvailableResolutions}"
+                SelectedItem="{Binding Path=Resolution}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock Text="Number of wallpapers (1 - 8)" FontWeight="Bold" />
+            <TextBlock Text="{Binding #NumOfWallpapers.Value}" HorizontalAlignment="Center" />
+            <Slider x:Name="NumOfWallpapers"
+                    Minimum="1"
+                    Maximum="8"
+                    Value="{Binding NumberOfWallpapers}"
+                    TickFrequency="1"
+                    IsSnapToTickEnabled="True"
+                    TickPlacement="BottomRight" />
+        </StackPanel>
+    </Expander>
+</UserControl>

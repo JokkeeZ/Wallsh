@@ -12,7 +12,7 @@
             <RadioButton VerticalAlignment="Center"
                          GroupName="SelectedServiceGroup"
                          IsChecked="{Binding IsActiveHandler}"
-                         Content="Use wallhaven.cc wallpapers" />
+                         Content="Wallhaven.cc wallpapers" />
         </Expander.Header>
         <StackPanel
             IsEnabled="{Binding IsActiveHandler}"

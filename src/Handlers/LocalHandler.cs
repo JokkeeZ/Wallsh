@@ -5,7 +5,7 @@ namespace Wallsh.Handlers;
 
 public class LocalHandler : IWallpaperHandler
 {
-    public void OnChange(WallpaperChanger changer, AppJsonConfiguration cfg)
+    public void OnChange(WallpaperChanger changer)
     {
         var currentWallpaper = changer.WpEnvironment.GetCurrentWallpaperPath();
 
