@@ -28,11 +28,6 @@ public partial class LocalViewModel : ViewModelBase, IWpChangerConfigValidator,
         if (string.IsNullOrWhiteSpace(_wallpapersFolder))
             return (false, "Wallpapers folder cannot be empty.");
 
-        // Folder must contain wallpapers inorder to
-        // use local handler.
-        if (Directory.GetFiles(_wallpapersFolder).Length == 0)
-            return (false, "Wallpapers folder does not contain any files.");
-
         return (true, string.Empty);
     }
 

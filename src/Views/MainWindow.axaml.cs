@@ -21,9 +21,9 @@ public partial class MainWindow : Window
             var folders = await StorageProvider.OpenFolderPickerAsync(new()
             {
                 AllowMultiple = false,
-                Title = "Select Wallpaper Folder",
+                Title = "Select wallpaper folder",
                 SuggestedStartLocation = await StorageProvider.TryGetFolderFromPathAsync(
-                    new(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)))
+                    new(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)))
             });
 
             if (folders is { Count: > 0 })

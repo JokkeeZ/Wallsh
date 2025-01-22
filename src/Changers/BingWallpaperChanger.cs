@@ -23,7 +23,7 @@ public class BingWallpaperChanger : IWallpaperChanger
             if (response is null)
             {
                 changer.Stop();
-                Console.WriteLine("[BingHandler]: Could not be request wallpapers. (response is null)");
+                Console.WriteLine("[BingChanger]: Could not be request wallpapers. (response is null)");
                 return;
             }
 
@@ -49,11 +49,18 @@ public class BingWallpaperChanger : IWallpaperChanger
         // so let's set random wallpaper from disk that is not current one.
         if (notOnDisk.Count == 0)
         {
-            Console.WriteLine("[BingHandler]: All queried wallpapers already exists on disk.");
+            Console.WriteLine("[BingChanger]: All queried wallpapers already exists on disk.");
 
             var wp = changer.GetRandomWallpaperFromDisk(folder);
 
-            Console.WriteLine("[BingHandler][DISK]: Setting wallpaper.");
+            if (wp is null)
+            {
+                changer.Stop();
+                Console.WriteLine("[BingChanger]: Could not set random wallpaper from disk. (wp is null)");
+                return;
+            }
+
+            Console.WriteLine("[BingChanger][DISK]: Setting wallpaper.");
             changer.WpEnvironment.SetWallpaperFromPath(wp);
 
             return;
@@ -71,11 +78,11 @@ public class BingWallpaperChanger : IWallpaperChanger
         if (wallpaperPath is null)
         {
             changer.Stop();
-            Console.WriteLine("[BingHandler]: Wallpaper could not be downloaded. (wallpaperPath is null)");
+            Console.WriteLine("[BingChanger]: Wallpaper could not be downloaded. (wallpaperPath is null)");
             return;
         }
 
-        Console.WriteLine("[BingHandler][DOWNLOAD]: Setting wallpaper.");
+        Console.WriteLine("[BingChanger][DOWNLOAD]: Setting wallpaper.");
         changer.WpEnvironment.SetWallpaperFromPath(wallpaperPath);
     }
 

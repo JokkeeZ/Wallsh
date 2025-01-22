@@ -20,7 +20,7 @@ public class WallhavenWallpaperChanger : IWallpaperChanger
             if (response is null)
             {
                 changer.Stop();
-                Console.WriteLine("[WallhavenHandler]: Could not be request wallpapers. (response is null)");
+                Console.WriteLine("[WallhavenChanger]: Could not be request wallpapers. (response is null)");
                 return;
             }
 
@@ -42,11 +42,18 @@ public class WallhavenWallpaperChanger : IWallpaperChanger
         // so let's set random wallpaper from disk that is not current one.
         if (notOnDisk.Count == 0)
         {
-            Console.WriteLine("[WallhavenHandler]: All queried wallpapers already exists on disk.");
+            Console.WriteLine("[WallhavenChanger]: All queried wallpapers already exists on disk.");
 
             var wp = changer.GetRandomWallpaperFromDisk(folder);
 
-            Console.WriteLine("[WallhavenHandler][DISK]: Setting wallpaper.");
+            if (wp is null)
+            {
+                changer.Stop();
+                Console.WriteLine("[WallhavenChanger]: Could not set random wallpaper from the disk. (wp is null)");
+                return;
+            }
+
+            Console.WriteLine("[WallhavenChanger][DISK]: Setting wallpaper.");
             changer.WpEnvironment.SetWallpaperFromPath(wp);
 
             if (_latestResponse.Meta!.CurrentPage < _latestResponse.Meta.LastPage)
@@ -65,11 +72,11 @@ public class WallhavenWallpaperChanger : IWallpaperChanger
         if (wallpaperPath is null)
         {
             changer.Stop();
-            Console.WriteLine("[WallhavenHandler]: Wallpaper could not be downloaded. (wallpaperPath is null)");
+            Console.WriteLine("[WallhavenChanger]: Wallpaper could not be downloaded. (wallpaperPath is null)");
             return;
         }
 
-        Console.WriteLine("[WallhavenHandler][DOWNLOAD]: Setting wallpaper.");
+        Console.WriteLine("[WallhavenChanger][DOWNLOAD]: Setting wallpaper.");
         changer.WpEnvironment.SetWallpaperFromPath(wallpaperPath);
     }
 

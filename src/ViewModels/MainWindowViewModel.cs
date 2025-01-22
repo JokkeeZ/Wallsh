@@ -177,38 +177,30 @@ public partial class MainWindowViewModel : ViewModelBase,
             {
                 var (success, message) = LocalViewModel.ValidateConfiguration();
                 if (!success)
-                {
                     await CreateNotification(message, NotificationType.Error);
-                    return false;
-                }
+
+                return success;
             }
-            break;
             case WallpaperChangerType.Wallhaven:
             {
                 var (success, message) = WallhavenViewModel.ValidateConfiguration();
                 if (!success)
-                {
                     await CreateNotification(message, NotificationType.Error);
-                    return false;
-                }
+
+                return success;
             }
-            break;
             case WallpaperChangerType.Bing:
             {
                 var (success, message) = BingViewModel.ValidateConfiguration();
                 if (!success)
-                {
                     await CreateNotification(message, NotificationType.Error);
-                    return false;
-                }
+
+                return success;
             }
-            break;
             case WallpaperChangerType.None:
             default:
                 return true;
         }
-
-        return true;
     }
 
     protected override void Broadcast<T>(T oldValue, T newValue, string? propertyName)

@@ -1,7 +1,9 @@
+using System.Runtime.Versioning;
 using GLib;
 
 namespace Wallsh.Models.Environments.Linux;
 
+[SupportedOSPlatform("linux")]
 public class GnomeWpEnvironment : IWpEnvironment
 {
     private const string SchemaId = "org.gnome.desktop.background";

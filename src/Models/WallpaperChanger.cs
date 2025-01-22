@@ -5,6 +5,7 @@ using Wallsh.Changers;
 using Wallsh.Messages;
 using Wallsh.Models.Environments;
 using Wallsh.Models.Environments.Linux;
+using Wallsh.Models.Environments.Windows;
 using Timer = System.Timers.Timer;
 
 namespace Wallsh.Models;
@@ -40,7 +41,7 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
         }
         // TODO: Add Windows support.
         else if (OperatingSystem.IsWindows())
-            throw new NotImplementedException("Windows is not supported.");
+            WpEnvironment = new WindowsWpEnvironment();
     }
 
     public void Dispose()
@@ -55,7 +56,7 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
         {
             if (!_services.TryGetValue(Config.ChangerType, out var service))
             {
-                Console.WriteLine($"[WallpaperChanger] No service for type {Config.ChangerType}");
+                Console.WriteLine($"[WallpaperChanger]: No service for type {Config.ChangerType}");
                 return;
             }
 
@@ -84,7 +85,7 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
 
         if (_services.TryGetValue(Config.ChangerType, out var service))
         {
-            Console.WriteLine($"[WallpaperChanger] Resetting {Config.ChangerType} before starting.");
+            Console.WriteLine($"[WallpaperChanger]: Resetting {Config.ChangerType} before starting.");
             service.Reset(this);
             
             if (Config.ChangerType != WallpaperChangerType.Local)
@@ -101,15 +102,28 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
         Console.WriteLine($"[WallpaperChanger][{Config.ChangerType}]: Interval - {time:HH:mm:ss}");
     }
 
-    public string GetRandomWallpaperFromDisk(string folder)
+    public string? GetRandomWallpaperFromDisk(string folder)
     {
         var currentWallpaper = WpEnvironment.GetCurrentWallpaperPath();
 
         var directory = new DirectoryInfo(folder);
         var wallpapers = WpEnvironment.SupportedFileExtensions
             .SelectMany(directory.EnumerateFiles)
-            .Where(wp => wp.FullName != currentWallpaper)
             .ToArray();
+
+        // Folder does not have any wallpapers.
+        if (wallpapers.Length == 0)
+        {
+            return null;
+        }
+
+        // Folder only has 1 wallpaper in it.
+        if (wallpapers.Length == 1)
+        {
+            return wallpapers[0].FullName;
+        }
+
+        wallpapers = [.. wallpapers.Where(wp => wp.FullName != currentWallpaper)];
 
         var randomFromDisk = wallpapers[Random.Shared.Next(wallpapers.Length)];
         return randomFromDisk.FullName;
