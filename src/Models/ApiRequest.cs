@@ -1,12 +1,11 @@
 using System.Net.Http.Json;
-using Wallsh.Services.Wallhaven;
 
 namespace Wallsh.Models;
 
 public abstract class ApiRequest<TConfig> where TConfig : class, new()
 {
-    protected abstract UriBuilder BuildRequestUri(TConfig cfg);
-    
+    public abstract UriBuilder BuildRequestUri(TConfig cfg);
+
     public async Task<string?> DownloadWallpaperAsync(string folder, string fileName, string fileUri)
     {
         using var client = new HttpClient();
@@ -25,8 +24,8 @@ public abstract class ApiRequest<TConfig> where TConfig : class, new()
             return null;
         }
     }
-    
-    public async Task<WallhavenApiResponse?> RequestWallpapersAsync(TConfig cfg)
+
+    public async Task<T?> RequestWallpapersAsync<T>(TConfig cfg) where T : class, IApiResponse
     {
         var uri = BuildRequestUri(cfg);
         Console.WriteLine($"[ApiRequest<{typeof(TConfig).Name}>]: {uri.Uri.AbsoluteUri}");
@@ -41,7 +40,7 @@ public abstract class ApiRequest<TConfig> where TConfig : class, new()
         }
 
         if (response.Content.Headers.ContentType?.MediaType == "application/json")
-            return await response.Content.ReadFromJsonAsync<WallhavenApiResponse>();
+            return await response.Content.ReadFromJsonAsync<T>();
 
         Console.WriteLine($"[ApiRequest<{typeof(TConfig).Name}>]: Invalid content type");
         return null;

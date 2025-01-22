@@ -4,7 +4,7 @@ namespace Wallsh.Services.Wallhaven;
 
 public class WallhavenRequest : ApiRequest<WallhavenConfiguration>
 {
-    protected override UriBuilder BuildRequestUri(WallhavenConfiguration cfg)
+    public override UriBuilder BuildRequestUri(WallhavenConfiguration cfg)
     {
         var qParams = new Dictionary<string, string>
         {

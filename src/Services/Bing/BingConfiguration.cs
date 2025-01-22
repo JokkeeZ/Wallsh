@@ -20,4 +20,6 @@ public class BingConfiguration
     public ScreenOrientation Orientation { get; set; } = ScreenOrientation.Landscape;
 
     public int NumberOfWallpapers { get; set; } = 4;
+
+    public DateTime LastFetchTime { get; set; } = DateTime.MinValue;
 }

@@ -4,14 +4,14 @@ namespace Wallsh.Services.Bing;
 
 public class BingRequest : ApiRequest<BingConfiguration>
 {
-    protected override UriBuilder BuildRequestUri(BingConfiguration cfg)
+    public override UriBuilder BuildRequestUri(BingConfiguration cfg)
     {
         var qParams = new Dictionary<string, string>
         {
             ["format"] = "js",
             ["n"] = cfg.NumberOfWallpapers.ToString()
         };
-        
+
         var uri = new UriBuilder
         {
             Scheme = "http",

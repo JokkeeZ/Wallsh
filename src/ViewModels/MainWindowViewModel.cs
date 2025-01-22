@@ -78,7 +78,7 @@ public partial class MainWindowViewModel : ViewModelBase,
         _wallpaperAdjustment = _cfg.WallpaperAdjustment;
 
         Adjustments = _wallpaperChanger.WpEnvironment.WallpaperAdjustments;
-        
+
         if (string.IsNullOrEmpty(_cfg.WallpaperAdjustment))
             WallpaperAdjustment = _wallpaperChanger.WpEnvironment.GetWallpaperAdjustment();
 

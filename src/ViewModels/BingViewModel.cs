@@ -23,7 +23,7 @@ public partial class BingViewModel : ViewModelBase, IWpHandlerConfigValidator
     private ScreenOrientation _orientation;
 
     [ObservableProperty]
-    private string? _resolution;
+    private string _resolution;
 
     public BingViewModel(AppJsonConfiguration cfg)
     {

@@ -1,9 +1,10 @@
 using System.Text.Json.Serialization;
+using Wallsh.Models;
 
 namespace Wallsh.Services.Wallhaven;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class WallhavenApiResponse
+public class WallhavenApiResponse : IApiResponse
 {
     [JsonPropertyName("data")]
     // ReSharper disable once CollectionNeverUpdated.Global
