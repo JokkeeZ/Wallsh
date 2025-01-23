@@ -24,10 +24,11 @@ dotnet run
 
 # Dependencies
 - [Avalonia](https://github.com/AvaloniaUI/Avalonia)
-- [Community Toolkit](https://github.com/CommunityToolkit/dotnet)
-- [GtkSharp](https://github.com/GtkSharp/GtkSharp)
+- [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet)
+- [Microsoft.Extensions.DependencyInjection](https://github.com/dotnet/runtime)
+- [Microsoft.Extensions.Logging](https://github.com/dotnet/runtime)
+- [Microsoft.Extensions.Logging.Console](https://github.com/dotnet/runtime)
+- [Microsoft.Extensions.Logging.Debug](https://github.com/dotnet/runtime)
 
 # License
-Wallsh is licensed under the [MIT License](https://github.com/JokkeeZ/Wallsh/blob/master/LICENSE), the same as **Avalonia** and **Community Toolkit**.
-
-This application also uses **GtkSharp** and it's related components, which are licensed under the [LGPL v2.0 License](https://github.com/GtkSharp/GtkSharp/blob/develop/LICENSE).
+Wallsh is licensed under the [MIT License](https://github.com/JokkeeZ/Wallsh/blob/master/LICENSE).

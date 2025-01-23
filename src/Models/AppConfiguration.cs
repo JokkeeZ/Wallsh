@@ -12,7 +12,6 @@ public class AppConfiguration
     };
 
     public WallpaperChangerType ChangerType { get; set; } = WallpaperChangerType.None;
-
     public TimeOnly Interval { get; set; } = new(0, 10, 0, 0);
     public string WallpapersFolder { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
     public string? WallpaperAdjustment { get; set; } = string.Empty;
@@ -33,10 +32,7 @@ public class AppConfiguration
     public static AppConfiguration FromFile()
     {
         if (!File.Exists(GetConfigurationPath()))
-        {
-            Console.WriteLine("[AppConfiguration] Could not locate existing `config.json`.");
             return new();
-        }
 
         try
         {
@@ -45,16 +41,15 @@ public class AppConfiguration
         }
         catch
         {
-            Console.WriteLine("[AppConfiguration] Failed to deserialize.");
             return new();
         }
     }
 
-    public static bool ToFile(AppConfiguration configuration)
+    public bool ToFile()
     {
         try
         {
-            var text = JsonSerializer.Serialize(configuration, JsonOptions);
+            var text = JsonSerializer.Serialize(this, JsonOptions);
             File.WriteAllText(GetConfigurationPath(), text);
 
             return true;

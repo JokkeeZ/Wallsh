@@ -1,9 +1,12 @@
 using System.Net.Http.Json;
+using Microsoft.Extensions.Logging;
 
 namespace Wallsh.Models;
 
 public abstract class ApiRequest<TConfig> where TConfig : class, new()
 {
+    private readonly ILogger<ApiRequest<TConfig>> _log = App.CreateLogger<ApiRequest<TConfig>>();
+
     protected abstract UriBuilder BuildRequestUri(TConfig cfg);
 
     public async Task<string?> DownloadWallpaperAsync(string folder, string fileName, string fileUri)
@@ -20,7 +23,7 @@ public abstract class ApiRequest<TConfig> where TConfig : class, new()
         }
         catch (Exception e)
         {
-            Console.WriteLine($"[ApiRequest<{typeof(TConfig).Name}>]: Error downloading wallpaper: {e.Message}");
+            _log.LogError("Error downloading wallpaper: {Error}", e.Message);
             return null;
         }
     }
@@ -28,21 +31,32 @@ public abstract class ApiRequest<TConfig> where TConfig : class, new()
     public async Task<T?> RequestWallpapersAsync<T>(TConfig cfg) where T : class, IApiResponse
     {
         var uri = BuildRequestUri(cfg);
-        Console.WriteLine($"[ApiRequest<{typeof(TConfig).Name}>]: {uri.Uri.AbsoluteUri}");
+        _log.LogDebug("Requesting wallpaper: {Uri}", uri.Uri.AbsoluteUri);
 
         using var http = new HttpClient();
-        var response = await http.GetAsync(uri.Uri.AbsoluteUri);
 
-        if (!response.IsSuccessStatusCode)
+        try
         {
-            Console.WriteLine($"[ApiRequest<{typeof(TConfig).Name}>]: {response.StatusCode}");
+            var response = await http.GetAsync(uri.Uri.AbsoluteUri);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _log.LogError("Received StatusCode: {StatusCode}", response.StatusCode);
+                return null;
+            }
+
+            if (response.Content.Headers.ContentType?.MediaType != "application/json")
+            {
+                _log.LogError("Received Content-Type: {ContentType}", response.Content.Headers.ContentType?.MediaType);
+                return null;
+            }
+
+            return await response.Content.ReadFromJsonAsync<T>();
+        }
+        catch (Exception e)
+        {
+            _log.LogError("Failed to request wallpapers. Exception message: {Message}", e.Message);
             return null;
         }
-
-        if (response.Content.Headers.ContentType?.MediaType == "application/json")
-            return await response.Content.ReadFromJsonAsync<T>();
-
-        Console.WriteLine($"[ApiRequest<{typeof(TConfig).Name}>]: Invalid content type");
-        return null;
     }
 }

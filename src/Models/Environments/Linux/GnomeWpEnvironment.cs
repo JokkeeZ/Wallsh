@@ -1,5 +1,4 @@
 using System.Runtime.Versioning;
-using GLib;
 
 namespace Wallsh.Models.Environments.Linux;
 
@@ -7,30 +6,41 @@ namespace Wallsh.Models.Environments.Linux;
 public class GnomeWpEnvironment : IWpEnvironment
 {
     private const string SchemaId = "org.gnome.desktop.background";
+    private const string PictureOptions = "picture-options";
+    private const string PictureUri = "picture-uri";
+    private const string PictureUriDark = "picture-uri-dark";
+    private const string EnvXdgCurrentDesktop = "XDG_CURRENT_DESKTOP";
+    private const string Gnome = "GNOME";
+
     public string[] SupportedFileExtensions => ["*.jpg", "*.png"];
     public string[] WallpaperAdjustments => ["none", "wallpaper", "centered", "scaled", "stretched", "zoom", "spanned"];
 
     public string GetWallpaperAdjustment()
     {
-        using var settings = new Settings(SchemaId);
-        return settings.GetString("picture-options");
+        using var gSettings = new GSettings(SchemaId);
+        var adjustment = gSettings.GetString(PictureOptions);
+
+        if (adjustment is not null)
+            return adjustment;
+
+        return string.Empty;
     }
 
     public void SetWallpaperAdjustment(string? adjustment)
     {
-        if (adjustment is null)
+        if (string.IsNullOrWhiteSpace(adjustment))
             return;
 
-        using var settings = new Settings(SchemaId);
-        settings.SetString("picture-options", adjustment);
+        using var gSettings = new GSettings(SchemaId);
+        gSettings.SetString(PictureOptions, adjustment);
     }
 
     public string GetCurrentWallpaperPath()
     {
-        using var settings = new Settings(SchemaId);
-        var pictureUri = settings.GetString("picture-uri");
+        using var gSettings = new GSettings(SchemaId);
+        var pictureUri = gSettings.GetString(PictureUri);
 
-        if (!string.IsNullOrEmpty(pictureUri))
+        if (!string.IsNullOrWhiteSpace(pictureUri))
             return pictureUri.Split("file://").Last();
 
         return string.Empty;
@@ -38,14 +48,14 @@ public class GnomeWpEnvironment : IWpEnvironment
 
     public void SetWallpaperFromPath(string path)
     {
-        using var settings = new Settings(SchemaId);
-        settings.SetString("picture-uri", $"file://{path}");
-        settings.SetString("picture-uri-dark", $"file://{path}");
+        using var settings = new GSettings(SchemaId);
+        settings.SetString(PictureUri, $"file://{path}");
+        settings.SetString(PictureUriDark, $"file://{path}");
     }
 
     public static bool IsGnome()
     {
-        var de = Environment.GetEnvironmentVariable("XDG_CURRENT_DESKTOP");
-        return de is not null && de.Contains("GNOME");
+        var de = Environment.GetEnvironmentVariable(EnvXdgCurrentDesktop);
+        return de is not null && de.Contains(Gnome);
     }
 }

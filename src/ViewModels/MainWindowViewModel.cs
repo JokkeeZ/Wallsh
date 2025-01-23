@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
+using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Wallsh.Messages;
@@ -8,6 +10,7 @@ using Wallsh.Models;
 
 namespace Wallsh.ViewModels;
 
+[NotifyPropertyChangedRecipients]
 public partial class MainWindowViewModel : ViewModelBase,
     IRecipient<WallpaperChangerUpdatedMessage>,
     IRecipient<TimerUpdatedMessage>
@@ -21,7 +24,6 @@ public partial class MainWindowViewModel : ViewModelBase,
     private WallpaperChangerType _changerType;
 
     [ObservableProperty]
-    [NotifyPropertyChangedRecipients]
     [NotifyPropertyChangedFor(nameof(Interval))]
     private int _hours;
 
@@ -29,7 +31,6 @@ public partial class MainWindowViewModel : ViewModelBase,
     private bool _isNotificationVisible;
 
     [ObservableProperty]
-    [NotifyPropertyChangedRecipients]
     [NotifyPropertyChangedFor(nameof(Interval))]
     private int _minutes;
 
@@ -40,7 +41,6 @@ public partial class MainWindowViewModel : ViewModelBase,
     private NotificationType _notificationType;
 
     [ObservableProperty]
-    [NotifyPropertyChangedRecipients]
     [NotifyPropertyChangedFor(nameof(Interval))]
     private int _seconds;
 
@@ -48,7 +48,6 @@ public partial class MainWindowViewModel : ViewModelBase,
     private string? _wallpaperAdjustment;
 
     [ObservableProperty]
-    [NotifyPropertyChangedRecipients]
     private string _wallpapersFolder;
 
     public LocalViewModel LocalViewModel { get; }
@@ -63,11 +62,22 @@ public partial class MainWindowViewModel : ViewModelBase,
     {
         Messenger.RegisterAll(this);
 
-        _cfg = AppConfiguration.FromFile();
+        // Avalonia designer doesn't like DI
+        if (Design.IsDesignMode)
+        {
+            _cfg = new();
+            LocalViewModel = new(_cfg);
+            WallhavenViewModel = new(_cfg);
+            BingViewModel = new(_cfg);
+        }
+        else
+        {
+            _cfg = Ioc.Default.GetRequiredService<AppConfiguration>();
+            LocalViewModel = Ioc.Default.GetRequiredService<LocalViewModel>();
+            WallhavenViewModel = Ioc.Default.GetRequiredService<WallhavenViewModel>();
+            BingViewModel = Ioc.Default.GetRequiredService<BingViewModel>();
+        }
 
-        LocalViewModel = new(_cfg);
-        WallhavenViewModel = new(_cfg);
-        BingViewModel = new(_cfg);
         _wallpaperChanger = new(_cfg);
 
         _changerType = _cfg.ChangerType;
@@ -79,10 +89,10 @@ public partial class MainWindowViewModel : ViewModelBase,
 
         Adjustments = _wallpaperChanger.WpEnvironment.WallpaperAdjustments;
 
-        if (string.IsNullOrEmpty(_cfg.WallpaperAdjustment))
+        if (string.IsNullOrWhiteSpace(_cfg.WallpaperAdjustment))
             WallpaperAdjustment = _wallpaperChanger.WpEnvironment.GetWallpaperAdjustment();
 
-        if (_changerType != WallpaperChangerType.None)
+        if (_changerType != WallpaperChangerType.None && !Design.IsDesignMode)
         {
             _wallpaperChanger.Start();
             UpdateAppTitle(Interval);
@@ -128,7 +138,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
         _wallpaperChanger.WpEnvironment.SetWallpaperAdjustment(_cfg.WallpaperAdjustment);
 
-        if (AppConfiguration.ToFile(_cfg))
+        if (_cfg.ToFile())
         {
             await CreateNotification("Settings saved!", NotificationType.Success);
 
@@ -150,13 +160,13 @@ public partial class MainWindowViewModel : ViewModelBase,
             return false;
         }
 
-        if (string.IsNullOrEmpty(WallpaperAdjustment))
+        if (string.IsNullOrWhiteSpace(WallpaperAdjustment))
         {
             await CreateNotification("Wallpaper adjustment cannot be empty.", NotificationType.Error);
             return false;
         }
 
-        if (string.IsNullOrEmpty(WallpapersFolder))
+        if (string.IsNullOrWhiteSpace(WallpapersFolder))
         {
             await CreateNotification("Wallpaper folder cannot be empty.", NotificationType.Error);
             return false;
@@ -171,36 +181,18 @@ public partial class MainWindowViewModel : ViewModelBase,
         if (_changerType == WallpaperChangerType.None)
             return true;
 
-        switch (_changerType)
+        var (success, message) = _changerType switch
         {
-            case WallpaperChangerType.Local:
-            {
-                var (success, message) = LocalViewModel.ValidateConfiguration();
-                if (!success)
-                    await CreateNotification(message, NotificationType.Error);
+            WallpaperChangerType.Local => LocalViewModel.ValidateConfiguration(),
+            WallpaperChangerType.Wallhaven => WallhavenViewModel.ValidateConfiguration(),
+            WallpaperChangerType.Bing => BingViewModel.ValidateConfiguration(),
+            _ => (true, null)
+        };
 
-                return success;
-            }
-            case WallpaperChangerType.Wallhaven:
-            {
-                var (success, message) = WallhavenViewModel.ValidateConfiguration();
-                if (!success)
-                    await CreateNotification(message, NotificationType.Error);
+        if (message is not null)
+            await CreateNotification(message, NotificationType.Error);
 
-                return success;
-            }
-            case WallpaperChangerType.Bing:
-            {
-                var (success, message) = BingViewModel.ValidateConfiguration();
-                if (!success)
-                    await CreateNotification(message, NotificationType.Error);
-
-                return success;
-            }
-            case WallpaperChangerType.None:
-            default:
-                return true;
-        }
+        return success;
     }
 
     protected override void Broadcast<T>(T oldValue, T newValue, string? propertyName)

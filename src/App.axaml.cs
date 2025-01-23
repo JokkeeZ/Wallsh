@@ -5,7 +5,10 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Wallsh.Models;
 using Wallsh.ViewModels;
 using Wallsh.Views;
@@ -63,8 +66,25 @@ public class App : Application
 
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
+    public static ILogger<T> CreateLogger<T>() => Ioc.Default.GetRequiredService<ILoggerFactory>().CreateLogger<T>();
+
     public override void OnFrameworkInitializationCompleted()
     {
+        Ioc.Default.ConfigureServices(new ServiceCollection()
+            .AddSingleton(LoggerFactory.Create(
+                builder => builder
+                    .AddConsole()
+                    .AddDebug()
+                    .SetMinimumLevel(LogLevel.Debug)
+            ))
+            .AddSingleton(AppConfiguration.FromFile())
+            .AddTransient<MainWindowViewModel>()
+            .AddTransient<LocalViewModel>()
+            .AddTransient<WallhavenViewModel>()
+            .AddTransient<BingViewModel>()
+            .BuildServiceProvider()
+        );
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
@@ -72,7 +92,7 @@ public class App : Application
             DisableAvaloniaDataAnnotationValidation();
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel()
+                DataContext = Ioc.Default.GetRequiredService<MainWindowViewModel>()
             };
 
             desktop.MainWindow.Closing += Closing;

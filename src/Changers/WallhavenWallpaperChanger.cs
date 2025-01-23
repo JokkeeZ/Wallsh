@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Wallsh.Models;
 using Wallsh.Services.Wallhaven;
 
@@ -5,6 +6,7 @@ namespace Wallsh.Changers;
 
 public class WallhavenWallpaperChanger : IWallpaperChanger
 {
+    private readonly ILogger<WallhavenWallpaperChanger> _log = App.CreateLogger<WallhavenWallpaperChanger>();
     private WallhavenApiResponse? _latestResponse;
 
     public async Task OnChange(WallpaperChanger changer)
@@ -20,7 +22,7 @@ public class WallhavenWallpaperChanger : IWallpaperChanger
             if (response is null)
             {
                 changer.Stop();
-                Console.WriteLine("[WallhavenChanger]: Could not be request wallpapers. (response is null)");
+                _log.LogError("Could not be request wallpapers. (response is null)");
                 return;
             }
 
@@ -42,23 +44,26 @@ public class WallhavenWallpaperChanger : IWallpaperChanger
         // so let's set random wallpaper from disk that is not current one.
         if (notOnDisk.Count == 0)
         {
-            Console.WriteLine("[WallhavenChanger]: All queried wallpapers already exists on disk.");
+            _log.LogDebug("All queried wallpapers already exists on disk.");
 
             var wp = changer.GetRandomWallpaperFromDisk(folder);
 
             if (wp is null)
             {
                 changer.Stop();
-                Console.WriteLine("[WallhavenChanger]: Could not set random wallpaper from the disk. (wp is null)");
+                _log.LogError("Could not set random wallpaper from disk. (wp is null)");
                 return;
             }
 
-            Console.WriteLine("[WallhavenChanger][DISK]: Setting wallpaper.");
+            _log.LogDebug("Disk: Setting wallpaper.");
             changer.WpEnvironment.SetWallpaperFromPath(wp);
 
             if (_latestResponse.Meta!.CurrentPage < _latestResponse.Meta.LastPage)
             {
-                changer.Config.Wallhaven.Page++;
+                var page = changer.Config.Wallhaven.Page;
+
+                _log.LogDebug("Updating CurrentPage {Current} -> {Next}", page, page + 1);
+                changer.Config.Wallhaven.Page = page + 1;
                 _latestResponse = null;
             }
 
@@ -72,11 +77,11 @@ public class WallhavenWallpaperChanger : IWallpaperChanger
         if (wallpaperPath is null)
         {
             changer.Stop();
-            Console.WriteLine("[WallhavenChanger]: Wallpaper could not be downloaded. (wallpaperPath is null)");
+            _log.LogError("Wallpaper could not be downloaded. (wallpaperPath is null)");
             return;
         }
 
-        Console.WriteLine("[WallhavenChanger][DOWNLOAD]: Setting wallpaper.");
+        _log.LogDebug("Download: Setting wallpaper.");
         changer.WpEnvironment.SetWallpaperFromPath(wallpaperPath);
     }
 

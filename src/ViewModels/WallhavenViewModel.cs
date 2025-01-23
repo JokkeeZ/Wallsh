@@ -76,15 +76,15 @@ public partial class WallhavenViewModel : ViewModelBase,
 
     public void Receive(IntervalUpdatedMessage message) => _interval = message.Interval;
 
-    public (bool Success, string Message) ValidateConfiguration()
+    public (bool Success, string? Message) ValidateConfiguration()
     {
         // Wallhaven.cc allows 45 requests per minute, so request
         // for every 2 seconds is easily on the safe side.
         if (_interval.ToTimeSpan().TotalSeconds < 2)
             return (false, "Wallhaven interval needs to be at least 2 seconds.");
 
-        if (!string.IsNullOrEmpty(Resolution))
-            return (true, string.Empty);
+        if (!string.IsNullOrWhiteSpace(Resolution))
+            return (true, null);
 
         return (false, "Wallpaper resolution cannot be empty.");
     }
@@ -92,7 +92,7 @@ public partial class WallhavenViewModel : ViewModelBase,
     partial void OnApiKeyChanged(string? value)
     {
         // wallhaven.cc api key seems to always be 32 chars.
-        if (string.IsNullOrEmpty(value) || value.Length != 32)
+        if (string.IsNullOrWhiteSpace(value) || value.Length != 32)
             PurityNsfw = false;
     }
 
@@ -100,13 +100,13 @@ public partial class WallhavenViewModel : ViewModelBase,
     {
         AvailableResolutions = new(WallhavenConfiguration.Resolutions[value]);
 
-        if (string.IsNullOrEmpty(Resolution) || !AvailableResolutions.Contains(Resolution))
+        if (string.IsNullOrWhiteSpace(Resolution) || !AvailableResolutions.Contains(Resolution))
             Resolution = AvailableResolutions[0];
     }
 
     partial void OnAvailableResolutionsChanged(ObservableCollection<string> value)
     {
-        if (string.IsNullOrEmpty(Resolution))
+        if (string.IsNullOrWhiteSpace(Resolution))
             Resolution = value[0];
     }
 

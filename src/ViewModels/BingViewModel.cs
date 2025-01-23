@@ -37,13 +37,13 @@ public partial class BingViewModel : ViewModelBase, IWpChangerConfigValidator
         AvailableResolutions = new(BingConfiguration.Resolutions[Orientation]);
     }
 
-    public (bool Success, string Message) ValidateConfiguration() => (true, string.Empty);
+    public (bool Success, string? Message) ValidateConfiguration() => (true, null);
 
     partial void OnOrientationChanged(ScreenOrientation value)
     {
         AvailableResolutions = new(BingConfiguration.Resolutions[value]);
 
-        if (string.IsNullOrEmpty(Resolution) || !AvailableResolutions.Contains(Resolution))
+        if (string.IsNullOrWhiteSpace(Resolution) || !AvailableResolutions.Contains(Resolution))
             Resolution = AvailableResolutions[0];
     }
 

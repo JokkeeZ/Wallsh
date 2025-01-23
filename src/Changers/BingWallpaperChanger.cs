@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Wallsh.Models;
 using Wallsh.Services.Bing;
 
@@ -5,6 +6,7 @@ namespace Wallsh.Changers;
 
 public class BingWallpaperChanger : IWallpaperChanger
 {
+    private readonly ILogger<BingWallpaperChanger> _log = App.CreateLogger<BingWallpaperChanger>();
     private BingResponse? _latestResponse;
 
     public async Task OnChange(WallpaperChanger changer)
@@ -17,13 +19,12 @@ public class BingWallpaperChanger : IWallpaperChanger
         // 12 hours since the last request.
         if (_latestResponse is null || timeDiff.TotalHours >= 12)
         {
-            Console.WriteLine($"Time diff: {timeDiff.TotalHours}");
             var response = await bingRequest.RequestWallpapersAsync<BingResponse>(changer.Config.Bing);
 
             if (response is null)
             {
                 changer.Stop();
-                Console.WriteLine("[BingChanger]: Could not be request wallpapers. (response is null)");
+                _log.LogError("Could not be request wallpapers. (response is null)");
                 return;
             }
 
@@ -49,18 +50,18 @@ public class BingWallpaperChanger : IWallpaperChanger
         // so let's set random wallpaper from disk that is not current one.
         if (notOnDisk.Count == 0)
         {
-            Console.WriteLine("[BingChanger]: All queried wallpapers already exists on disk.");
+            _log.LogDebug("All queried wallpapers already exists on disk.");
 
             var wp = changer.GetRandomWallpaperFromDisk(folder);
 
             if (wp is null)
             {
                 changer.Stop();
-                Console.WriteLine("[BingChanger]: Could not set random wallpaper from disk. (wp is null)");
+                _log.LogError("Could not set random wallpaper from disk. (wp is null)");
                 return;
             }
 
-            Console.WriteLine("[BingChanger][DISK]: Setting wallpaper.");
+            _log.LogDebug("Disk: Setting wallpaper.");
             changer.WpEnvironment.SetWallpaperFromPath(wp);
 
             return;
@@ -78,11 +79,11 @@ public class BingWallpaperChanger : IWallpaperChanger
         if (wallpaperPath is null)
         {
             changer.Stop();
-            Console.WriteLine("[BingChanger]: Wallpaper could not be downloaded. (wallpaperPath is null)");
+            _log.LogError("Wallpaper could not be downloaded. (wallpaperPath is null)");
             return;
         }
 
-        Console.WriteLine("[BingChanger][DOWNLOAD]: Setting wallpaper.");
+        _log.LogDebug("Download: Setting wallpaper.");
         changer.WpEnvironment.SetWallpaperFromPath(wallpaperPath);
     }
 

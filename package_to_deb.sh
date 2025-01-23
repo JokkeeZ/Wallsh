@@ -19,7 +19,7 @@ Version: $version
 Section: devel
 Priority: optional
 Architecture: amd64
-Depends: libx11-6, libice6, libsm6, libfontconfig1, libc6, libgcc-s1, libicu74, libssl3, libstdc++6, zlib1g, libglib2.0-dev, libdbus-1-dev
+Depends: libx11-6, libice6, libsm6, libfontconfig1, libc6, libgcc-s1, libicu74, libssl3, libstdc++6, zlib1g, libglib2.0-dev, libgio2.0-dev
 Maintainer: Joel <https://github.com/JokkeeZ>
 Homepage: https://github.com/JokkeeZ/Wallsh
 Description: Wallpaper slideshow handler

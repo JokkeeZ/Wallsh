@@ -23,12 +23,12 @@ public partial class LocalViewModel : ViewModelBase, IWpChangerConfigValidator,
 
     public void Receive(WallpaperFolderUpdatedMessage message) => _wallpapersFolder = message.WallpapersFolder;
 
-    public (bool Success, string Message) ValidateConfiguration()
+    public (bool Success, string? Message) ValidateConfiguration()
     {
         if (string.IsNullOrWhiteSpace(_wallpapersFolder))
             return (false, "Wallpapers folder cannot be empty.");
 
-        return (true, string.Empty);
+        return (true, null);
     }
 
     partial void OnIsActiveHandlerChanged(bool value) =>
