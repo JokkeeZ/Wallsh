@@ -92,7 +92,9 @@ public partial class MainWindowViewModel : ViewModelBase,
         if (string.IsNullOrWhiteSpace(_cfg.WallpaperAdjustment))
             WallpaperAdjustment = _wallpaperChanger.WpEnvironment.GetWallpaperAdjustment();
 
-        if (_changerType != WallpaperChangerType.None && !Design.IsDesignMode)
+        // We don't start the changer if changer
+        // is None OR we are in design mode.
+        if (_wallpaperChanger.CanStart)
         {
             _wallpaperChanger.Start();
             UpdateAppTitle(Interval);
@@ -142,10 +144,12 @@ public partial class MainWindowViewModel : ViewModelBase,
         {
             await CreateNotification("Settings saved!", NotificationType.Success);
 
-            if (_changerType != WallpaperChangerType.None)
+            // We don't start the changer if changer
+            // is None OR we are in design mode.
+            if (_wallpaperChanger.CanStart)
             {
-                UpdateAppTitle(Interval);
                 _wallpaperChanger.Start();
+                UpdateAppTitle(Interval);
             }
         }
         else

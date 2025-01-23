@@ -1,4 +1,5 @@
 using System.Timers;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
@@ -26,6 +27,8 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
 
     public IWpEnvironment WpEnvironment { get; } = null!;
     public AppConfiguration Config { get; set; }
+
+    public bool CanStart => Config.ChangerType != WallpaperChangerType.Local && !Design.IsDesignMode;
 
     public WallpaperChanger(AppConfiguration cfg)
     {
