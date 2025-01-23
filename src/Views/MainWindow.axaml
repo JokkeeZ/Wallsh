@@ -39,6 +39,7 @@
                         <NumericUpDown Value="{Binding Hours}" Increment="1"
                                        FormatString="0"
                                        Width="110"
+                                       Watermark="0"
                                        Minimum="0" Maximum="23" />
                     </StackPanel>
 
@@ -47,6 +48,7 @@
                         <NumericUpDown Value="{Binding Minutes}" Increment="1"
                                        FormatString="0"
                                        Width="110"
+                                       Watermark="0"
                                        Minimum="0" Maximum="59" />
                     </StackPanel>
 
@@ -55,6 +57,7 @@
                         <NumericUpDown Value="{Binding Seconds}" Increment="1"
                                        FormatString="0"
                                        Width="110"
+                                       Watermark="0"
                                        Minimum="0" Maximum="59" />
                     </StackPanel>
                 </StackPanel>
@@ -64,10 +67,12 @@
                     <StackPanel Orientation="Horizontal" Spacing="5">
                         <TextBox
                             Width="340"
+                            Watermark="Folder containing wallpapers"
                             Name="FolderPathTextBox"
                             Text="{Binding WallpapersFolder}" />
                         <Button
                             Content="Browse"
+                            Width="110"
                             Click="BrowseFolderClick"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Center" />
@@ -79,6 +84,7 @@
                     <ComboBox
                         SelectedIndex="0"
                         Width="340"
+                        PlaceholderText="Select wallpaper adjustment"
                         ItemsSource="{Binding Adjustments}"
                         SelectedItem="{Binding WallpaperAdjustment}">
                         <ComboBox.ItemTemplate>

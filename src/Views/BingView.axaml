@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Wallsh.ViewModels"
              xmlns:avalonia="clr-namespace:Avalonia.Platform;assembly=Avalonia.Controls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="500"
              x:Class="Wallsh.Views.BingView"
              x:DataType="vm:BingViewModel">
     <Expander HorizontalAlignment="Stretch">
@@ -29,6 +29,7 @@
             <TextBlock Text="Resolution" FontWeight="Bold" />
             <ComboBox
                 Width="340"
+                PlaceholderText="Select resolution"
                 ItemsSource="{Binding AvailableResolutions}"
                 SelectedItem="{Binding Path=Resolution}">
                 <ComboBox.ItemTemplate>

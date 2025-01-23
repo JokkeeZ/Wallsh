@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Wallsh.ViewModels"
              xmlns:wallhaven1="clr-namespace:Wallsh.Services.Wallhaven"
-             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="795"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="500"
              x:Class="Wallsh.Views.WallhavenView"
              x:DataType="vm:WallhavenViewModel">
     <Expander HorizontalAlignment="Stretch">
@@ -20,6 +20,7 @@
             <TextBlock Text="API key" FontWeight="Bold" />
             <TextBox Name="WallhavenApiKey"
                      Width="340"
+                     Watermark="Your wallhaven API key"
                      Text="{Binding ApiKey}"
                      HorizontalAlignment="Left" />
 
@@ -69,6 +70,7 @@
 
             <ComboBox
                 Width="340"
+                PlaceholderText="Select resolution"
                 ItemsSource="{Binding AvailableResolutions}"
                 SelectedItem="{Binding Path=Resolution}">
                 <ComboBox.ItemTemplate>
