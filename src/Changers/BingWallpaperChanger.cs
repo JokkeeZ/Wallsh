@@ -32,7 +32,7 @@ public class BingWallpaperChanger : IWallpaperChanger
         }
 
         var folder = changer.GetChangerDownloadFolderPath();
-        
+
         var notOnDisk = new List<BingWallpaperImage>();
         foreach (var wp in _latestResponse.Images)
         {

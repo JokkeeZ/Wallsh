@@ -1,8 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using Avalonia.Controls;
+﻿using System.Reflection;
 using Avalonia.Controls.Notifications;
-using Avalonia.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -95,7 +92,7 @@ public partial class MainWindowViewModel : ViewModelBase,
     public void Receive(TimerUpdatedMessage message) => UpdateAppTitle(message.Time);
 
     public void Receive(WallpaperChangerUpdatedMessage message) => _changerType = message.ChangerType;
-    
+
     [RelayCommand]
     private async Task SaveConfiguration()
     {
@@ -170,6 +167,9 @@ public partial class MainWindowViewModel : ViewModelBase,
             await CreateNotification("Wallpaper folder does not exist.", NotificationType.Error);
             return false;
         }
+
+        if (_changerType == WallpaperChangerType.None)
+            return true;
 
         switch (_changerType)
         {

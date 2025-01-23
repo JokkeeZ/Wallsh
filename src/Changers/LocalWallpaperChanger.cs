@@ -19,5 +19,7 @@ public class LocalWallpaperChanger : IWallpaperChanger
         await Task.CompletedTask;
     }
 
-    public void Reset(WallpaperChanger changer) { }
+    public void Reset(WallpaperChanger changer)
+    {
+    }
 }

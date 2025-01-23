@@ -87,7 +87,7 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
         {
             Console.WriteLine($"[WallpaperChanger]: Resetting {Config.ChangerType} before starting.");
             service.Reset(this);
-            
+
             if (Config.ChangerType != WallpaperChangerType.Local)
                 Directory.CreateDirectory(GetChangerDownloadFolderPath());
         }
@@ -111,16 +111,14 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
             .SelectMany(directory.EnumerateFiles)
             .ToArray();
 
-        // Folder does not have any wallpapers.
-        if (wallpapers.Length == 0)
+        switch (wallpapers.Length)
         {
-            return null;
-        }
-
-        // Folder only has 1 wallpaper in it.
-        if (wallpapers.Length == 1)
-        {
-            return wallpapers[0].FullName;
+            // Folder does not have any wallpapers.
+            case 0:
+                return null;
+            // Folder only has 1 wallpaper in it.
+            case 1:
+                return wallpapers[0].FullName;
         }
 
         wallpapers = [.. wallpapers.Where(wp => wp.FullName != currentWallpaper)];
@@ -129,8 +127,6 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
         return randomFromDisk.FullName;
     }
 
-    public string GetChangerDownloadFolderPath()
-    {
-        return Path.Combine(Config.WallpapersFolder, Config.ChangerType.ToString());
-    }
+    public string GetChangerDownloadFolderPath() =>
+        Path.Combine(Config.WallpapersFolder, Config.ChangerType.ToString());
 }

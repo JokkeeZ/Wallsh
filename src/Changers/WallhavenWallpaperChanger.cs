@@ -28,7 +28,7 @@ public class WallhavenWallpaperChanger : IWallpaperChanger
         }
 
         var folder = changer.GetChangerDownloadFolderPath();
-        
+
         var notOnDisk = new List<WallhavenWallpaperInfo>();
         foreach (var wp in _latestResponse.Data)
         {

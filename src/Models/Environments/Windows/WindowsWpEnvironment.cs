@@ -7,25 +7,26 @@ namespace Wallsh.Models.Environments.Windows;
 [SupportedOSPlatform("windows")]
 public class WindowsWpEnvironment : IWpEnvironment
 {
-    public string[] SupportedFileExtensions => ["*.png", "*.jpg", "*.bmp"];
-
-    public string[] WallpaperAdjustments => ["center", "fill", "fit", "stretch", "tile", "span"];
-
-    private const string RegCPDesktop = @"Control Panel\Desktop";
+    private const string RegCpDesktop = @"Control Panel\Desktop";
     private const string RegWallpapers = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Wallpapers";
     private const string RegKeyWallpaperStyle = "WallpaperStyle";
     private const string RegKeyTileWallpaper = "TileWallpaper";
 
+    // ReSharper disable once InconsistentNaming
     private const int SPI_SETDESKWALLPAPER = 0x0014;
-    private const int SPIF_SENDWININICHANGE = 0x002;
-    private const int SPIF_UPDATEINIFILE = 0x001;
 
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
+    // ReSharper disable once InconsistentNaming
+    private const int SPIF_SENDWININICHANGE = 0x002;
+
+    // ReSharper disable once InconsistentNaming
+    private const int SPIF_UPDATEINIFILE = 0x001;
+    public string[] SupportedFileExtensions => ["*.png", "*.jpg", "*.bmp"];
+
+    public string[] WallpaperAdjustments => ["center", "fill", "fit", "stretch", "tile", "span"];
 
     public string GetWallpaperAdjustment()
     {
-        var key = Registry.CurrentUser.OpenSubKey(RegCPDesktop, true);
+        var key = Registry.CurrentUser.OpenSubKey(RegCpDesktop, true);
 
         if (key is not null)
         {
@@ -48,10 +49,7 @@ public class WindowsWpEnvironment : IWpEnvironment
 
     public void SetWallpaperAdjustment(string? adjustment)
     {
-        int style;
-        bool tiled;
-        
-        (style, tiled) = adjustment switch
+        var (style, tiled) = adjustment switch
         {
             "fill" => (10, false),
             "fit" => (6, false),
@@ -62,7 +60,7 @@ public class WindowsWpEnvironment : IWpEnvironment
             _ => throw new("Unknown wallpaper adjustment.")
         };
 
-        var key = Registry.CurrentUser.OpenSubKey(RegCPDesktop, true);
+        var key = Registry.CurrentUser.OpenSubKey(RegCpDesktop, true);
 
         if (key is not null)
         {
@@ -83,5 +81,8 @@ public class WindowsWpEnvironment : IWpEnvironment
     }
 
     public void SetWallpaperFromPath(string path) =>
-        SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
+        _ = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
+
+    [DllImport("user32.dll", CharSet = CharSet.Ansi)]
+    private static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
 }
