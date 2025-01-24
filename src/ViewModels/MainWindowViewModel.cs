@@ -222,7 +222,7 @@ public partial class MainWindowViewModel : ViewModelBase,
             .AddMinutes(time.Minute)
             .AddSeconds(time.Second);
 
-        var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(2);
+        var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3);
         AppTitle = $"Wallsh {version} | WP Change: {nextChangeTime.ToLongTimeString()}";
     }
 }
