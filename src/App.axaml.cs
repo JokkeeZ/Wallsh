@@ -103,14 +103,13 @@ public class App : Application
 
     private void Closing(object? sender, WindowClosingEventArgs e)
     {
-        e.Cancel = true;
-
         if (e.CloseReason != WindowCloseReason.WindowClosing)
             return;
-
+        
         if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
             return;
 
+        e.Cancel = true;
         desktop.MainWindow?.Hide();
     }
 
