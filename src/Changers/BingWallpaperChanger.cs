@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Wallsh.Models;
 using Wallsh.Models.Environments;
@@ -10,7 +9,7 @@ public class BingWallpaperChanger(IWpEnvironment env) : IWallpaperChanger
 {
     private readonly ILogger<BingWallpaperChanger> _log = App.CreateLogger<BingWallpaperChanger>();
     private BingResponse? _latestResponse;
-    
+
     public async Task OnChange(WallpaperManager manager)
     {
         if (ShouldFetchNewWallpapers(manager))

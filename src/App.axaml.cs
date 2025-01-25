@@ -79,7 +79,7 @@ public class App : Application
 
         if (OperatingSystem.IsWindows())
             return new WindowsWpEnvironment();
-        
+
         throw new NotImplementedException("This environment is not supported.");
     }
 
