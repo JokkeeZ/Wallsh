@@ -12,7 +12,6 @@ namespace Wallsh.ViewModels;
 
 [NotifyPropertyChangedRecipients]
 public partial class MainWindowViewModel : ViewModelBase,
-    IRecipient<WallpaperChangerUpdatedMessage>,
     IRecipient<TimerUpdatedMessage>
 {
     private readonly AppConfiguration _cfg;
@@ -21,6 +20,7 @@ public partial class MainWindowViewModel : ViewModelBase,
     [ObservableProperty]
     private string _appTitle = "Wallsh";
 
+    [ObservableProperty]
     private WallpaperChangerType _changerType;
 
     [ObservableProperty]
@@ -80,12 +80,12 @@ public partial class MainWindowViewModel : ViewModelBase,
 
         _wallpaperChanger = new(_cfg);
 
-        _changerType = _cfg.ChangerType;
-        _hours = _cfg.Interval.Hour;
-        _minutes = _cfg.Interval.Minute;
-        _seconds = _cfg.Interval.Second;
-        _wallpapersFolder = _cfg.WallpapersFolder;
-        _wallpaperAdjustment = _cfg.WallpaperAdjustment;
+        ChangerType = _cfg.ChangerType;
+        Hours = _cfg.Interval.Hour;
+        Minutes = _cfg.Interval.Minute;
+        Seconds = _cfg.Interval.Second;
+        WallpapersFolder = _cfg.WallpapersFolder;
+        WallpaperAdjustment = _cfg.WallpaperAdjustment;
 
         Adjustments = _wallpaperChanger.WpEnvironment.WallpaperAdjustments;
 
@@ -103,8 +103,6 @@ public partial class MainWindowViewModel : ViewModelBase,
 
     public void Receive(TimerUpdatedMessage message) => UpdateAppTitle(message.Time);
 
-    public void Receive(WallpaperChangerUpdatedMessage message) => _changerType = message.ChangerType;
-
     [RelayCommand]
     private async Task SaveConfiguration()
     {
@@ -113,7 +111,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
         _wallpaperChanger.Stop();
 
-        _cfg.ChangerType = _changerType;
+        _cfg.ChangerType = ChangerType;
         _cfg.Interval = Interval;
         _cfg.WallpapersFolder = WallpapersFolder;
         _cfg.WallpaperAdjustment = WallpaperAdjustment;
@@ -182,10 +180,10 @@ public partial class MainWindowViewModel : ViewModelBase,
             return false;
         }
 
-        if (_changerType == WallpaperChangerType.None)
+        if (ChangerType == WallpaperChangerType.None)
             return true;
 
-        var (success, message) = _changerType switch
+        var (success, message) = ChangerType switch
         {
             WallpaperChangerType.Local => LocalViewModel.ValidateConfiguration(),
             WallpaperChangerType.Wallhaven => WallhavenViewModel.ValidateConfiguration(),

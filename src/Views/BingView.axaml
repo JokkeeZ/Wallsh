@@ -4,20 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Wallsh.ViewModels"
              xmlns:avalonia="clr-namespace:Avalonia.Platform;assembly=Avalonia.Controls"
-             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="500"
+             mc:Ignorable="d" d:DesignWidth="500"
              x:Class="Wallsh.Views.BingView"
              x:DataType="vm:BingViewModel">
-    <Expander HorizontalAlignment="Stretch">
-        <Expander.Header>
-            <RadioButton VerticalAlignment="Center"
-                         GroupName="SelectedServiceGroup"
-                         IsChecked="{Binding IsActiveHandler}"
-                         Content="Bing daily wallpapers" />
-        </Expander.Header>
-        <StackPanel IsEnabled="{Binding IsActiveHandler}" Spacing="5">
 
+    <StackPanel Classes="Container">
+        <StackPanel Classes="Group">
             <TextBlock Text="Orientation (Landscape/Portrait)" FontWeight="Bold" />
-            <StackPanel Orientation="Horizontal" Spacing="30">
+            <StackPanel Classes="HorizontalChild">
                 <RadioButton GroupName="Orientation"
                              IsChecked="{Binding Orientation, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static avalonia:ScreenOrientation.Landscape}}"
                              Content="Landscape" />
@@ -25,29 +19,37 @@
                              IsChecked="{Binding Orientation, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static avalonia:ScreenOrientation.Portrait}}"
                              Content="Portrait" />
             </StackPanel>
+        </StackPanel>
 
+        <StackPanel Classes="Group">
             <TextBlock Text="Resolution" FontWeight="Bold" />
-            <ComboBox
-                Width="340"
-                PlaceholderText="Select resolution"
-                ItemsSource="{Binding AvailableResolutions}"
-                SelectedItem="{Binding Path=Resolution}">
+            <ComboBox Classes="ComboBox340"
+                      PlaceholderText="Select resolution"
+                      ItemsSource="{Binding AvailableResolutions}"
+                      SelectedItem="{Binding Path=Resolution}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-
-            <TextBlock Text="Number of wallpapers (1 - 8)" FontWeight="Bold" />
-            <TextBlock Text="{Binding #NumOfWallpapers.Value}" HorizontalAlignment="Center" />
-            <Slider x:Name="NumOfWallpapers"
-                    Minimum="1"
-                    Maximum="8"
-                    Value="{Binding NumberOfWallpapers}"
-                    TickFrequency="1"
-                    IsSnapToTickEnabled="True"
-                    TickPlacement="BottomRight" />
         </StackPanel>
-    </Expander>
+
+        <StackPanel Classes="Group">
+            <TextBlock Text="Number of wallpapers (1 - 8)" FontWeight="Bold" />
+            <StackPanel Classes="Child">
+                <TextBlock Text="{Binding #NumOfWallpapers.Value}" Margin="0 0 170 -20" HorizontalAlignment="Center" />
+                <Slider x:Name="NumOfWallpapers"
+                        Minimum="1"
+                        Maximum="8"
+                        Width="340"
+                        HorizontalAlignment="Left"
+                        Value="{Binding NumberOfWallpapers}"
+                        TickFrequency="1"
+                        IsSnapToTickEnabled="True"
+                        TickPlacement="BottomRight" />
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+
 </UserControl>

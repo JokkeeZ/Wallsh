@@ -3,18 +3,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Wallsh.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="795"
+             mc:Ignorable="d" d:DesignWidth="500"
              x:Class="Wallsh.Views.LocalView"
              x:DataType="vm:LocalViewModel">
-    <Expander HorizontalAlignment="Stretch">
-        <Expander.Header>
-            <RadioButton VerticalAlignment="Center"
-                         GroupName="SelectedServiceGroup"
-                         IsChecked="{Binding IsActiveHandler}"
-                         Content="Local wallpapers" />
-        </Expander.Header>
-        <StackPanel IsEnabled="{Binding IsActiveHandler}">
-            <TextBlock>Maybe some settings later</TextBlock>
-        </StackPanel>
-    </Expander>
+
+    <StackPanel Classes="Container">
+        <TextBlock>Maybe some settings later</TextBlock>
+    </StackPanel>
+
 </UserControl>

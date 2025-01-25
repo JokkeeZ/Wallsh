@@ -30,9 +30,6 @@ public partial class WallhavenViewModel : ViewModelBase,
     private TimeOnly _interval;
 
     [ObservableProperty]
-    private bool _isActiveHandler;
-
-    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanEnableNsfw))]
     private bool _purityNsfw;
 
@@ -58,7 +55,6 @@ public partial class WallhavenViewModel : ViewModelBase,
         Messenger.RegisterAll(this);
 
         _interval = cfg.Interval;
-        IsActiveHandler = cfg.ChangerType == WallpaperChangerType.Wallhaven;
 
         Sorting = cfg.Wallhaven.Sorting;
         Resolution = cfg.Wallhaven.Resolution;
@@ -109,9 +105,4 @@ public partial class WallhavenViewModel : ViewModelBase,
         if (string.IsNullOrWhiteSpace(Resolution))
             Resolution = value[0];
     }
-
-    partial void OnIsActiveHandlerChanged(bool value) =>
-        Messenger.Send(new WallpaperChangerUpdatedMessage(value
-            ? WallpaperChangerType.Wallhaven
-            : WallpaperChangerType.None));
 }

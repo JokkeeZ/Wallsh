@@ -4,9 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:Wallsh.Views"
-        SizeToContent="WidthAndHeight"
-        CanResize="False"
-        MaxWidth="500"
+        xmlns:models="clr-namespace:Wallsh.Models"
+        MinHeight="500"
+        MinWidth="500"
+        Width="500"
+        Height="500"
         mc:Ignorable="d" d:DesignWidth="500"
         x:Class="Wallsh.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -19,90 +21,134 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
+    <Window.Resources>
+        <StreamGeometry x:Key="info_regular">M14,2 C20.6274,2 26,7.37258 26,14 C26,20.6274 20.6274,26 14,26 C7.37258,26 2,20.6274 2,14 C2,7.37258 7.37258,2 14,2 Z M14,3.5 C8.20101,3.5 3.5,8.20101 3.5,14 C3.5,19.799 8.20101,24.5 14,24.5 C19.799,24.5 24.5,19.799 24.5,14 C24.5,8.20101 19.799,3.5 14,3.5 Z M14,11 C14.3796833,11 14.6934889,11.2821653 14.7431531,11.6482323 L14.75,11.75 L14.75,19.25 C14.75,19.6642 14.4142,20 14,20 C13.6203167,20 13.3065111,19.7178347 13.2568469,19.3517677 L13.25,19.25 L13.25,11.75 C13.25,11.3358 13.5858,11 14,11 Z M14,7 C14.5523,7 15,7.44772 15,8 C15,8.55228 14.5523,9 14,9 C13.4477,9 13,8.55228 13,8 C13,7.44772 13.4477,7 14,7 Z</StreamGeometry>
+    </Window.Resources>
 
-    <Grid RowDefinitions="Auto,0,Auto,10,Auto,10,Auto,10,Auto">
-        <StackPanel Grid.Row="1" ZIndex="1">
-            <NotificationCard NotificationType="{Binding NotificationType}" IsVisible="{Binding IsNotificationVisible}"
-                              Width="{Binding $parent.Width}" Height="60">
-                <DockPanel Margin="10 10 10 10" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding NotificationText}" />
-                </DockPanel>
+
+    <Grid RowDefinitions="0,*,30" HorizontalAlignment="Center">
+        <!-- NOTIFICATION -->
+        <StackPanel Grid.Row="0" ZIndex="1">
+            <NotificationCard NotificationType="{Binding NotificationType}"
+                              IsVisible="{Binding IsNotificationVisible}"
+                              Width="{Binding $parent.Width}"
+                              Height="60">
+                <StackPanel Margin="10 10 10 10" VerticalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Center" Text="{Binding NotificationText}" />
+                </StackPanel>
             </NotificationCard>
         </StackPanel>
-        <Border Margin="10 10 10 0" BorderThickness="1" BorderBrush="Gray" Padding="10" CornerRadius="5" Grid.Row="2">
-            <StackPanel Spacing="5">
-                <TextBlock Text="Time Between Changes" FontWeight="Bold" />
 
-                <StackPanel Orientation="Horizontal" Spacing="15">
-                    <StackPanel Spacing="5">
-                        <TextBlock Text="Hours(s):" />
-                        <NumericUpDown Value="{Binding Hours}" Increment="1"
-                                       FormatString="0"
-                                       Width="110"
-                                       Watermark="0"
-                                       Minimum="0" Maximum="23" />
+        <TabControl Grid.Row="1" Classes="TabControlContainer">
+
+            <!-- GENERAL SETTINGS -->
+            <TabItem Header="General">
+                <Border Classes="TabContent">
+                    <StackPanel Classes="Container">
+
+                        <StackPanel Classes="Group">
+                            <TextBlock Text="Time Between Changes" FontWeight="Bold" />
+
+                            <StackPanel Classes="HorizontalChild">
+                                <StackPanel Classes="Child" Width="146">
+                                    <TextBlock Text="Hours(s):" />
+                                    <NumericUpDown Classes="TimeSelector" Value="{Binding Hours}" Maximum="23" />
+                                </StackPanel>
+
+                                <StackPanel Classes="Child" Width="146">
+                                    <TextBlock Text="Minute(s):" />
+                                    <NumericUpDown Classes="TimeSelector" Value="{Binding Minutes}" Maximum="59" />
+                                </StackPanel>
+
+                                <StackPanel Classes="Child" Width="146">
+                                    <TextBlock Text="Second(s):" />
+                                    <NumericUpDown Classes="TimeSelector" Value="{Binding Seconds}" Maximum="59" />
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Classes="Group">
+                            <TextBlock Text="Wallpapers folder" FontWeight="Bold" />
+                            <StackPanel Classes="HorizontalChild">
+                                <TextBox Classes="TextBox340"
+                                         Watermark="Folder containing wallpapers"
+                                         Name="FolderPathTextBox"
+                                         Text="{Binding WallpapersFolder}" />
+                                <Button Classes="Medium"
+                                        Content="Browse"
+                                        Click="BrowseFolderClick" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Classes="Group">
+                            <TextBlock Text="Wallpaper adjustment" FontWeight="Bold" />
+                            <StackPanel Classes="HorizontalChild">
+                                <ComboBox Classes="ComboBox340"
+                                          PlaceholderText="Select wallpaper adjustment"
+                                          ItemsSource="{Binding Adjustments}"
+                                          SelectedItem="{Binding WallpaperAdjustment}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <Button Classes="Medium"
+                                        Content="Save Settings"
+                                        Command="{Binding SaveConfigurationCommand}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- SERVICES -->
+                        <StackPanel Classes="Group">
+                            <TextBlock Text="Select a service" FontWeight="Bold" />
+                            <StackPanel>
+                                <ToggleSwitch
+                                    IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Local}}"
+                                    OffContent="Enable Local"
+                                    OnContent="Disable Local" />
+                                <ToggleSwitch
+                                    IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Wallhaven}}"
+                                    OffContent="Enable Wallhaven"
+                                    OnContent="Disable Wallhaven" />
+                                <ToggleSwitch
+                                    IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Bing}}"
+                                    OffContent="Enable Bing"
+                                    OnContent="Disable Bing" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- INFO BUTTON -->
+                        <RelativePanel ZIndex="1" Margin="0 25 5 0">
+                            <Button Classes="InfoButton" RelativePanel.AlignRightWithPanel="True">
+                                <PathIcon Width="15" Height="15" Data="{StaticResource info_regular}" />
+                            </Button>
+                        </RelativePanel>
                     </StackPanel>
+                </Border>
+            </TabItem>
 
-                    <StackPanel Spacing="5">
-                        <TextBlock Text="Minute(s):" />
-                        <NumericUpDown Value="{Binding Minutes}" Increment="1"
-                                       FormatString="0"
-                                       Width="110"
-                                       Watermark="0"
-                                       Minimum="0" Maximum="59" />
-                    </StackPanel>
+            <!-- LOCAL SETTINGS -->
+            <TabItem Header="Local">
+                <Border Classes="TabContent">
+                    <views:LocalView DataContext="{Binding LocalViewModel}" />
+                </Border>
+            </TabItem>
 
-                    <StackPanel Spacing="5">
-                        <TextBlock Text="Second(s):" />
-                        <NumericUpDown Value="{Binding Seconds}" Increment="1"
-                                       FormatString="0"
-                                       Width="110"
-                                       Watermark="0"
-                                       Minimum="0" Maximum="59" />
-                    </StackPanel>
-                </StackPanel>
+            <!-- WALLHAVEN SETTINGS -->
+            <TabItem Header="Wallhaven">
+                <Border Classes="TabContent">
+                    <views:WallhavenView DataContext="{Binding WallhavenViewModel}" />
+                </Border>
+            </TabItem>
 
-                <StackPanel Spacing="5">
-                    <TextBlock Text="Wallpapers folder" FontWeight="Bold" />
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <TextBox
-                            Width="340"
-                            Watermark="Folder containing wallpapers"
-                            Name="FolderPathTextBox"
-                            Text="{Binding WallpapersFolder}" />
-                        <Button
-                            Content="Browse"
-                            Width="110"
-                            Click="BrowseFolderClick"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Center" />
-                    </StackPanel>
-                </StackPanel>
+            <!-- BING SETTINGS -->
+            <TabItem Header="Bing">
+                <Border Classes="TabContent">
+                    <views:BingView DataContext="{Binding BingViewModel}" />
+                </Border>
+            </TabItem>
 
-                <TextBlock Text="Wallpaper adjustment" FontWeight="Bold" />
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                    <ComboBox
-                        SelectedIndex="0"
-                        Width="340"
-                        PlaceholderText="Select wallpaper adjustment"
-                        ItemsSource="{Binding Adjustments}"
-                        SelectedItem="{Binding WallpaperAdjustment}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <Button
-                        Content="Save Settings"
-                        Command="{Binding SaveConfigurationCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Center" />
-                </StackPanel>
-            </StackPanel>
-        </Border>
-        <views:LocalView Grid.Row="4" Margin="10 0 10 0" DataContext="{Binding LocalViewModel}" />
-        <views:WallhavenView Grid.Row="6" Margin="10 0 10 0" DataContext="{Binding WallhavenViewModel}" />
-        <views:BingView Grid.Row="8" Margin="10 0 10 10" DataContext="{Binding BingViewModel}" />
+        </TabControl>
     </Grid>
 </Window>

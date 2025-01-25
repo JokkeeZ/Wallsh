@@ -9,30 +9,22 @@ public partial class LocalViewModel : ViewModelBase, IWpChangerConfigValidator,
     IRecipient<WallpaperFolderUpdatedMessage>
 {
     [ObservableProperty]
-    private bool _isActiveHandler;
-
     private string? _wallpapersFolder;
 
     public LocalViewModel(AppConfiguration cfg)
     {
         Messenger.RegisterAll(this);
 
-        _wallpapersFolder = cfg.WallpapersFolder;
-        IsActiveHandler = cfg.ChangerType == WallpaperChangerType.Local;
+        WallpapersFolder = cfg.WallpapersFolder;
     }
 
-    public void Receive(WallpaperFolderUpdatedMessage message) => _wallpapersFolder = message.WallpapersFolder;
+    public void Receive(WallpaperFolderUpdatedMessage message) => WallpapersFolder = message.WallpapersFolder;
 
     public (bool Success, string? Message) ValidateConfiguration()
     {
-        if (string.IsNullOrWhiteSpace(_wallpapersFolder))
+        if (string.IsNullOrWhiteSpace(WallpapersFolder))
             return (false, "Wallpapers folder cannot be empty.");
 
         return (true, null);
     }
-
-    partial void OnIsActiveHandlerChanged(bool value) =>
-        Messenger.Send(new WallpaperChangerUpdatedMessage(value
-            ? WallpaperChangerType.Local
-            : WallpaperChangerType.None));
 }

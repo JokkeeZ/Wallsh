@@ -105,7 +105,7 @@ public class App : Application
     {
         if (e.CloseReason != WindowCloseReason.WindowClosing)
             return;
-        
+
         if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
             return;
 

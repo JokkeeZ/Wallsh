@@ -4,54 +4,43 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Wallsh.ViewModels"
              xmlns:wallhaven1="clr-namespace:Wallsh.Services.Wallhaven"
-             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="500"
+             mc:Ignorable="d" d:DesignWidth="500"
              x:Class="Wallsh.Views.WallhavenView"
              x:DataType="vm:WallhavenViewModel">
-    <Expander HorizontalAlignment="Stretch">
-        <Expander.Header>
-            <RadioButton VerticalAlignment="Center"
-                         GroupName="SelectedServiceGroup"
-                         IsChecked="{Binding IsActiveHandler}"
-                         Content="Wallhaven.cc wallpapers" />
-        </Expander.Header>
-        <StackPanel
-            IsEnabled="{Binding IsActiveHandler}"
-            Spacing="5">
+
+    <StackPanel Classes="Container">
+        <StackPanel Classes="Group">
             <TextBlock Text="API key" FontWeight="Bold" />
-            <TextBox Name="WallhavenApiKey"
-                     Width="340"
+            <TextBox Classes="TextBox340"
+                     HorizontalAlignment="Left"
                      Watermark="Your wallhaven API key"
-                     Text="{Binding ApiKey}"
-                     HorizontalAlignment="Left" />
+                     Text="{Binding ApiKey}" />
+        </StackPanel>
 
+        <StackPanel Classes="Group">
             <TextBlock Text="Ratios" FontWeight="Bold" />
-
-            <StackPanel Orientation="Horizontal" Spacing="10">
-                <RadioButton
-                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.RatioUltrawide}}"
-                    GroupName="WallhavenRatioGroup"
-                    Content="Ultrawide" />
-                <RadioButton
-                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.Ratio16X9}}"
-                    GroupName="WallhavenRatioGroup"
-                    Content="16:9" />
-                <RadioButton
-                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.Ratio16X10}}"
-                    GroupName="WallhavenRatioGroup"
-                    Content="16:10" />
-                <RadioButton
-                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.Ratio4X3}}"
-                    GroupName="WallhavenRatioGroup"
-                    Content="4:3" />
-                <RadioButton
-                    IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.Ratio5X4}}"
-                    GroupName="WallhavenRatioGroup"
-                    Content="5:4" />
+            <StackPanel Classes="HorizontalChild">
+                <RadioButton GroupName="WallhavenRatioGroup"
+                             IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.RatioUltrawide}}"
+                             Content="Ultrawide" />
+                <RadioButton GroupName="WallhavenRatioGroup"
+                             IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.Ratio16X9}}"
+                             Content="16:9" />
+                <RadioButton GroupName="WallhavenRatioGroup"
+                             IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.Ratio16X10}}"
+                             Content="16:10" />
+                <RadioButton GroupName="WallhavenRatioGroup"
+                             IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.Ratio4X3}}"
+                             Content="4:3" />
+                <RadioButton GroupName="WallhavenRatioGroup"
+                             IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.Ratio5X4}}"
+                             Content="5:4" />
             </StackPanel>
+        </StackPanel>
 
+        <StackPanel Classes="Group">
             <TextBlock Text="Sorting" FontWeight="Bold" />
-
-            <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel Classes="HorizontalChild">
                 <RadioButton GroupName="Sorting"
                              IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenSorting.Top}}"
                              Content="Top" />
@@ -65,34 +54,38 @@
                              IsChecked="{Binding Sorting, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenSorting.Random}}"
                              Content="Random" />
             </StackPanel>
+        </StackPanel>
 
+        <StackPanel Classes="Group">
             <TextBlock Text="Minimum resolution" FontWeight="Bold" />
-
-            <ComboBox
-                Width="340"
-                PlaceholderText="Select resolution"
-                ItemsSource="{Binding AvailableResolutions}"
-                SelectedItem="{Binding Path=Resolution}">
+            <ComboBox Classes="ComboBox340"
+                      PlaceholderText="Select resolution"
+                      ItemsSource="{Binding AvailableResolutions}"
+                      SelectedItem="{Binding Path=Resolution}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+        </StackPanel>
 
+        <StackPanel Classes="Group">
             <TextBlock Text="Categories" FontWeight="Bold" />
-            <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel Classes="HorizontalChild">
                 <CheckBox IsChecked="{Binding CategoryGeneral}" Content="General" />
                 <CheckBox IsChecked="{Binding CategoryAnime}" Content="Anime" />
                 <CheckBox IsChecked="{Binding CategoryPeople}" Content="People" />
             </StackPanel>
+        </StackPanel>
 
+        <StackPanel Classes="Group">
             <TextBlock Text="Purity" FontWeight="Bold" />
-            <StackPanel Orientation="Horizontal" Spacing="35">
+            <StackPanel Classes="HorizontalChild">
                 <CheckBox IsChecked="{Binding PuritySfw}" Content="SFW" />
                 <CheckBox IsChecked="{Binding PuritySketchy}" Content="Sketchy" />
-                <CheckBox IsEnabled="{Binding CanEnableNsfw}" IsChecked="{Binding PurityNsfw}" Content="NSFW" />
+                <CheckBox IsChecked="{Binding PurityNsfw}" IsEnabled="{Binding CanEnableNsfw}" Content="NSFW" />
             </StackPanel>
         </StackPanel>
-    </Expander>
+    </StackPanel>
 </UserControl>
