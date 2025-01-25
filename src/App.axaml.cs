@@ -9,7 +9,11 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Wallsh.Changers;
 using Wallsh.Models;
+using Wallsh.Models.Environments;
+using Wallsh.Models.Environments.Linux;
+using Wallsh.Models.Environments.Windows;
 using Wallsh.ViewModels;
 using Wallsh.Views;
 
@@ -68,6 +72,17 @@ public class App : Application
 
     public static ILogger<T> CreateLogger<T>() => Ioc.Default.GetRequiredService<ILoggerFactory>().CreateLogger<T>();
 
+    private static IWpEnvironment GetWpEnvironment()
+    {
+        if (OperatingSystem.IsLinux() && GnomeWpEnvironment.IsGnome())
+            return new GnomeWpEnvironment();
+
+        if (OperatingSystem.IsWindows())
+            return new WindowsWpEnvironment();
+        
+        throw new NotImplementedException("This environment is not supported.");
+    }
+
     public override void OnFrameworkInitializationCompleted()
     {
         Ioc.Default.ConfigureServices(new ServiceCollection()
@@ -78,6 +93,10 @@ public class App : Application
                     .SetMinimumLevel(LogLevel.Debug)
             ))
             .AddSingleton(AppConfiguration.FromFile())
+            .AddSingleton(GetWpEnvironment())
+            .AddKeyedSingleton<IWallpaperChanger, LocalWallpaperChanger>(WallpaperChangerType.Local)
+            .AddKeyedSingleton<IWallpaperChanger, WallhavenWallpaperChanger>(WallpaperChangerType.Wallhaven)
+            .AddKeyedSingleton<IWallpaperChanger, BingWallpaperChanger>(WallpaperChangerType.Bing)
             .AddTransient<MainWindowViewModel>()
             .AddTransient<LocalViewModel>()
             .AddTransient<WallhavenViewModel>()

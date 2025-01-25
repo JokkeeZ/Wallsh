@@ -1,10 +1,11 @@
 using Microsoft.Extensions.Logging;
 using Wallsh.Models;
+using Wallsh.Models.Environments;
 using Wallsh.Services.Wallhaven;
 
 namespace Wallsh.Changers;
 
-public class WallhavenWallpaperChanger : IWallpaperChanger
+public class WallhavenWallpaperChanger(IWpEnvironment env) : IWallpaperChanger
 {
     private readonly ILogger<WallhavenWallpaperChanger> _log = App.CreateLogger<WallhavenWallpaperChanger>();
     private WallhavenApiResponse? _latestResponse;
@@ -56,7 +57,7 @@ public class WallhavenWallpaperChanger : IWallpaperChanger
         }
 
         _log.LogDebug("Setting a random wallpaper from disk.");
-        manager.WpEnvironment.SetWallpaperFromPath(wpPath);
+        env.SetWallpaperFromPath(wpPath);
     }
 
     private async Task<WallhavenApiResponse?> FetchWallpapersAsync(WallpaperManager manager)
@@ -87,6 +88,6 @@ public class WallhavenWallpaperChanger : IWallpaperChanger
         }
 
         _log.LogDebug("Download: Setting wallpaper.");
-        manager.WpEnvironment.SetWallpaperFromPath(wpPath);
+        env.SetWallpaperFromPath(wpPath);
     }
 }

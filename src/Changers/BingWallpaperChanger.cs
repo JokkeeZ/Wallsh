@@ -1,14 +1,16 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Wallsh.Models;
+using Wallsh.Models.Environments;
 using Wallsh.Services.Bing;
 
 namespace Wallsh.Changers;
 
-public class BingWallpaperChanger : IWallpaperChanger
+public class BingWallpaperChanger(IWpEnvironment env) : IWallpaperChanger
 {
     private readonly ILogger<BingWallpaperChanger> _log = App.CreateLogger<BingWallpaperChanger>();
     private BingResponse? _latestResponse;
-
+    
     public async Task OnChange(WallpaperManager manager)
     {
         if (ShouldFetchNewWallpapers(manager))
@@ -33,7 +35,7 @@ public class BingWallpaperChanger : IWallpaperChanger
             return;
         }
 
-        await DownloadAndSetWallpaper(manager, folder, notOnDisk);
+        await DownloadAndSetWallpaper(manager, folder, notOnDisk.First());
     }
 
     public bool ShouldFetchNewWallpapers(WallpaperManager manager)
@@ -62,7 +64,7 @@ public class BingWallpaperChanger : IWallpaperChanger
         }
 
         _log.LogDebug("Setting a random wallpaper from disk.");
-        manager.WpEnvironment.SetWallpaperFromPath(wpPath);
+        env.SetWallpaperFromPath(wpPath);
     }
 
     private async Task<BingResponse?> FetchWallpapersAsync(WallpaperManager manager)
@@ -79,11 +81,10 @@ public class BingWallpaperChanger : IWallpaperChanger
     }
 
     private async Task DownloadAndSetWallpaper(WallpaperManager manager, string folder,
-        List<BingWallpaperImage> wallpapers)
+        BingWallpaperImage bingWallpaperImage)
     {
-        var randomWp = wallpapers[Random.Shared.Next(wallpapers.Count)];
-        var wpName = GetWallpaperNameFromUrl(randomWp.Urlbase!);
-        var queryUri = $"https://www.bing.com{randomWp.Urlbase}_{manager.Config.Bing.Resolution}.jpg";
+        var wpName = GetWallpaperNameFromUrl(bingWallpaperImage.Urlbase!);
+        var queryUri = $"https://www.bing.com{bingWallpaperImage.Urlbase}_{manager.Config.Bing.Resolution}.jpg";
         var wpPath = await new BingRequest().DownloadWallpaperAsync(folder, wpName, queryUri);
 
         if (wpPath is null)
@@ -94,6 +95,6 @@ public class BingWallpaperChanger : IWallpaperChanger
         }
 
         _log.LogDebug("Setting the downloaded wallpaper.");
-        manager.WpEnvironment.SetWallpaperFromPath(wpPath);
+        env.SetWallpaperFromPath(wpPath);
     }
 }

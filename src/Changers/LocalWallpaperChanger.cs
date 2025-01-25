@@ -1,9 +1,10 @@
 using Microsoft.Extensions.Logging;
 using Wallsh.Models;
+using Wallsh.Models.Environments;
 
 namespace Wallsh.Changers;
 
-public class LocalWallpaperChanger : IWallpaperChanger
+public class LocalWallpaperChanger(IWpEnvironment env) : IWallpaperChanger
 {
     private readonly ILogger<LocalWallpaperChanger> _log = App.CreateLogger<LocalWallpaperChanger>();
 
@@ -19,7 +20,7 @@ public class LocalWallpaperChanger : IWallpaperChanger
         }
 
         _log.LogDebug("Setting a random wallpaper from disk.");
-        manager.WpEnvironment.SetWallpaperFromPath(wpPath);
+        env.SetWallpaperFromPath(wpPath);
 
         await Task.CompletedTask;
     }

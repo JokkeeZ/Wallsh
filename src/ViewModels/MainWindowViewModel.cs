@@ -1,12 +1,17 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel;
+using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using Wallsh.Messages;
 using Wallsh.Models;
+using Wallsh.Models.Environments;
+using Wallsh.Models.Environments.Linux;
+using Wallsh.Models.Environments.Windows;
 
 namespace Wallsh.ViewModels;
 
@@ -17,6 +22,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 {
     private readonly AppConfiguration _cfg;
     private readonly WallpaperManager _wallpaperManager;
+    private readonly IWpEnvironment _wpEnvironment;
 
     [ObservableProperty]
     private string _appTitle = "Wallsh";
@@ -67,6 +73,7 @@ public partial class MainWindowViewModel : ViewModelBase,
         if (Design.IsDesignMode)
         {
             _cfg = new();
+            _wpEnvironment = OperatingSystem.IsLinux() ? new GnomeWpEnvironment() : null!;
             LocalViewModel = new(_cfg);
             WallhavenViewModel = new(_cfg);
             BingViewModel = new(_cfg);
@@ -74,24 +81,25 @@ public partial class MainWindowViewModel : ViewModelBase,
         else
         {
             _cfg = Ioc.Default.GetRequiredService<AppConfiguration>();
+            _wpEnvironment = Ioc.Default.GetRequiredService<IWpEnvironment>();
             LocalViewModel = Ioc.Default.GetRequiredService<LocalViewModel>();
             WallhavenViewModel = Ioc.Default.GetRequiredService<WallhavenViewModel>();
             BingViewModel = Ioc.Default.GetRequiredService<BingViewModel>();
         }
 
-        _wallpaperManager = new(_cfg);
-
+        _wallpaperManager = new(_cfg, _wpEnvironment);
+        
+        Adjustments = _wpEnvironment.WallpaperAdjustments;
         ChangerType = _cfg.ChangerType;
         Hours = _cfg.Interval.Hour;
         Minutes = _cfg.Interval.Minute;
         Seconds = _cfg.Interval.Second;
         WallpapersFolder = _cfg.WallpapersFolder;
         WallpaperAdjustment = _cfg.WallpaperAdjustment;
-
-        Adjustments = _wallpaperManager.WpEnvironment.WallpaperAdjustments;
-
+        Adjustments = _wpEnvironment.WallpaperAdjustments;
+        
         if (string.IsNullOrWhiteSpace(_cfg.WallpaperAdjustment))
-            WallpaperAdjustment = _wallpaperManager.WpEnvironment.GetWallpaperAdjustment();
+            WallpaperAdjustment = _wpEnvironment.GetWallpaperAdjustment();
 
         if (_wallpaperManager.CanStart)
         {
@@ -137,7 +145,7 @@ public partial class MainWindowViewModel : ViewModelBase,
         _wallpaperManager.Config = _cfg;
         _wallpaperManager.SetInterval(_cfg.Interval);
 
-        _wallpaperManager.WpEnvironment.SetWallpaperAdjustment(_cfg.WallpaperAdjustment);
+        _wpEnvironment.SetWallpaperAdjustment(_cfg.WallpaperAdjustment);
 
         if (_cfg.ToFile())
         {
