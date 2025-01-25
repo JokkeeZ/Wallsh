@@ -105,16 +105,16 @@
                             <StackPanel>
                                 <ToggleSwitch
                                     IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Local}}"
-                                    OffContent="Enable Local"
-                                    OnContent="Disable Local" />
+                                    OffContent="Local disabled"
+                                    OnContent="Local enabled" />
                                 <ToggleSwitch
                                     IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Wallhaven}}"
-                                    OffContent="Enable Wallhaven"
-                                    OnContent="Disable Wallhaven" />
+                                    OffContent="Wallhaven disabled"
+                                    OnContent="Wallhaven enabled" />
                                 <ToggleSwitch
                                     IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Bing}}"
-                                    OffContent="Enable Bing"
-                                    OnContent="Disable Bing" />
+                                    OffContent="Bing disabled"
+                                    OnContent="Bing enabled" />
                             </StackPanel>
                         </StackPanel>
 
