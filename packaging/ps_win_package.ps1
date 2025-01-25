@@ -1,4 +1,4 @@
-$csproj = Get-Content -Path "./src/Wallsh.csproj" -Raw
+$csproj = Get-Content -Path "../src/Wallsh.csproj" -Raw
 
 # Project version
 if ($csproj -match '<Version>(.*?)<\/Version>') {
@@ -9,15 +9,15 @@ if ($csproj -match '<Version>(.*?)<\/Version>') {
 }
 
 # .NET publish self-contained
-dotnet publish "./src/Wallsh.csproj" `
+dotnet publish "../src/Wallsh.csproj" `
     --nologo `
     --configuration Release `
     --self-contained true `
     --runtime win-x64 `
-    --output "./staging/Wallsh"
+    --output "../staging/Wallsh"
 
 # Make .zip
-Compress-Archive -Path "./staging/*" -DestinationPath "./wallsh_${version}_win-x64.zip"
+Compress-Archive -Path "../staging/*" -DestinationPath "./wallsh_${version}_win-x64.zip"
 
 # Clean-up
-rm "./staging/" -r -force
+rm "../staging/" -r -force
