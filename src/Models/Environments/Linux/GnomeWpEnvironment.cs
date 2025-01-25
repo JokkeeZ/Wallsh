@@ -48,9 +48,9 @@ public class GnomeWpEnvironment : IWpEnvironment
 
     public void SetWallpaperFromPath(string path)
     {
-        using var settings = new GSettings(SchemaId);
-        settings.SetString(PictureUri, $"file://{path}");
-        settings.SetString(PictureUriDark, $"file://{path}");
+        using var gSettings = new GSettings(SchemaId);
+        gSettings.SetString(PictureUri, $"file://{path}");
+        gSettings.SetString(PictureUriDark, $"file://{path}");
     }
 
     public static bool IsGnome()
