@@ -28,7 +28,7 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
     public IWpEnvironment WpEnvironment { get; } = null!;
     public AppConfiguration Config { get; set; }
 
-    public bool CanStart => Config.ChangerType != WallpaperChangerType.Local && !Design.IsDesignMode;
+    public bool CanStart => Config.ChangerType != WallpaperChangerType.None && !Design.IsDesignMode;
 
     public WallpaperChanger(AppConfiguration cfg)
     {
