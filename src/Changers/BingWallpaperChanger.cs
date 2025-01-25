@@ -9,40 +9,40 @@ public class BingWallpaperChanger : IWallpaperChanger
     private readonly ILogger<BingWallpaperChanger> _log = App.CreateLogger<BingWallpaperChanger>();
     private BingResponse? _latestResponse;
 
-    public async Task OnChange(WallpaperChanger changer)
+    public async Task OnChange(WallpaperManager manager)
     {
-        if (ShouldFetchNewWallpapers(changer))
-            _latestResponse = await FetchWallpapersAsync(changer);
+        if (ShouldFetchNewWallpapers(manager))
+            _latestResponse = await FetchWallpapersAsync(manager);
 
         if (_latestResponse is null)
         {
-            _log.LogError("_latestResponse is null after attempting to fetch wallpapers. Stopping changer.");
-            changer.RequestStop();
+            _log.LogError("_latestResponse is null after attempting to fetch wallpapers. Requesting stop.");
+            manager.RequestStop();
             return;
         }
 
-        var folder = changer.GetChangerDownloadFolderPath();
+        var folder = manager.GetChangerDownloadFolderPath();
         var notOnDisk = _latestResponse.Images
             .Where(wp => wp.Urlbase != null)
-            .Where(wp => !changer.FileExistsInChangerDownloadFolder(GetWallpaperNameFromUrl(wp.Urlbase!)))
+            .Where(wp => !manager.FileExistsInChangerDownloadFolder(GetWallpaperNameFromUrl(wp.Urlbase!)))
             .ToList();
 
         if (notOnDisk.Count == 0)
         {
-            SetRandomWallpaperFromDisk(changer, folder);
+            SetRandomWallpaperFromDisk(manager, folder);
             return;
         }
 
-        await DownloadAndSetWallpaper(changer, folder, notOnDisk);
+        await DownloadAndSetWallpaper(manager, folder, notOnDisk);
     }
 
-    public bool ShouldFetchNewWallpapers(WallpaperChanger changer)
+    public bool ShouldFetchNewWallpapers(WallpaperManager manager)
     {
-        var timeDiff = DateTime.Now - changer.Config.Bing.LastFetchTime;
+        var timeDiff = DateTime.Now - manager.Config.Bing.LastFetchTime;
         return _latestResponse is null || timeDiff.TotalHours >= 12;
     }
 
-    public void Reset(WallpaperChanger changer) => _latestResponse = null;
+    public void Reset(WallpaperManager manager) => _latestResponse = null;
 
     public string GetWallpaperNameFromUrl(string url)
     {
@@ -51,49 +51,49 @@ public class BingWallpaperChanger : IWallpaperChanger
         return $"{wpName}.jpg";
     }
 
-    private void SetRandomWallpaperFromDisk(WallpaperChanger changer, string folder)
+    private void SetRandomWallpaperFromDisk(WallpaperManager manager, string folder)
     {
-        var wpPath = changer.GetRandomWallpaperFromDisk(folder);
+        var wpPath = manager.GetRandomWallpaperFromDisk(folder);
         if (wpPath is null)
         {
-            _log.LogError("No wallpapers found on disk to set. Stopping changer.");
-            changer.RequestStop();
+            _log.LogError("No wallpapers found on disk to set. Requesting stop.");
+            manager.RequestStop();
             return;
         }
 
         _log.LogDebug("Setting a random wallpaper from disk.");
-        changer.WpEnvironment.SetWallpaperFromPath(wpPath);
+        manager.WpEnvironment.SetWallpaperFromPath(wpPath);
     }
-    
-    private async Task<BingResponse?> FetchWallpapersAsync(WallpaperChanger changer)
+
+    private async Task<BingResponse?> FetchWallpapersAsync(WallpaperManager manager)
     {
-        var response = await new BingRequest().RequestWallpapersAsync<BingResponse>(changer.Config.Bing);
+        var response = await new BingRequest().RequestWallpapersAsync<BingResponse>(manager.Config.Bing);
         if (response is null)
         {
             _log.LogError("Failed to fetch wallpapers (response is null).");
             return null;
         }
 
-        changer.Config.Bing.LastFetchTime = DateTime.Now;
+        manager.Config.Bing.LastFetchTime = DateTime.Now;
         return response;
     }
 
-    private async Task DownloadAndSetWallpaper(WallpaperChanger changer, string folder,
+    private async Task DownloadAndSetWallpaper(WallpaperManager manager, string folder,
         List<BingWallpaperImage> wallpapers)
     {
         var randomWp = wallpapers[Random.Shared.Next(wallpapers.Count)];
         var wpName = GetWallpaperNameFromUrl(randomWp.Urlbase!);
-        var queryUri = $"https://www.bing.com{randomWp.Urlbase}_{changer.Config.Bing.Resolution}.jpg";
+        var queryUri = $"https://www.bing.com{randomWp.Urlbase}_{manager.Config.Bing.Resolution}.jpg";
         var wpPath = await new BingRequest().DownloadWallpaperAsync(folder, wpName, queryUri);
 
         if (wpPath is null)
         {
-            _log.LogError("Failed to download wallpaper. Stopping changer.");
-            changer.RequestStop();
+            _log.LogError("Failed to download wallpaper. Requesting stop.");
+            manager.RequestStop();
             return;
         }
 
         _log.LogDebug("Setting the downloaded wallpaper.");
-        changer.WpEnvironment.SetWallpaperFromPath(wpPath);
+        manager.WpEnvironment.SetWallpaperFromPath(wpPath);
     }
 }

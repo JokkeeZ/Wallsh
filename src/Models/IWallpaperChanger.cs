@@ -2,11 +2,11 @@ namespace Wallsh.Models;
 
 public interface IWallpaperChanger
 {
-    Task OnChange(WallpaperChanger changer);
+    Task OnChange(WallpaperManager manager);
 
-    void Reset(WallpaperChanger changer) { }
+    void Reset(WallpaperManager manager) { }
 
-    bool ShouldFetchNewWallpapers(WallpaperChanger changer) => true;
+    bool ShouldFetchNewWallpapers(WallpaperManager manager) => true;
 
     string GetWallpaperNameFromUrl(string url) => string.Empty;
 }

@@ -11,9 +11,9 @@ using Timer = System.Timers.Timer;
 
 namespace Wallsh.Models;
 
-public class WallpaperChanger : IDisposable
+public class WallpaperManager : IDisposable
 {
-    private readonly ILogger<WallpaperChanger> _log = App.CreateLogger<WallpaperChanger>();
+    private readonly ILogger<WallpaperManager> _log = App.CreateLogger<WallpaperManager>();
 
     private readonly Dictionary<WallpaperChangerType, IWallpaperChanger> _services = new()
     {
@@ -29,7 +29,7 @@ public class WallpaperChanger : IDisposable
 
     public bool CanStart => Config.ChangerType != WallpaperChangerType.None && !Design.IsDesignMode;
 
-    public WallpaperChanger(AppConfiguration cfg)
+    public WallpaperManager(AppConfiguration cfg)
     {
         Config = cfg;
 

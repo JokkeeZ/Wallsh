@@ -16,7 +16,7 @@ public partial class MainWindowViewModel : ViewModelBase,
     IRecipient<StopRequestedMessage>
 {
     private readonly AppConfiguration _cfg;
-    private readonly WallpaperChanger _wallpaperChanger;
+    private readonly WallpaperManager _wallpaperManager;
 
     [ObservableProperty]
     private string _appTitle = "Wallsh";
@@ -79,7 +79,7 @@ public partial class MainWindowViewModel : ViewModelBase,
             BingViewModel = Ioc.Default.GetRequiredService<BingViewModel>();
         }
 
-        _wallpaperChanger = new(_cfg);
+        _wallpaperManager = new(_cfg);
 
         ChangerType = _cfg.ChangerType;
         Hours = _cfg.Interval.Hour;
@@ -88,14 +88,14 @@ public partial class MainWindowViewModel : ViewModelBase,
         WallpapersFolder = _cfg.WallpapersFolder;
         WallpaperAdjustment = _cfg.WallpaperAdjustment;
 
-        Adjustments = _wallpaperChanger.WpEnvironment.WallpaperAdjustments;
+        Adjustments = _wallpaperManager.WpEnvironment.WallpaperAdjustments;
 
         if (string.IsNullOrWhiteSpace(_cfg.WallpaperAdjustment))
-            WallpaperAdjustment = _wallpaperChanger.WpEnvironment.GetWallpaperAdjustment();
+            WallpaperAdjustment = _wallpaperManager.WpEnvironment.GetWallpaperAdjustment();
 
-        if (_wallpaperChanger.CanStart)
+        if (_wallpaperManager.CanStart)
         {
-            _wallpaperChanger.Start();
+            _wallpaperManager.Start();
             UpdateAppTitle(Interval);
         }
     }
@@ -110,7 +110,7 @@ public partial class MainWindowViewModel : ViewModelBase,
         if (!await IsValidConfiguration())
             return;
 
-        _wallpaperChanger.Stop();
+        _wallpaperManager.Stop();
 
         _cfg.ChangerType = ChangerType;
         _cfg.Interval = Interval;
@@ -134,18 +134,18 @@ public partial class MainWindowViewModel : ViewModelBase,
         _cfg.Bing.NumberOfWallpapers = BingViewModel.NumberOfWallpapers;
         _cfg.Bing.Orientation = BingViewModel.Orientation;
 
-        _wallpaperChanger.Config = _cfg;
-        _wallpaperChanger.SetInterval(_cfg.Interval);
+        _wallpaperManager.Config = _cfg;
+        _wallpaperManager.SetInterval(_cfg.Interval);
 
-        _wallpaperChanger.WpEnvironment.SetWallpaperAdjustment(_cfg.WallpaperAdjustment);
+        _wallpaperManager.WpEnvironment.SetWallpaperAdjustment(_cfg.WallpaperAdjustment);
 
         if (_cfg.ToFile())
         {
             await CreateNotification("Settings saved!", NotificationType.Success);
 
-            if (_wallpaperChanger.CanStart)
+            if (_wallpaperManager.CanStart)
             {
-                _wallpaperChanger.Start();
+                _wallpaperManager.Start();
                 UpdateAppTitle(Interval);
             }
         }

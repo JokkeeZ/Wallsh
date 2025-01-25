@@ -7,19 +7,19 @@ public class LocalWallpaperChanger : IWallpaperChanger
 {
     private readonly ILogger<LocalWallpaperChanger> _log = App.CreateLogger<LocalWallpaperChanger>();
 
-    public async Task OnChange(WallpaperChanger changer)
+    public async Task OnChange(WallpaperManager manager)
     {
-        var wpPath = changer.GetRandomWallpaperFromDisk(changer.Config.WallpapersFolder);
+        var wpPath = manager.GetRandomWallpaperFromDisk(manager.Config.WallpapersFolder);
 
         if (wpPath is null)
         {
-            changer.RequestStop();
-            _log.LogError("Could not set random wallpaper from disk. (wp is null)");
+            _log.LogError("Could not set random wallpaper from disk (wpPath is null). Requesting stop.");
+            manager.RequestStop();
             return;
         }
 
         _log.LogDebug("Setting a random wallpaper from disk.");
-        changer.WpEnvironment.SetWallpaperFromPath(wpPath);
+        manager.WpEnvironment.SetWallpaperFromPath(wpPath);
 
         await Task.CompletedTask;
     }
