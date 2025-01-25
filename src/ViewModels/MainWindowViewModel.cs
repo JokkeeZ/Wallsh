@@ -1,17 +1,13 @@
-﻿using System.ComponentModel;
-using System.Reflection;
+﻿using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Extensions.DependencyInjection;
 using Wallsh.Messages;
 using Wallsh.Models;
 using Wallsh.Models.Environments;
-using Wallsh.Models.Environments.Linux;
-using Wallsh.Models.Environments.Windows;
 
 namespace Wallsh.ViewModels;
 
@@ -28,6 +24,7 @@ public partial class MainWindowViewModel : ViewModelBase,
     private string _appTitle = "Wallsh";
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanStart))]
     private WallpaperChangerType _changerType;
 
     [ObservableProperty]
@@ -62,7 +59,9 @@ public partial class MainWindowViewModel : ViewModelBase,
     public BingViewModel BingViewModel { get; }
 
     public TimeOnly Interval => new(Hours, Minutes, Seconds);
-
+    
+    private bool CanStart => ChangerType != WallpaperChangerType.None && !Design.IsDesignMode;
+    
     public string[] Adjustments { get; }
 
     public MainWindowViewModel()
@@ -73,35 +72,32 @@ public partial class MainWindowViewModel : ViewModelBase,
         if (Design.IsDesignMode)
         {
             _cfg = new();
-            _wpEnvironment = OperatingSystem.IsLinux() ? new GnomeWpEnvironment() : null!;
             LocalViewModel = new(_cfg);
             WallhavenViewModel = new(_cfg);
             BingViewModel = new(_cfg);
-        }
-        else
-        {
-            _cfg = Ioc.Default.GetRequiredService<AppConfiguration>();
-            _wpEnvironment = Ioc.Default.GetRequiredService<IWpEnvironment>();
-            LocalViewModel = Ioc.Default.GetRequiredService<LocalViewModel>();
-            WallhavenViewModel = Ioc.Default.GetRequiredService<WallhavenViewModel>();
-            BingViewModel = Ioc.Default.GetRequiredService<BingViewModel>();
+            _wpEnvironment = null!;
+            _wallpaperManager = null!;
+            WallpapersFolder = _cfg.WallpapersFolder;
+            Adjustments = [];
+            return;
         }
 
+        _cfg = Ioc.Default.GetRequiredService<AppConfiguration>();
+        _wpEnvironment = Ioc.Default.GetRequiredService<IWpEnvironment>();
+        LocalViewModel = Ioc.Default.GetRequiredService<LocalViewModel>();
+        WallhavenViewModel = Ioc.Default.GetRequiredService<WallhavenViewModel>();
+        BingViewModel = Ioc.Default.GetRequiredService<BingViewModel>();
         _wallpaperManager = new(_cfg, _wpEnvironment);
-        
+
         Adjustments = _wpEnvironment.WallpaperAdjustments;
         ChangerType = _cfg.ChangerType;
         Hours = _cfg.Interval.Hour;
         Minutes = _cfg.Interval.Minute;
         Seconds = _cfg.Interval.Second;
         WallpapersFolder = _cfg.WallpapersFolder;
-        WallpaperAdjustment = _cfg.WallpaperAdjustment;
-        Adjustments = _wpEnvironment.WallpaperAdjustments;
-        
-        if (string.IsNullOrWhiteSpace(_cfg.WallpaperAdjustment))
-            WallpaperAdjustment = _wpEnvironment.GetWallpaperAdjustment();
+        WallpaperAdjustment = _cfg.WallpaperAdjustment ?? _wpEnvironment.GetWallpaperAdjustment();
 
-        if (_wallpaperManager.CanStart)
+        if (CanStart)
         {
             _wallpaperManager.Start();
             UpdateAppTitle(Interval);
@@ -151,7 +147,7 @@ public partial class MainWindowViewModel : ViewModelBase,
         {
             await CreateNotification("Settings saved!", NotificationType.Success);
 
-            if (_wallpaperManager.CanStart)
+            if (CanStart)
             {
                 _wallpaperManager.Start();
                 UpdateAppTitle(Interval);

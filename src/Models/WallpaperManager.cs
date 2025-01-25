@@ -1,5 +1,4 @@
 using System.Timers;
-using Avalonia.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +19,6 @@ public class WallpaperManager : IDisposable
 
     public AppConfiguration Config { get; set; }
 
-    public bool CanStart => Config.ChangerType != WallpaperChangerType.None && !Design.IsDesignMode;
 
     public WallpaperManager(AppConfiguration cfg, IWpEnvironment env)
     {

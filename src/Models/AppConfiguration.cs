@@ -14,7 +14,7 @@ public class AppConfiguration
     public WallpaperChangerType ChangerType { get; set; } = WallpaperChangerType.None;
     public TimeOnly Interval { get; set; } = new(0, 10, 0, 0);
     public string WallpapersFolder { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-    public string? WallpaperAdjustment { get; set; } = string.Empty;
+    public string? WallpaperAdjustment { get; set; }
     public WallhavenConfiguration Wallhaven { get; init; } = new();
     public BingConfiguration Bing { get; init; } = new();
 
