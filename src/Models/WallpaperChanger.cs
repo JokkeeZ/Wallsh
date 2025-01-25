@@ -1,6 +1,5 @@
 using System.Timers;
 using Avalonia.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Wallsh.Changers;
@@ -12,7 +11,7 @@ using Timer = System.Timers.Timer;
 
 namespace Wallsh.Models;
 
-public class WallpaperChanger : ObservableRecipient, IDisposable
+public class WallpaperChanger : IDisposable
 {
     private readonly ILogger<WallpaperChanger> _log = App.CreateLogger<WallpaperChanger>();
 
@@ -63,7 +62,7 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
             return;
         }
 
-        Messenger.Send(new TimerUpdatedMessage(Config.Interval));
+        WeakReferenceMessenger.Default.Send(new TimerUpdatedMessage(Config.Interval));
         Task.Run(async () => await service.OnChange(this));
     }
 
@@ -71,6 +70,13 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
     {
         _timer.Stop();
         _log.LogDebug("{Changer} stopped.", Config.ChangerType);
+    }
+
+    public void RequestStop()
+    {
+        _timer.Stop();
+        _log.LogDebug("{Changer} requested to stop.. Timer stopped.", Config.ChangerType);
+        WeakReferenceMessenger.Default.Send(new StopRequestedMessage());
     }
 
     public void Start()
@@ -81,17 +87,20 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
             return;
         }
 
-        if (_services.TryGetValue(Config.ChangerType, out var service))
+        if (!_services.TryGetValue(Config.ChangerType, out var changer))
         {
-            _log.LogDebug("Resetting {Changer} before starting.", Config.ChangerType);
-            service.Reset(this);
+            _log.LogError("Trying to start with unknown chager type: {Changer}", Config.ChangerType);
+            return;
+        }
 
-            var folder = GetChangerDownloadFolderPath();
-            if (Config.ChangerType != WallpaperChangerType.Local && !Directory.Exists(folder))
-            {
-                var cwd = Directory.CreateDirectory(folder);
-                _log.LogDebug("Attempted to make folder for: {Changer} -> '{Path}'", Config.ChangerType, cwd.FullName);
-            }
+        _log.LogDebug("Resetting {Changer} before starting.", Config.ChangerType);
+        changer.Reset(this);
+
+        var folder = GetChangerDownloadFolderPath();
+        if (Config.ChangerType != WallpaperChangerType.Local && !Directory.Exists(folder))
+        {
+            var cwd = Directory.CreateDirectory(folder);
+            _log.LogDebug("Attempted to make folder for: {Changer} -> '{Path}'", Config.ChangerType, cwd.FullName);
         }
 
         _timer.Start();
@@ -128,6 +137,9 @@ public class WallpaperChanger : ObservableRecipient, IDisposable
         var randomFromDisk = wallpapers[Random.Shared.Next(wallpapers.Length)];
         return randomFromDisk.FullName;
     }
+
+    public bool FileExistsInChangerDownloadFolder(string filename) =>
+        File.Exists(Path.Combine(GetChangerDownloadFolderPath(), filename));
 
     public string GetChangerDownloadFolderPath() =>
         Path.Combine(Config.WallpapersFolder, Config.ChangerType.ToString());

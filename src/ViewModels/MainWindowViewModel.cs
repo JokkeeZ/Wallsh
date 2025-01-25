@@ -12,7 +12,8 @@ namespace Wallsh.ViewModels;
 
 [NotifyPropertyChangedRecipients]
 public partial class MainWindowViewModel : ViewModelBase,
-    IRecipient<TimerUpdatedMessage>
+    IRecipient<TimerUpdatedMessage>,
+    IRecipient<StopRequestedMessage>
 {
     private readonly AppConfiguration _cfg;
     private readonly WallpaperChanger _wallpaperChanger;
@@ -92,14 +93,14 @@ public partial class MainWindowViewModel : ViewModelBase,
         if (string.IsNullOrWhiteSpace(_cfg.WallpaperAdjustment))
             WallpaperAdjustment = _wallpaperChanger.WpEnvironment.GetWallpaperAdjustment();
 
-        // We don't start the changer if changer
-        // is None OR we are in design mode.
         if (_wallpaperChanger.CanStart)
         {
             _wallpaperChanger.Start();
             UpdateAppTitle(Interval);
         }
     }
+
+    public void Receive(StopRequestedMessage message) => ChangerType = WallpaperChangerType.None;
 
     public void Receive(TimerUpdatedMessage message) => UpdateAppTitle(message.Time);
 
@@ -142,8 +143,6 @@ public partial class MainWindowViewModel : ViewModelBase,
         {
             await CreateNotification("Settings saved!", NotificationType.Success);
 
-            // We don't start the changer if changer
-            // is None OR we are in design mode.
             if (_wallpaperChanger.CanStart)
             {
                 _wallpaperChanger.Start();
@@ -199,8 +198,15 @@ public partial class MainWindowViewModel : ViewModelBase,
 
     protected override void Broadcast<T>(T oldValue, T newValue, string? propertyName)
     {
-        Messenger.Send(new IntervalUpdatedMessage(Interval));
-        Messenger.Send(new WallpaperFolderUpdatedMessage(WallpapersFolder));
+        switch (propertyName)
+        {
+            case nameof(Interval):
+                Messenger.Send(new IntervalUpdatedMessage(Interval));
+            break;
+            case nameof(WallpapersFolder):
+                Messenger.Send(new WallpaperFolderUpdatedMessage(WallpapersFolder));
+            break;
+        }
     }
 
     private async Task CreateNotification(string message, NotificationType type)
