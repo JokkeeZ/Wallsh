@@ -25,7 +25,7 @@
                                         Command="{x:Static local:App.ShowAppFromTray}" />
                         <NativeMenuItem Header="Open website"
                                         Command="{x:Static local:App.OpenWebsiteFromTray}" />
-                        <NativeMenuItem Header="Open wallpapers folder"
+                        <NativeMenuItem Header="Open wallpaper folder"
                                         Command="{x:Static local:App.OpenWallpapersFolderFromTray}" />
                         <NativeMenuItemSeparator />
                         <NativeMenuItem Header="Quit"

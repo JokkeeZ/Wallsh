@@ -42,20 +42,27 @@
                     <StackPanel Classes="Container">
 
                         <StackPanel Classes="Group">
-                            <TextBlock Text="Time Between Changes" FontWeight="Bold" />
+                            <!-- INFO BUTTON -->
+                            <RelativePanel>
+                                <TextBlock RelativePanel.AlignLeftWithPanel="True" Text="Time Between Changes"
+                                           FontWeight="Bold" />
+                                <Button Classes="InfoButton" RelativePanel.AlignRightWithPanel="True">
+                                    <PathIcon Width="15" Height="15" Data="{StaticResource InfoRegular}" />
+                                </Button>
+                            </RelativePanel>
 
                             <StackPanel Classes="HorizontalChild">
-                                <StackPanel Classes="Child" Width="146">
+                                <StackPanel Classes="Child" Width="147">
                                     <TextBlock Text="Hours(s):" />
                                     <NumericUpDown Classes="TimeSelector" Value="{Binding Hours}" Maximum="23" />
                                 </StackPanel>
 
-                                <StackPanel Classes="Child" Width="146">
+                                <StackPanel Classes="Child" Width="147">
                                     <TextBlock Text="Minute(s):" />
                                     <NumericUpDown Classes="TimeSelector" Value="{Binding Minutes}" Maximum="59" />
                                 </StackPanel>
 
-                                <StackPanel Classes="Child" Width="146">
+                                <StackPanel Classes="Child" Width="147">
                                     <TextBlock Text="Second(s):" />
                                     <NumericUpDown Classes="TimeSelector" Value="{Binding Seconds}" Maximum="59" />
                                 </StackPanel>
@@ -63,7 +70,7 @@
                         </StackPanel>
 
                         <StackPanel Classes="Group">
-                            <TextBlock Text="Wallpapers folder" FontWeight="Bold" />
+                            <TextBlock Text="Wallpaper folder" FontWeight="Bold" />
                             <StackPanel Classes="HorizontalChild">
                                 <TextBox Classes="TextBox340"
                                          Watermark="Folder containing wallpapers"
@@ -79,7 +86,7 @@
                             <TextBlock Text="Wallpaper adjustment" FontWeight="Bold" />
                             <StackPanel Classes="HorizontalChild">
                                 <ComboBox Classes="ComboBox340"
-                                          PlaceholderText="Select wallpaper adjustment"
+                                          PlaceholderText="Select adjustment"
                                           ItemsSource="{Binding Adjustments}"
                                           SelectedItem="{Binding WallpaperAdjustment}">
                                     <ComboBox.ItemTemplate>
@@ -96,49 +103,45 @@
 
                         <!-- SERVICES -->
                         <StackPanel Classes="Group">
-                            <TextBlock Text="Select a service" FontWeight="Bold" />
+                            <TextBlock Text="Slideshow source" FontWeight="Bold" />
                             <StackPanel>
                                 <ToggleSwitch
+                                    Name="LocalToggle"
                                     IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Local}}"
-                                    OffContent="Local disabled"
-                                    OnContent="Local enabled" />
+                                    OffContent="Local wallpapers"
+                                    OnContent="Local wallpapers" />
                                 <ToggleSwitch
+                                    Name="WallhavenToggle"
                                     IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Wallhaven}}"
-                                    OffContent="Wallhaven disabled"
-                                    OnContent="Wallhaven enabled" />
+                                    OffContent="Wallhaven"
+                                    OnContent="Wallhaven" />
                                 <ToggleSwitch
+                                    Name="BingToggle"
                                     IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Bing}}"
-                                    OffContent="Bing disabled"
-                                    OnContent="Bing enabled" />
+                                    OffContent="Bing"
+                                    OnContent="Bing" />
                             </StackPanel>
                         </StackPanel>
-
-                        <!-- INFO BUTTON -->
-                        <RelativePanel ZIndex="1" Margin="0 25 5 0">
-                            <Button Classes="InfoButton" RelativePanel.AlignRightWithPanel="True">
-                                <PathIcon Width="15" Height="15" Data="{StaticResource InfoRegular}" />
-                            </Button>
-                        </RelativePanel>
                     </StackPanel>
                 </Border>
             </TabItem>
 
             <!-- LOCAL SETTINGS -->
-            <TabItem Header="Local">
+            <TabItem Header="Local wallpapers" IsVisible="{Binding #LocalToggle.IsChecked}">
                 <Border Classes="TabContent">
                     <views:LocalView DataContext="{Binding LocalViewModel}" />
                 </Border>
             </TabItem>
 
             <!-- WALLHAVEN SETTINGS -->
-            <TabItem Header="Wallhaven">
+            <TabItem Header="Wallhaven" IsVisible="{Binding #WallhavenToggle.IsChecked}">
                 <Border Classes="TabContent">
                     <views:WallhavenView DataContext="{Binding WallhavenViewModel}" />
                 </Border>
             </TabItem>
 
             <!-- BING SETTINGS -->
-            <TabItem Header="Bing">
+            <TabItem Header="Bing" IsVisible="{Binding #BingToggle.IsChecked}">
                 <Border Classes="TabContent">
                     <views:BingView DataContext="{Binding BingViewModel}" />
                 </Border>
