@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Wallsh.Services.Bing;
 using Wallsh.Services.Wallhaven;
 
@@ -11,6 +12,9 @@ public class AppConfiguration
         WriteIndented = true
     };
 
+    [JsonIgnore]
+    private string? ConfigurationFileLocation { get; set; }
+
     public WallpaperChangerType ChangerType { get; set; } = WallpaperChangerType.None;
     public TimeOnly Interval { get; set; } = new(0, 10, 0, 0);
     public string WallpapersFolder { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
@@ -18,26 +22,17 @@ public class AppConfiguration
     public WallhavenConfiguration Wallhaven { get; init; } = new();
     public BingConfiguration Bing { get; init; } = new();
 
-    private static string GetConfigurationPath()
+    public static AppConfiguration FromFile(string fileName)
     {
-        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        var wallshConfig = Path.Combine(home, ".config", "wallsh");
-
-        // Create ~/.config/wallsh/ folder unless it already exists.
-        Directory.CreateDirectory(wallshConfig);
-
-        return Path.Combine(wallshConfig, "config.json");
-    }
-
-    public static AppConfiguration FromFile()
-    {
-        if (!File.Exists(GetConfigurationPath()))
-            return new();
-
         try
         {
-            var json = File.ReadAllText(GetConfigurationPath());
-            return JsonSerializer.Deserialize<AppConfiguration>(json) ?? new();
+            var filePath = Path.Combine(GetFolderPath(), fileName);
+
+            var json = File.ReadAllText(filePath);
+            var config = JsonSerializer.Deserialize<AppConfiguration>(json) ?? new();
+            config.ConfigurationFileLocation = filePath;
+
+            return config;
         }
         catch
         {
@@ -49,8 +44,11 @@ public class AppConfiguration
     {
         try
         {
+            // Create ~/.config/wallsh folder if not exist
+            Directory.CreateDirectory(GetFolderPath());
+
             var text = JsonSerializer.Serialize(this, JsonOptions);
-            File.WriteAllText(GetConfigurationPath(), text);
+            File.WriteAllText(ConfigurationFileLocation!, text);
 
             return true;
         }
@@ -58,5 +56,13 @@ public class AppConfiguration
         {
             return false;
         }
+    }
+
+    private static string GetFolderPath()
+    {
+        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        var folderPath = Path.Combine(home, ".config", "wallsh");
+
+        return folderPath;
     }
 }

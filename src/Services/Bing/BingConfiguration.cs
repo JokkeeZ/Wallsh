@@ -1,10 +1,11 @@
+using System.Text.Json.Serialization;
 using Avalonia.Platform;
 
 namespace Wallsh.Services.Bing;
 
 public class BingConfiguration
 {
-    [NonSerialized]
+    [JsonIgnore]
     public static readonly Dictionary<ScreenOrientation, List<string>> Resolutions = new()
     {
         [ScreenOrientation.Landscape] =

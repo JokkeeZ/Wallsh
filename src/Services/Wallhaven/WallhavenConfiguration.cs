@@ -1,8 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace Wallsh.Services.Wallhaven;
 
 public class WallhavenConfiguration
 {
-    [NonSerialized]
+    [JsonIgnore]
     public static readonly Dictionary<WallhavenRatio, List<string>> Resolutions = new()
     {
         [WallhavenRatio.Ratio16X10] = ["1280x800", "1600x1000", "1920x1200", "2560x1600", "3840x2400"],

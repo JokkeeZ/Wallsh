@@ -24,7 +24,7 @@ public class App : Application
     public static ICommand OpenWallpapersFolderFromTray =>
         new RelayCommand(() =>
         {
-            var cfg = AppConfiguration.FromFile();
+            var cfg = Ioc.Default.GetRequiredService<AppConfiguration>();
 
             Process.Start(new ProcessStartInfo
             {
@@ -92,7 +92,7 @@ public class App : Application
                     .AddDebug()
                     .SetMinimumLevel(LogLevel.Debug)
             ))
-            .AddSingleton(AppConfiguration.FromFile())
+            .AddSingleton(AppConfiguration.FromFile("config.json"))
             .AddSingleton(GetWpEnvironment())
             .AddKeyedSingleton<IWallpaperChanger, NoneWallpaperChanger>(WallpaperChangerType.None)
             .AddKeyedSingleton<IWallpaperChanger, LocalWallpaperChanger>(WallpaperChangerType.Local)
