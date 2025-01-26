@@ -94,6 +94,7 @@ public class App : Application
             ))
             .AddSingleton(AppConfiguration.FromFile())
             .AddSingleton(GetWpEnvironment())
+            .AddKeyedSingleton<IWallpaperChanger, NoneWallpaperChanger>(WallpaperChangerType.None)
             .AddKeyedSingleton<IWallpaperChanger, LocalWallpaperChanger>(WallpaperChangerType.Local)
             .AddKeyedSingleton<IWallpaperChanger, WallhavenWallpaperChanger>(WallpaperChangerType.Wallhaven)
             .AddKeyedSingleton<IWallpaperChanger, BingWallpaperChanger>(WallpaperChangerType.Bing)

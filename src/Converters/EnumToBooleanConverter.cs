@@ -14,6 +14,14 @@ public class EnumToBooleanConverter : IValueConverter
         return false;
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
-        value?.Equals(true) == true ? parameter : BindingOperations.DoNothing;
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value?.Equals(true) == true)
+            return parameter;
+
+        if (targetType.IsEnum)
+            return Enum.GetValues(targetType).GetValue(0);
+
+        return BindingOperations.DoNothing;
+    }
 }
