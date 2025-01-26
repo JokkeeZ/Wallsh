@@ -59,9 +59,9 @@ public partial class MainWindowViewModel : ViewModelBase,
     public BingViewModel BingViewModel { get; }
 
     public TimeOnly Interval => new(Hours, Minutes, Seconds);
-    
+
     private bool CanStart => ChangerType != WallpaperChangerType.None && !Design.IsDesignMode;
-    
+
     public string[] Adjustments { get; }
 
     public MainWindowViewModel()
