@@ -19,7 +19,6 @@ public class WallpaperManager : IDisposable
 
     public AppConfiguration Config { get; set; }
 
-
     public WallpaperManager(AppConfiguration cfg, IWpEnvironment env)
     {
         Config = cfg;
@@ -47,7 +46,7 @@ public class WallpaperManager : IDisposable
     public void Stop()
     {
         _timer.Stop();
-        _log.LogDebug("{Changer} stopped.", Config.ChangerType);
+        _log.LogDebug("Timer stopped.");
     }
 
     public void RequestStop()
@@ -73,13 +72,13 @@ public class WallpaperManager : IDisposable
         }
 
         _timer.Start();
-        _log.LogDebug("{Changer} started.", Config.ChangerType);
+        _log.LogDebug("Timer started.");
     }
 
     public void SetInterval(TimeOnly time)
     {
         _timer.Interval = time.ToTimeSpan().TotalMilliseconds;
-        _log.LogDebug("{Changer} interval set to: {Interval:HH:mm:ss}", Config.ChangerType, time);
+        _log.LogDebug("Timer interval set to: {Interval:HH:mm:ss}", time);
     }
 
     public string? GetRandomWallpaperFromDisk(string folder)

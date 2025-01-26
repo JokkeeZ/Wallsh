@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using Microsoft.Win32;
 
 namespace Wallsh.Models.Environments.Windows;
 
+[SuppressMessage("Globalization", "CA2101:Specify marshaling for P/Invoke string arguments")]
 [SupportedOSPlatform("windows")]
 public class WindowsWpEnvironment : IWpEnvironment
 {

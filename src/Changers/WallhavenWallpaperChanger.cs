@@ -87,7 +87,7 @@ public class WallhavenWallpaperChanger(IWpEnvironment env) : IWallpaperChanger
             return;
         }
 
-        _log.LogDebug("Download: Setting wallpaper.");
+        _log.LogDebug("Setting the downloaded wallpaper.");
         env.SetWallpaperFromPath(wpPath);
     }
 }

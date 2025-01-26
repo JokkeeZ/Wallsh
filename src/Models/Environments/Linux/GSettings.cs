@@ -19,7 +19,7 @@ public class GSettings : IDisposable
         {
             _gSettingsPtr = g_settings_new(schema);
             if (_gSettingsPtr == nint.Zero)
-                _log.LogError("Failed to create GSettings object. Ensure the schema is installed.");
+                _log.LogError("Failed to create GSettings pointer. Ensure the schema: '{Schema}' is installed.", schema);
         }
         catch (Exception e)
         {
@@ -71,7 +71,7 @@ public class GSettings : IDisposable
 
             if (getStringPtr == nint.Zero)
             {
-                _log.LogError("'g_settings_get_string' was zero pointer.");
+                _log.LogError("'g_settings_get_string' returned zero.");
                 return null;
             }
         }
