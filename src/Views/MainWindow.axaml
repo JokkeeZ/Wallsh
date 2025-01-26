@@ -13,7 +13,7 @@
         x:Class="Wallsh.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/Wallsh.ico"
-        Title="{Binding AppTitle}">
+        Title="Wallsh">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,

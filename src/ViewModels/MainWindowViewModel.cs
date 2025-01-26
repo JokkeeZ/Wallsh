@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -19,9 +18,6 @@ public partial class MainWindowViewModel : ViewModelBase,
     private readonly AppConfiguration _cfg;
     private readonly WallpaperManager _wallpaperManager;
     private readonly IWpEnvironment _wpEnvironment;
-
-    [ObservableProperty]
-    private string _appTitle = "Wallsh";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanStart))]
@@ -98,15 +94,12 @@ public partial class MainWindowViewModel : ViewModelBase,
         WallpaperAdjustment = _cfg.WallpaperAdjustment ?? _wpEnvironment.GetWallpaperAdjustment();
 
         if (CanStart)
-        {
             _wallpaperManager.Start();
-            UpdateAppTitle(Interval);
-        }
     }
 
     public void Receive(StopRequestedMessage message) => ChangerType = WallpaperChangerType.None;
 
-    public void Receive(TimerUpdatedMessage message) => UpdateAppTitle(message.Time);
+    public void Receive(TimerUpdatedMessage message) { }
 
     [RelayCommand]
     private async Task SaveConfiguration()
@@ -148,10 +141,7 @@ public partial class MainWindowViewModel : ViewModelBase,
             await CreateNotification("Settings saved!", NotificationType.Success);
 
             if (CanStart)
-            {
                 _wallpaperManager.Start();
-                UpdateAppTitle(Interval);
-            }
         }
         else
             await CreateNotification("Failed to save settings!", NotificationType.Error);
@@ -221,16 +211,5 @@ public partial class MainWindowViewModel : ViewModelBase,
 
         await Task.Delay(TimeSpan.FromSeconds(5));
         IsNotificationVisible = false;
-    }
-
-    private void UpdateAppTitle(TimeOnly time)
-    {
-        var nextChangeTime = DateTime.Now
-            .AddHours(time.Hour)
-            .AddMinutes(time.Minute)
-            .AddSeconds(time.Second);
-
-        var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3);
-        AppTitle = $"Wallsh {version} | WP Change: {nextChangeTime.ToLongTimeString()}";
     }
 }
