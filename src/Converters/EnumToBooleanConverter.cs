@@ -16,10 +16,13 @@ public class EnumToBooleanConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value?.Equals(true) == true)
+        if (value is true && parameter != null)
             return parameter;
 
-        if (targetType.IsEnum)
+        if (value is false)
+            return BindingOperations.DoNothing;
+
+        if (targetType.IsEnum && parameter == null)
             return Enum.GetValues(targetType).GetValue(0);
 
         return BindingOperations.DoNothing;
