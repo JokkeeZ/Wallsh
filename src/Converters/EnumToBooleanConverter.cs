@@ -16,8 +16,6 @@ public class EnumToBooleanConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        Console.WriteLine($"Parameter: {parameter} Value: {value} ");
-        
         if (value != null)
             return (bool)value ? parameter : AvaloniaProperty.UnsetValue;
         
