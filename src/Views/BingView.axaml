@@ -4,52 +4,55 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Wallsh.ViewModels"
              xmlns:avalonia="clr-namespace:Avalonia.Platform;assembly=Avalonia.Controls"
+             xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
              mc:Ignorable="d" d:DesignWidth="500"
              x:Class="Wallsh.Views.BingView"
              x:DataType="vm:BingViewModel">
 
-    <StackPanel Classes="Container">
-        <StackPanel Classes="Group">
-            <TextBlock Text="Orientation (Landscape/Portrait)" FontWeight="Bold" />
-            <StackPanel Classes="HorizontalChild">
-                <RadioButton GroupName="Orientation"
-                             IsChecked="{Binding Orientation, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static avalonia:ScreenOrientation.Landscape}}"
-                             Content="Landscape" />
-                <RadioButton GroupName="Orientation"
-                             IsChecked="{Binding Orientation, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static avalonia:ScreenOrientation.Portrait}}"
-                             Content="Portrait" />
+    <Grid RowDefinitions="Auto,10,Auto">
+        <Border Classes="TabContent" Padding="10" Grid.Row="0">
+            <StackPanel Classes="Container">
+                <TextBlock Text="Orientation and Resolution" Classes="Subtitle2" Margin="0,0,0,8" />
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <RadioButton GroupName="Orientation"
+                                     Content="Landscape"
+                                     IsChecked="{Binding Orientation, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static avalonia:ScreenOrientation.Landscape}}" />
+                        <RadioButton GroupName="Orientation"
+                                     Content="Portrait"
+                                     IsChecked="{Binding Orientation, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static avalonia:ScreenOrientation.Portrait}}" />
+                    </StackPanel>
+
+                    <ComboBox
+                        Theme="{StaticResource MaterialOutlineComboBox}"
+                        Classes="outline dense"
+                        assists:ComboBoxAssist.Label="Select a resolution"
+                        ItemsSource="{Binding AvailableResolutions}"
+                        SelectedItem="{Binding Path=Resolution}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
+        </Border>
 
-        <StackPanel Classes="Group">
-            <TextBlock Text="Resolution" FontWeight="Bold" />
-            <ComboBox Classes="ComboBox340"
-                      PlaceholderText="Select resolution"
-                      ItemsSource="{Binding AvailableResolutions}"
-                      SelectedItem="{Binding Path=Resolution}">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}" />
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-        </StackPanel>
-
-        <StackPanel Classes="Group">
-            <TextBlock Text="Number of wallpapers (1 - 8)" FontWeight="Bold" />
-            <StackPanel Classes="Child">
-                <TextBlock Text="{Binding #NumOfWallpapers.Value}" Margin="0 0 170 -20" HorizontalAlignment="Center" />
-                <Slider x:Name="NumOfWallpapers"
-                        Minimum="1"
-                        Maximum="8"
-                        Width="340"
-                        HorizontalAlignment="Left"
-                        Value="{Binding NumberOfWallpapers}"
-                        TickFrequency="1"
-                        IsSnapToTickEnabled="True"
-                        TickPlacement="BottomRight" />
+        <Border Classes="TabContent" Padding="10" Grid.Row="2">
+            <StackPanel Classes="Container">
+                <TextBlock Text="Number of wallpapers to download" Margin="0,0,0,8" Classes="Subtitle2" />
+                <StackPanel>
+                    <Slider IsSnapToTickEnabled="True"
+                            TickPlacement="TopLeft"
+                            Classes="Discrete Accent"
+                            Minimum="1"
+                            Maximum="8"
+                            TickFrequency="1"
+                            Width="465"
+                            Value="{Binding NumberOfWallpapers}" />
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
-    </StackPanel>
-
+        </Border>
+    </Grid>
 </UserControl>

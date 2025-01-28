@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -38,6 +37,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Interval))]
+    [NotifyPropertyChangedFor(nameof(SelectedTime))]
     private int _hours;
 
     [ObservableProperty]
@@ -45,6 +45,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Interval))]
+    [NotifyPropertyChangedFor(nameof(SelectedTime))]
     private int _minutes;
 
     [ObservableProperty]
@@ -55,6 +56,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Interval))]
+    [NotifyPropertyChangedFor(nameof(SelectedTime))]
     private int _seconds;
 
     [ObservableProperty]
@@ -63,11 +65,13 @@ public partial class MainWindowViewModel : ViewModelBase,
     [ObservableProperty]
     private string _wallpapersFolder;
 
-    public LocalViewModel LocalViewModel { get; }
-    public WallhavenViewModel WallhavenViewModel { get; }
-    public BingViewModel BingViewModel { get; }
+    private LocalViewModel LocalViewModel { get; }
+    private WallhavenViewModel WallhavenViewModel { get; }
+    private BingViewModel BingViewModel { get; }
 
     public TimeOnly Interval => new(Hours, Minutes, Seconds);
+
+    public TimeSpan SelectedTime => new(0, Hours, Minutes, Seconds);
 
     public string[] Adjustments { get; }
 
@@ -267,7 +271,7 @@ public partial class MainWindowViewModel : ViewModelBase,
         NotificationText = message;
         IsNotificationVisible = true;
 
-        await Task.Delay(TimeSpan.FromSeconds(5));
+        await Task.Delay(TimeSpan.FromSeconds(2));
         IsNotificationVisible = false;
     }
 }

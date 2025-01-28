@@ -8,7 +8,7 @@
              x:DataType="vm:LocalViewModel">
 
     <StackPanel Classes="Container">
-        <TextBlock>Maybe some settings later</TextBlock>
+        <TextBlock>Some settings later</TextBlock>
     </StackPanel>
 
 </UserControl>

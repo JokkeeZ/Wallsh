@@ -5,10 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:Wallsh.Views"
         xmlns:models="clr-namespace:Wallsh.Models"
+        xmlns:p1="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
         MinWidth="500"
         MinHeight="560"
         Width="500"
-        Height="560"
+        Height="570"
+        CanResize="False"
         mc:Ignorable="d" d:DesignWidth="500"
         x:Class="Wallsh.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -21,74 +23,58 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="0,*,10" HorizontalAlignment="Center">
-        <!-- NOTIFICATION -->
-        <StackPanel Grid.Row="0" ZIndex="1">
+    <Grid RowDefinitions="1,*">
+        <StackPanel ZIndex="1" Grid.Row="0" Grid.IsSharedSizeScope="True">
             <NotificationCard NotificationType="{Binding NotificationType}"
                               IsVisible="{Binding IsNotificationVisible}"
-                              Width="{Binding $parent.Width}"
-                              Height="60">
-                <StackPanel Margin="10 10 10 10" VerticalAlignment="Center">
-                    <TextBlock HorizontalAlignment="Center" Text="{Binding NotificationText}" />
+                              Width="500"
+                              Margin="-8 0 0 0"
+                              Height="60" Padding="10">
+                <StackPanel Margin="10 10 10 10">
+                    <TextBlock Classes="Body1" Text="{Binding NotificationText}" />
                 </StackPanel>
             </NotificationCard>
         </StackPanel>
 
-        <TabControl Grid.Row="1" Classes="TabControlContainer">
-
-            <!-- GENERAL SETTINGS -->
+        <TabControl Grid.Row="1" Width="500" Padding="5">
             <TabItem Header="General">
-                <Border Classes="TabContent">
-                    <RelativePanel>
-                        <StackPanel Classes="Container">
-
-                            <StackPanel Classes="Group">
-                                <!-- INFO BUTTON -->
-                                <RelativePanel>
-                                    <TextBlock RelativePanel.AlignLeftWithPanel="True" Text="Time Between Changes"
-                                               FontWeight="Bold" />
-                                    <Button Classes="InfoButton" RelativePanel.AlignRightWithPanel="True"
-                                            RelativePanel.AlignTopWithPanel="True">
-                                        <PathIcon Width="15" Height="15" Data="{StaticResource InfoRegular}" />
-                                    </Button>
-                                </RelativePanel>
-
-                                <StackPanel Classes="HorizontalChild">
-                                    <StackPanel Classes="Child" Width="147">
-                                        <TextBlock Text="Hours(s):" />
-                                        <NumericUpDown Classes="TimeSelector" Value="{Binding Hours}" Maximum="23" />
-                                    </StackPanel>
-
-                                    <StackPanel Classes="Child" Width="147">
-                                        <TextBlock Text="Minute(s):" />
-                                        <NumericUpDown Classes="TimeSelector" Value="{Binding Minutes}" Maximum="59" />
-                                    </StackPanel>
-
-                                    <StackPanel Classes="Child" Width="147">
-                                        <TextBlock Text="Second(s):" />
-                                        <NumericUpDown Classes="TimeSelector" Value="{Binding Seconds}" Maximum="59" />
-                                    </StackPanel>
+                <StackPanel>
+                    <Grid RowDefinitions="*,10,Auto">
+                        <Border Classes="TabContent" Padding="10" Grid.Row="0">
+                            <StackPanel Spacing="7">
+                                <StackPanel>
+                                    <TextBlock Text="Interval settings" Classes="Subtitle2" Margin="0,0,0,8" />
+                                    <TimePicker ClockIdentifier="24HourClock"
+                                                Width="465"
+                                                UseSeconds="True"
+                                                SelectedTime="{Binding SelectedTime}"
+                                                p1:TextFieldAssist.Label="Wallpaper should change after this time has passed:"
+                                                p1:TimePickerAssist.DateTimeFormat="HH:mm:ss"
+                                                p1:TimePickerAssist.CanSelectSeconds="True" />
                                 </StackPanel>
                             </StackPanel>
+                        </Border>
 
-                            <StackPanel Classes="Group">
-                                <TextBlock Text="Wallpaper folder" FontWeight="Bold" />
-                                <StackPanel Classes="HorizontalChild">
-                                    <TextBox Classes="TextBox340"
-                                             Watermark="Folder containing wallpapers"
-                                             Name="FolderPathTextBox"
-                                             Text="{Binding WallpapersFolder}" />
-                                    <Button Classes="Medium"
-                                            Content="Browse"
-                                            Command="{Binding BrowseWallpapersFolderCommand}" />
+                        <Border Classes="TabContent" Padding="10" Grid.Row="2">
+                            <StackPanel>
+                                <TextBlock Text="General settings" Classes="Subtitle2" Margin="0,0,0,8" />
+                                <StackPanel Margin="0,0,0,8">
+                                    <Grid ColumnDefinitions="*,5,Auto">
+                                        <TextBox Grid.Column="0" UseFloatingWatermark="True"
+                                                 Text="{Binding WallpapersFolder}"
+                                                 p1:TextFieldAssist.Label="Folder containing wallpapers"
+                                                 Classes="outline dense" />
+                                        <Button Grid.Column="2" Content="Browse"
+                                                Height="40"
+                                                VerticalAlignment="Bottom"
+                                                Command="{Binding BrowseWallpapersFolderCommand}" />
+                                    </Grid>
                                 </StackPanel>
-                            </StackPanel>
 
-                            <StackPanel Classes="Group">
-                                <TextBlock Text="Wallpaper adjustment" FontWeight="Bold" />
-                                <StackPanel Classes="HorizontalChild">
-                                    <ComboBox Classes="ComboBox340"
-                                              PlaceholderText="Select adjustment"
+                                <StackPanel Margin="0,0,0,8">
+                                    <TextBlock Text="Wallpaper adjustment" Classes="Body2" />
+                                    <ComboBox p1:ComboBoxAssist.Label="Select wallpaper adjustment"
+                                              Theme="{StaticResource MaterialOutlineComboBox}"
                                               ItemsSource="{Binding Adjustments}"
                                               SelectedItem="{Binding WallpaperAdjustment}">
                                         <ComboBox.ItemTemplate>
@@ -98,83 +84,57 @@
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
                                 </StackPanel>
-                            </StackPanel>
 
-                            <!-- HISTORY -->
-                            <StackPanel Classes="Group">
-                                <TextBlock Text="History" FontWeight="Bold" />
-                                <ToggleSwitch
-                                    IsChecked="{Binding HistoryEnabled}"
-                                    OffContent="History disabled"
-                                    OnContent="History enabled" />
-
-                                <StackPanel Classes="Group"
-                                            HorizontalAlignment="Left"
-                                            Width="340"
-                                            IsEnabled="{Binding HistoryEnabled}">
-                                    <TextBlock Text="Remember this many wallpapers" FontWeight="Bold" />
-                                    <NumericUpDown Classes="TimeSelector"
-                                                   Value="{Binding HistoryMaxItems}"
-                                                   Minimum="0"
-                                                   Maximum="100" />
+                                <StackPanel Margin="0,0,0,8">
+                                    <StackPanel Spacing="8">
+                                        <TextBlock Text="Remember this many wallpapers" Classes="Body2" />
+                                        <NumericUpDown Value="{Binding HistoryMaxItems}"
+                                                       Minimum="0"
+                                                       TextAlignment="Center"
+                                                       Maximum="100"
+                                                       Height="40"
+                                                       FormatString="0"
+                                                       Theme="{StaticResource OutlineNumericUpDown}" />
+                                    </StackPanel>
                                 </StackPanel>
-                            </StackPanel>
 
-                            <!-- SERVICES -->
-                            <StackPanel Classes="Group">
-                                <TextBlock Text="Slideshow source" FontWeight="Bold" />
-                                <StackPanel Classes="HorizontalContainer">
-                                    <RadioButton
-                                        GroupName="ChangerGroup"
-                                        Name="NoneToggle"
-                                        IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.None}}"
-                                        Content="None" />
-                                    <RadioButton
-                                        GroupName="ChangerGroup"
-                                        Name="LocalToggle"
-                                        IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Local}}"
-                                        Content="Local" />
-                                    <RadioButton
-                                        GroupName="ChangerGroup"
-                                        Name="WallhavenToggle"
-                                        IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Wallhaven}}"
-                                        Content="Wallhaven" />
-                                    <RadioButton
-                                        GroupName="ChangerGroup"
-                                        Name="BingToggle"
-                                        IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Bing}}"
-                                        Content="Bing" />
+                                <StackPanel Margin="0,0,0,50">
+                                    <TextBlock Text="Wallpaper source" Classes="Body2" Margin="0,0,0,8" />
+                                    <StackPanel Orientation="Horizontal" Spacing="16">
+                                        <RadioButton Content="None"
+                                                     GroupName="ChangerGroup"
+                                                     IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.None}}" />
+                                        <RadioButton Content="Local"
+                                                     GroupName="ChangerGroup"
+                                                     IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Local}}" />
+                                        <RadioButton Content="Wallhaven"
+                                                     GroupName="ChangerGroup"
+                                                     IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Wallhaven}}" />
+                                        <RadioButton Content="Bing"
+                                                     GroupName="ChangerGroup"
+                                                     IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Bing}}" />
+                                    </StackPanel>
                                 </StackPanel>
+
+                                <Button Content="Save all settings"
+                                        HorizontalAlignment="Right"
+                                        Command="{Binding SaveConfigurationCommand}" />
                             </StackPanel>
-                        </StackPanel>
-
-                        <Button Content="Save settings"
-                                RelativePanel.AlignRightWithPanel="True"
-                                RelativePanel.AlignBottomWithPanel="True"
-                                Command="{Binding SaveConfigurationCommand}" />
-                    </RelativePanel>
-                </Border>
+                        </Border>
+                    </Grid>
+                </StackPanel>
             </TabItem>
 
-            <!-- LOCAL SETTINGS -->
-            <TabItem Header="Local wallpapers" IsVisible="{Binding #LocalToggle.IsChecked}">
-                <Border Classes="TabContent">
-                    <views:LocalView DataContext="{Binding LocalViewModel}" />
-                </Border>
+            <TabItem Header="Local wallpapers">
+                <views:LocalView DataContext="{Binding LocalViewModel}" />
             </TabItem>
 
-            <!-- WALLHAVEN SETTINGS -->
-            <TabItem Header="Wallhaven" IsVisible="{Binding #WallhavenToggle.IsChecked}">
-                <Border Classes="TabContent">
-                    <views:WallhavenView DataContext="{Binding WallhavenViewModel}" />
-                </Border>
+            <TabItem Header="Wallhaven">
+                <views:WallhavenView DataContext="{Binding WallhavenViewModel}" />
             </TabItem>
 
-            <!-- BING SETTINGS -->
-            <TabItem Header="Bing" IsVisible="{Binding #BingToggle.IsChecked}">
-                <Border Classes="TabContent">
-                    <views:BingView DataContext="{Binding BingViewModel}" />
-                </Border>
+            <TabItem Header="Bing">
+                <views:BingView DataContext="{Binding BingViewModel}" />
             </TabItem>
         </TabControl>
     </Grid>

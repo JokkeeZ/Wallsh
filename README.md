@@ -24,6 +24,7 @@ dotnet run
 
 # Dependencies
 - [Avalonia](https://github.com/AvaloniaUI/Avalonia)
+- [Material.Avalonia](https://github.com/AvaloniaCommunity/Material.Avalonia)
 - [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet)
 - [Microsoft.Extensions.DependencyInjection](https://github.com/dotnet/runtime)
 - [Microsoft.Extensions.Logging](https://github.com/dotnet/runtime)
