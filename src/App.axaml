@@ -42,7 +42,7 @@
     </Application.DataTemplates>
 
     <Application.Styles>
-        <themes:MaterialTheme PrimaryColor="Pink" SecondaryColor="Pink" />
+        <themes:MaterialTheme PrimaryColor="BlueGrey" SecondaryColor="LightGreen" />
 
         <Style Selector="StackPanel.Container">
             <Setter Property="Spacing" Value="10" />
