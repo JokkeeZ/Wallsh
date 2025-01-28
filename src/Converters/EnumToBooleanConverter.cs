@@ -1,5 +1,6 @@
 using System.Globalization;
 using Avalonia;
+using Avalonia.Data;
 using Avalonia.Data.Converters;
 
 namespace Wallsh.Converters;
@@ -11,14 +12,14 @@ public class EnumToBooleanConverter : IValueConverter
         if (value != null)
             return value.Equals(parameter);
 
-        return AvaloniaProperty.UnsetValue;
+        return BindingOperations.DoNothing;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value != null)
-            return (bool)value ? parameter : AvaloniaProperty.UnsetValue;
+            return (bool)value ? parameter : BindingOperations.DoNothing;
 
-        return AvaloniaProperty.UnsetValue;
+        return BindingOperations.DoNothing;
     }
 }
