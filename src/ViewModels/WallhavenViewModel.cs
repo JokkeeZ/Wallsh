@@ -28,7 +28,7 @@ public partial class WallhavenViewModel : ViewModelBase,
     [ObservableProperty]
     private bool _categoryPeople;
 
-    private TimeOnly _interval;
+    private TimeSpan _interval;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanEnableNsfw))]
@@ -77,7 +77,7 @@ public partial class WallhavenViewModel : ViewModelBase,
     {
         // Wallhaven.cc allows 45 requests per minute, so request
         // for every 2 seconds is easily on the safe side.
-        if (_interval.ToTimeSpan().TotalSeconds < 2)
+        if (_interval.TotalSeconds < 2)
             return (false, "Wallhaven interval needs to be at least 2 seconds.");
 
         if (!string.IsNullOrWhiteSpace(Resolution))

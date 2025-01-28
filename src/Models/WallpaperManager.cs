@@ -28,7 +28,7 @@ public class WallpaperManager : IDisposable
         var sp = Ioc.Default.GetRequiredService<IServiceProvider>();
         _changer = sp.GetRequiredKeyedService<IWallpaperChanger>(Config.ChangerType);
 
-        _timer = new(Config.Interval.ToTimeSpan());
+        _timer = new(Config.Interval);
         _timer.Elapsed += OnTimerElapsed;
     }
 
@@ -75,10 +75,11 @@ public class WallpaperManager : IDisposable
         _log.LogDebug("Timer started.");
     }
 
-    public void SetInterval(TimeOnly time)
+    public void SetInterval(TimeSpan time)
     {
-        _timer.Interval = time.ToTimeSpan().TotalMilliseconds;
-        _log.LogDebug("Timer interval set to: {Interval:HH:mm:ss}", time);
+        _timer.Interval = time.TotalMilliseconds;
+        _log.LogDebug("Timer interval set to: {Hour:00}:{Minute:00}:{Second:00}", 
+            time.Hours, time.Minutes, time.Seconds);
     }
 
     public string? GetRandomWallpaperFromFolder(string folder)

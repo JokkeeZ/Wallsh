@@ -36,18 +36,7 @@ public partial class MainWindowViewModel : ViewModelBase,
     private int _historyMaxItems;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(Interval))]
-    [NotifyPropertyChangedFor(nameof(SelectedTime))]
-    private int _hours;
-
-    [ObservableProperty]
     private bool _isNotificationVisible;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(Interval))]
-    [NotifyPropertyChangedFor(nameof(SelectedTime))]
-    private int _minutes;
-
     [ObservableProperty]
     private string? _notificationText;
 
@@ -55,24 +44,17 @@ public partial class MainWindowViewModel : ViewModelBase,
     private NotificationType _notificationType;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(Interval))]
-    [NotifyPropertyChangedFor(nameof(SelectedTime))]
-    private int _seconds;
-
-    [ObservableProperty]
     private string? _wallpaperAdjustment;
 
     [ObservableProperty]
     private string _wallpapersFolder;
 
-    private LocalViewModel LocalViewModel { get; }
-    private WallhavenViewModel WallhavenViewModel { get; }
-    private BingViewModel BingViewModel { get; }
-
-    public TimeOnly Interval => new(Hours, Minutes, Seconds);
-
-    public TimeSpan SelectedTime => new(0, Hours, Minutes, Seconds);
-
+    [ObservableProperty]
+    private TimeSpan _interval;
+    
+    public LocalViewModel LocalViewModel { get; }
+    public WallhavenViewModel WallhavenViewModel { get; }
+    public BingViewModel BingViewModel { get; }
     public string[] Adjustments { get; }
 
     public MainWindowViewModel()
@@ -105,9 +87,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
         Adjustments = _wpEnvironment.WallpaperAdjustments;
         ChangerType = _cfg.ChangerType;
-        Hours = _cfg.Interval.Hour;
-        Minutes = _cfg.Interval.Minute;
-        Seconds = _cfg.Interval.Second;
+        Interval = _cfg.Interval;
         WallpapersFolder = _cfg.WallpapersFolder;
         WallpaperAdjustment = _cfg.WallpaperAdjustment ?? _wpEnvironment.GetWallpaperAdjustment();
 
@@ -129,14 +109,7 @@ public partial class MainWindowViewModel : ViewModelBase,
         var latest = history.Wallpapers.FirstOrDefault();
 
         if (latest is null)
-        {
             _log.LogWarning("Latest wallpaper is null.");
-            return;
-        }
-
-        _log.LogDebug(
-            "Wallpaper updated: Resolution: {Res} | Copyright: {Cp} | Url: {Url} | IsLocal: {Local} | Path: {Path}",
-            latest.Resolution, latest.Copyright, latest.Url, latest.IsLocal, latest.Path);
     }
 
     [RelayCommand]
@@ -201,7 +174,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
     private async Task<bool> IsValidConfiguration()
     {
-        if (Interval == TimeOnly.MinValue)
+        if (Interval == TimeSpan.Zero)
         {
             await CreateNotification("Interval cannot be 00:00:00.", NotificationType.Warning);
             return false;

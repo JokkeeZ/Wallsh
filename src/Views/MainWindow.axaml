@@ -47,7 +47,7 @@
                                     <TimePicker ClockIdentifier="24HourClock"
                                                 Width="465"
                                                 UseSeconds="True"
-                                                SelectedTime="{Binding SelectedTime}"
+                                                SelectedTime="{Binding Interval}"
                                                 p1:TextFieldAssist.Label="Wallpaper should change after this time has passed:"
                                                 p1:TimePickerAssist.DateTimeFormat="HH:mm:ss"
                                                 p1:TimePickerAssist.CanSelectSeconds="True" />
