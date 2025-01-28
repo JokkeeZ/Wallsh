@@ -8,14 +8,14 @@ public class WallhavenApiResponse : IApiResponse
 {
     [JsonPropertyName("data")]
     // ReSharper disable once CollectionNeverUpdated.Global
-    public List<WallhavenWallpaperInfo> Data { get; set; } = [];
+    public List<WallhavenImage> Data { get; set; } = [];
 
     [JsonPropertyName("meta")]
     public Meta? Meta { get; set; }
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class WallhavenWallpaperInfo
+public class WallhavenImage
 {
     [JsonPropertyName("id")]
     public string? Id { get; set; }

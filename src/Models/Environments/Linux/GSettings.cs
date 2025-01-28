@@ -19,7 +19,10 @@ public class GSettings : IDisposable
         {
             _gSettingsPtr = g_settings_new(schema);
             if (_gSettingsPtr == nint.Zero)
-                _log.LogError("Failed to create GSettings pointer. Ensure the schema: '{Schema}' is installed.", schema);
+            {
+                _log.LogError("Failed to create GSettings pointer. Ensure the schema: '{Schema}' is installed.",
+                    schema);
+            }
         }
         catch (Exception e)
         {

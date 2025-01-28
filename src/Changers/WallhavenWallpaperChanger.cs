@@ -1,84 +1,69 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
+using Wallsh.Messages;
 using Wallsh.Models;
 using Wallsh.Models.Environments;
 using Wallsh.Services.Wallhaven;
 
 namespace Wallsh.Changers;
 
-public class WallhavenWallpaperChanger(IWpEnvironment env) : IWallpaperChanger
+public class WallhavenWallpaperChanger(IWpEnvironment env) :
+    FetchWallpaperChanger<WallhavenApiResponse, WallhavenImage>(env),
+    IWallpaperChanger
 {
     private readonly ILogger<WallhavenWallpaperChanger> _log = App.CreateLogger<WallhavenWallpaperChanger>();
-    private WallhavenApiResponse? _latestResponse;
 
-    public async Task OnChange(WallpaperManager manager)
+    public override async Task OnChange(WallpaperManager manager)
     {
         if (ShouldFetchNewWallpapers(manager))
-            _latestResponse = await FetchWallpapersAsync(manager);
-
-        if (_latestResponse is null)
         {
-            _log.LogError("_latestResponse is null after attempting to fetch wallpapers. Requesting stop");
+            LatestResponse =
+                await new WallhavenRequest().RequestWallpapersAsync<WallhavenApiResponse>(manager.Config.Wallhaven);
+        }
+
+        if (LatestResponse is null)
+        {
+            _log.LogError("LatestResponse is null after attempting to fetch wallpapers. Requesting stop");
             manager.RequestStop();
             return;
         }
 
         var folder = manager.GetChangerDownloadFolderPath();
-        var notOnDisk = _latestResponse.Data.Where(wp =>
+        var notOnDisk = LatestResponse.Data.Where(wp =>
                 !manager.FileExistsInChangerDownloadFolder(GetWallpaperNameFromUrl(wp.Path!)))
             .ToList();
 
         if (notOnDisk.Count == 0)
         {
-            SetRandomWallpaperFromDisk(manager, folder);
+            if (!SetRandomWallpaperFromFolder(manager, folder, out var filePath))
+            {
+                _log.LogError("Could not set random wallpaper from disk. Requesting stop.");
+                manager.RequestStop();
+                return;
+            }
+
+            SaveWallpaperToHistory(filePath!, isLocal: true);
+            WeakReferenceMessenger.Default.Send(new WallpaperUpdatedMessage());
+
+            _log.LogDebug("Set random wallpaper from disk completed.");
             return;
         }
 
-        await DownloadAndSetWallpaper(manager, folder, notOnDisk);
+        var randomWp = notOnDisk[Random.Shared.Next(notOnDisk.Count)];
+        await DownloadAndSetWallpaper(manager, folder, randomWp);
     }
-
-    public bool ShouldFetchNewWallpapers(WallpaperManager manager) => _latestResponse is null;
 
     public void Reset(WallpaperManager manager)
     {
         manager.Config.Wallhaven.Page = 1;
-        _latestResponse = null;
+        LatestResponse = null;
     }
 
-    public string GetWallpaperNameFromUrl(string url) => url.Split('/').Last();
-
-    private void SetRandomWallpaperFromDisk(WallpaperManager manager, string folder)
+    protected override async Task DownloadAndSetWallpaper(WallpaperManager manager, string folder,
+        WallhavenImage img)
     {
-        var wpPath = manager.GetRandomWallpaperFromDisk(folder);
-        if (wpPath is null)
-        {
-            _log.LogError("No wallpapers found on disk to set. Requesting stop");
-            manager.RequestStop();
-            return;
-        }
-
-        _log.LogDebug("Setting a random wallpaper from disk.");
-        env.SetWallpaperFromPath(wpPath);
-    }
-
-    private async Task<WallhavenApiResponse?> FetchWallpapersAsync(WallpaperManager manager)
-    {
-        var response =
-            await new WallhavenRequest().RequestWallpapersAsync<WallhavenApiResponse>(manager.Config.Wallhaven);
-        if (response is null)
-        {
-            _log.LogError("Failed to fetch wallpapers (response is null). Requesting stop");
-            manager.RequestStop();
-        }
-
-        return response;
-    }
-
-    private async Task DownloadAndSetWallpaper(WallpaperManager manager, string folder,
-        List<WallhavenWallpaperInfo> wallpapers)
-    {
-        var randomWp = wallpapers[Random.Shared.Next(wallpapers.Count)];
-        var wpName = GetWallpaperNameFromUrl(randomWp.Path!);
-        var wpPath = await new WallhavenRequest().DownloadWallpaperAsync(folder, wpName, randomWp.Path!);
+        var wpName = GetWallpaperNameFromUrl(img.Path!);
+        var wpPath = await new WallhavenRequest().DownloadWallpaperAsync(folder, wpName, img.Path!);
 
         if (wpPath is null)
         {
@@ -88,6 +73,9 @@ public class WallhavenWallpaperChanger(IWpEnvironment env) : IWallpaperChanger
         }
 
         _log.LogDebug("Setting the downloaded wallpaper.");
-        env.SetWallpaperFromPath(wpPath);
+        WpEnvironment.SetWallpaperFromPath(wpPath);
+
+        SaveWallpaperToHistory(wpPath, img.Resolution, url: img.Url);
+        WeakReferenceMessenger.Default.Send(new WallpaperUpdatedMessage());
     }
 }

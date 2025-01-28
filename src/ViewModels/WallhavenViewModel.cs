@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Wallsh.Messages;
 using Wallsh.Models;
+using Wallsh.Models.Config;
 using Wallsh.Services.Wallhaven;
 
 namespace Wallsh.ViewModels;

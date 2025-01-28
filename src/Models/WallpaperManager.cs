@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Wallsh.Messages;
+using Wallsh.Models.Config;
 using Wallsh.Models.Environments;
 using Timer = System.Timers.Timer;
 
@@ -19,15 +20,15 @@ public class WallpaperManager : IDisposable
 
     public AppConfiguration Config { get; set; }
 
-    public WallpaperManager(AppConfiguration cfg, IWpEnvironment env)
+    public WallpaperManager(IWpEnvironment env)
     {
-        Config = cfg;
         _wpEnvironment = env;
 
+        Config = Ioc.Default.GetRequiredService<AppConfiguration>();
         var sp = Ioc.Default.GetRequiredService<IServiceProvider>();
-        _changer = sp.GetRequiredKeyedService<IWallpaperChanger>(cfg.ChangerType);
+        _changer = sp.GetRequiredKeyedService<IWallpaperChanger>(Config.ChangerType);
 
-        _timer = new(cfg.Interval.ToTimeSpan());
+        _timer = new(Config.Interval.ToTimeSpan());
         _timer.Elapsed += OnTimerElapsed;
     }
 
@@ -39,8 +40,8 @@ public class WallpaperManager : IDisposable
 
     private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
     {
-        WeakReferenceMessenger.Default.Send(new TimerUpdatedMessage(Config.Interval));
         Task.Run(async () => await _changer.OnChange(this));
+        _log.LogDebug("OnTimerElapsed completed.");
     }
 
     public void Stop()
@@ -61,7 +62,6 @@ public class WallpaperManager : IDisposable
         var sp = Ioc.Default.GetRequiredService<IServiceProvider>();
         _changer = sp.GetRequiredKeyedService<IWallpaperChanger>(Config.ChangerType);
 
-        _log.LogDebug("Resetting {Changer} before starting.", Config.ChangerType);
         _changer.Reset(this);
 
         var folder = GetChangerDownloadFolderPath();
@@ -81,7 +81,7 @@ public class WallpaperManager : IDisposable
         _log.LogDebug("Timer interval set to: {Interval:HH:mm:ss}", time);
     }
 
-    public string? GetRandomWallpaperFromDisk(string folder)
+    public string? GetRandomWallpaperFromFolder(string folder)
     {
         var currentWallpaper = _wpEnvironment.GetCurrentWallpaperPath();
 

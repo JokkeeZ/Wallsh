@@ -18,7 +18,7 @@ public class EnumToBooleanConverter : IValueConverter
     {
         if (value != null)
             return (bool)value ? parameter : AvaloniaProperty.UnsetValue;
-        
+
         return AvaloniaProperty.UnsetValue;
     }
 }

@@ -6,10 +6,10 @@ namespace Wallsh.Services.Bing;
 public class BingResponse : IApiResponse
 {
     [JsonPropertyName("images")]
-    public List<BingWallpaperImage> Images { get; set; } = [];
+    public List<BingWallpaper> Images { get; set; } = [];
 }
 
-public class BingWallpaperImage
+public class BingWallpaper
 {
     [JsonPropertyName("startdate")]
     public string? Startdate { get; set; }

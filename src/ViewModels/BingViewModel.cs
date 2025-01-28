@@ -3,6 +3,7 @@ using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Wallsh.Models;
+using Wallsh.Models.Config;
 using Wallsh.Services.Bing;
 
 namespace Wallsh.ViewModels;

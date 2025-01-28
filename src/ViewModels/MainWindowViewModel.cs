@@ -4,24 +4,34 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using Wallsh.Messages;
 using Wallsh.Models;
+using Wallsh.Models.Config;
 using Wallsh.Models.Environments;
+using Wallsh.Models.History;
 
 namespace Wallsh.ViewModels;
 
 [NotifyPropertyChangedRecipients]
 public partial class MainWindowViewModel : ViewModelBase,
-    IRecipient<TimerUpdatedMessage>,
-    IRecipient<StopRequestedMessage>
+    IRecipient<StopRequestedMessage>,
+    IRecipient<WallpaperUpdatedMessage>
 {
     private readonly AppConfiguration _cfg;
+    private readonly WallpaperHistory _history;
+    private readonly ILogger<MainWindowViewModel> _log = App.CreateLogger<MainWindowViewModel>();
     private readonly WallpaperManager _wallpaperManager;
     private readonly IWpEnvironment _wpEnvironment;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanStart))]
     private WallpaperChangerType _changerType;
+
+    [ObservableProperty]
+    private bool _historyEnabled;
+
+    [ObservableProperty]
+    private int _historyMaxItems;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Interval))]
@@ -56,8 +66,6 @@ public partial class MainWindowViewModel : ViewModelBase,
 
     public TimeOnly Interval => new(Hours, Minutes, Seconds);
 
-    private bool CanStart => ChangerType != WallpaperChangerType.None && !Design.IsDesignMode;
-
     public string[] Adjustments { get; }
 
     public MainWindowViewModel()
@@ -68,6 +76,7 @@ public partial class MainWindowViewModel : ViewModelBase,
         if (Design.IsDesignMode)
         {
             _cfg = new();
+            _history = new();
             LocalViewModel = new(_cfg);
             WallhavenViewModel = new(_cfg);
             BingViewModel = new(_cfg);
@@ -79,11 +88,13 @@ public partial class MainWindowViewModel : ViewModelBase,
         }
 
         _cfg = Ioc.Default.GetRequiredService<AppConfiguration>();
+        _history = Ioc.Default.GetRequiredService<WallpaperHistory>();
+
         _wpEnvironment = Ioc.Default.GetRequiredService<IWpEnvironment>();
         LocalViewModel = Ioc.Default.GetRequiredService<LocalViewModel>();
         WallhavenViewModel = Ioc.Default.GetRequiredService<WallhavenViewModel>();
         BingViewModel = Ioc.Default.GetRequiredService<BingViewModel>();
-        _wallpaperManager = new(_cfg, _wpEnvironment);
+        _wallpaperManager = new(_wpEnvironment);
 
         Adjustments = _wpEnvironment.WallpaperAdjustments;
         ChangerType = _cfg.ChangerType;
@@ -93,13 +104,33 @@ public partial class MainWindowViewModel : ViewModelBase,
         WallpapersFolder = _cfg.WallpapersFolder;
         WallpaperAdjustment = _cfg.WallpaperAdjustment ?? _wpEnvironment.GetWallpaperAdjustment();
 
-        if (CanStart)
+        HistoryEnabled = _history.Enabled;
+        HistoryMaxItems = _history.MaxItems;
+
+        if (Design.IsDesignMode)
+            return;
+
+        if (ChangerType != WallpaperChangerType.None)
             _wallpaperManager.Start();
     }
 
     public void Receive(StopRequestedMessage message) => ChangerType = WallpaperChangerType.None;
 
-    public void Receive(TimerUpdatedMessage message) { }
+    public void Receive(WallpaperUpdatedMessage message)
+    {
+        var history = Ioc.Default.GetRequiredService<WallpaperHistory>();
+        var latest = history.Wallpapers.FirstOrDefault();
+
+        if (latest is null)
+        {
+            _log.LogWarning("Latest wallpaper is null.");
+            return;
+        }
+
+        _log.LogDebug(
+            "Wallpaper updated: Resolution: {Res} | Copyright: {Cp} | Url: {Url} | IsLocal: {Local} | Path: {Path}",
+            latest.Resolution, latest.Copyright, latest.Url, latest.IsLocal, latest.Path);
+    }
 
     [RelayCommand]
     private async Task SaveConfiguration()
@@ -131,20 +162,34 @@ public partial class MainWindowViewModel : ViewModelBase,
         _cfg.Bing.NumberOfWallpapers = BingViewModel.NumberOfWallpapers;
         _cfg.Bing.Orientation = BingViewModel.Orientation;
 
-        _wallpaperManager.Config = _cfg;
-        _wallpaperManager.SetInterval(_cfg.Interval);
+        // History
+        _history.Enabled = HistoryEnabled;
+        _history.MaxItems = HistoryMaxItems;
+
+        if (_history.MaxItems == 0)
+            _history.Wallpapers.Clear();
 
         _wpEnvironment.SetWallpaperAdjustment(_cfg.WallpaperAdjustment);
 
-        if (_cfg.ToFile())
+        if (!JsonFile.SerializeAndWrite(_cfg))
         {
-            await CreateNotification("Settings saved!", NotificationType.Success);
-
-            if (CanStart)
-                _wallpaperManager.Start();
-        }
-        else
             await CreateNotification("Failed to save settings!", NotificationType.Error);
+            return;
+        }
+
+        if (!JsonFile.SerializeAndWrite(_history))
+        {
+            await CreateNotification("Failed to save history settings!", NotificationType.Error);
+            return;
+        }
+
+        if (ChangerType != WallpaperChangerType.None)
+        {
+            _wallpaperManager.SetInterval(_cfg.Interval);
+            _wallpaperManager.Start();
+        }
+
+        await CreateNotification("Settings saved!", NotificationType.Success);
     }
 
     private async Task<bool> IsValidConfiguration()

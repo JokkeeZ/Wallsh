@@ -4,6 +4,8 @@ namespace Wallsh.Services.Wallhaven;
 
 public class WallhavenRequest : ApiRequest<WallhavenConfiguration>
 {
+    protected WallhavenApiResponse? LatestResponse;
+
     protected override UriBuilder BuildRequestUri(WallhavenConfiguration cfg)
     {
         var qParams = new Dictionary<string, string>
@@ -29,4 +31,6 @@ public class WallhavenRequest : ApiRequest<WallhavenConfiguration>
 
         return uri;
     }
+
+    protected bool ShouldFetchNewWallpapers() => LatestResponse is null;
 }

@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:Wallsh.Views"
         xmlns:models="clr-namespace:Wallsh.Models"
-        MinHeight="500"
         MinWidth="500"
+        MinHeight="560"
         Width="500"
-        Height="500"
+        Height="560"
         mc:Ignorable="d" d:DesignWidth="500"
         x:Class="Wallsh.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -101,25 +101,50 @@
                             </StackPanel>
                         </StackPanel>
 
+                        <!-- HISTORY -->
+                        <StackPanel Classes="Group">
+                            <TextBlock Text="History" FontWeight="Bold" />
+                            <ToggleSwitch
+                                IsChecked="{Binding HistoryEnabled}"
+                                OffContent="History disabled"
+                                OnContent="History enabled" />
+
+                            <StackPanel Classes="Group"
+                                        HorizontalAlignment="Left"
+                                        Width="340"
+                                        IsEnabled="{Binding HistoryEnabled}">
+                                <TextBlock Text="Remember this many wallpapers" FontWeight="Bold" />
+                                <NumericUpDown Classes="TimeSelector"
+                                               Value="{Binding HistoryMaxItems}"
+                                               Minimum="0"
+                                               Maximum="100" />
+                            </StackPanel>
+                        </StackPanel>
+
                         <!-- SERVICES -->
                         <StackPanel Classes="Group">
                             <TextBlock Text="Slideshow source" FontWeight="Bold" />
-                            <StackPanel>
-                                <ToggleSwitch
+                            <StackPanel Classes="HorizontalContainer">
+                                <RadioButton
+                                    GroupName="ChangerGroup"
+                                    Name="NoneToggle"
+                                    IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.None}}"
+                                    Content="None" />
+                                <RadioButton
+                                    GroupName="ChangerGroup"
                                     Name="LocalToggle"
                                     IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Local}}"
-                                    OffContent="Local wallpapers"
-                                    OnContent="Local wallpapers" />
-                                <ToggleSwitch
+                                    Content="Local" />
+                                <RadioButton
+                                    GroupName="ChangerGroup"
                                     Name="WallhavenToggle"
                                     IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Wallhaven}}"
-                                    OffContent="Wallhaven"
-                                    OnContent="Wallhaven" />
-                                <ToggleSwitch
+                                    Content="Wallhaven" />
+                                <RadioButton
+                                    GroupName="ChangerGroup"
                                     Name="BingToggle"
                                     IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Bing}}"
-                                    OffContent="Bing"
-                                    OnContent="Bing" />
+                                    Content="Bing" />
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>

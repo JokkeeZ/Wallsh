@@ -11,9 +11,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Wallsh.Changers;
 using Wallsh.Models;
+using Wallsh.Models.Config;
 using Wallsh.Models.Environments;
 using Wallsh.Models.Environments.Linux;
 using Wallsh.Models.Environments.Windows;
+using Wallsh.Models.History;
 using Wallsh.ViewModels;
 using Wallsh.Views;
 
@@ -92,7 +94,8 @@ public class App : Application
                     .AddDebug()
                     .SetMinimumLevel(LogLevel.Debug)
             ))
-            .AddSingleton(AppConfiguration.FromFile("config.json"))
+            .AddSingleton(JsonFile.ReadAndDeserialize<AppConfiguration>("config.json"))
+            .AddSingleton(JsonFile.ReadAndDeserialize<WallpaperHistory>("history.json"))
             .AddSingleton(GetWpEnvironment())
             .AddKeyedSingleton<IWallpaperChanger, NoneWallpaperChanger>(WallpaperChangerType.None)
             .AddKeyedSingleton<IWallpaperChanger, LocalWallpaperChanger>(WallpaperChangerType.Local)
