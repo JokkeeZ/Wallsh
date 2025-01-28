@@ -78,7 +78,7 @@ public class WallpaperManager : IDisposable
     public void SetInterval(TimeSpan time)
     {
         _timer.Interval = time.TotalMilliseconds;
-        _log.LogDebug("Timer interval set to: {Hour:00}:{Minute:00}:{Second:00}", 
+        _log.LogDebug("Timer interval set to: {Hour:00}:{Minute:00}:{Second:00}",
             time.Hours, time.Minutes, time.Seconds);
     }
 
