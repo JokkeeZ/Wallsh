@@ -39,115 +39,120 @@
             <!-- GENERAL SETTINGS -->
             <TabItem Header="General">
                 <Border Classes="TabContent">
-                    <StackPanel Classes="Container">
+                    <RelativePanel>
+                        <StackPanel Classes="Container">
 
-                        <StackPanel Classes="Group">
-                            <!-- INFO BUTTON -->
-                            <RelativePanel>
-                                <TextBlock RelativePanel.AlignLeftWithPanel="True" Text="Time Between Changes"
-                                           FontWeight="Bold" />
-                                <Button Classes="InfoButton" RelativePanel.AlignRightWithPanel="True">
-                                    <PathIcon Width="15" Height="15" Data="{StaticResource InfoRegular}" />
-                                </Button>
-                            </RelativePanel>
+                            <StackPanel Classes="Group">
+                                <!-- INFO BUTTON -->
+                                <RelativePanel>
+                                    <TextBlock RelativePanel.AlignLeftWithPanel="True" Text="Time Between Changes"
+                                               FontWeight="Bold" />
+                                    <Button Classes="InfoButton" RelativePanel.AlignRightWithPanel="True"
+                                            RelativePanel.AlignTopWithPanel="True">
+                                        <PathIcon Width="15" Height="15" Data="{StaticResource InfoRegular}" />
+                                    </Button>
+                                </RelativePanel>
 
-                            <StackPanel Classes="HorizontalChild">
-                                <StackPanel Classes="Child" Width="147">
-                                    <TextBlock Text="Hours(s):" />
-                                    <NumericUpDown Classes="TimeSelector" Value="{Binding Hours}" Maximum="23" />
+                                <StackPanel Classes="HorizontalChild">
+                                    <StackPanel Classes="Child" Width="147">
+                                        <TextBlock Text="Hours(s):" />
+                                        <NumericUpDown Classes="TimeSelector" Value="{Binding Hours}" Maximum="23" />
+                                    </StackPanel>
+
+                                    <StackPanel Classes="Child" Width="147">
+                                        <TextBlock Text="Minute(s):" />
+                                        <NumericUpDown Classes="TimeSelector" Value="{Binding Minutes}" Maximum="59" />
+                                    </StackPanel>
+
+                                    <StackPanel Classes="Child" Width="147">
+                                        <TextBlock Text="Second(s):" />
+                                        <NumericUpDown Classes="TimeSelector" Value="{Binding Seconds}" Maximum="59" />
+                                    </StackPanel>
                                 </StackPanel>
+                            </StackPanel>
 
-                                <StackPanel Classes="Child" Width="147">
-                                    <TextBlock Text="Minute(s):" />
-                                    <NumericUpDown Classes="TimeSelector" Value="{Binding Minutes}" Maximum="59" />
+                            <StackPanel Classes="Group">
+                                <TextBlock Text="Wallpaper folder" FontWeight="Bold" />
+                                <StackPanel Classes="HorizontalChild">
+                                    <TextBox Classes="TextBox340"
+                                             Watermark="Folder containing wallpapers"
+                                             Name="FolderPathTextBox"
+                                             Text="{Binding WallpapersFolder}" />
+                                    <Button Classes="Medium"
+                                            Content="Browse"
+                                            Click="BrowseFolderClick" />
                                 </StackPanel>
+                            </StackPanel>
 
-                                <StackPanel Classes="Child" Width="147">
-                                    <TextBlock Text="Second(s):" />
-                                    <NumericUpDown Classes="TimeSelector" Value="{Binding Seconds}" Maximum="59" />
+                            <StackPanel Classes="Group">
+                                <TextBlock Text="Wallpaper adjustment" FontWeight="Bold" />
+                                <StackPanel Classes="HorizontalChild">
+                                    <ComboBox Classes="ComboBox340"
+                                              PlaceholderText="Select adjustment"
+                                              ItemsSource="{Binding Adjustments}"
+                                              SelectedItem="{Binding WallpaperAdjustment}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- HISTORY -->
+                            <StackPanel Classes="Group">
+                                <TextBlock Text="History" FontWeight="Bold" />
+                                <ToggleSwitch
+                                    IsChecked="{Binding HistoryEnabled}"
+                                    OffContent="History disabled"
+                                    OnContent="History enabled" />
+
+                                <StackPanel Classes="Group"
+                                            HorizontalAlignment="Left"
+                                            Width="340"
+                                            IsEnabled="{Binding HistoryEnabled}">
+                                    <TextBlock Text="Remember this many wallpapers" FontWeight="Bold" />
+                                    <NumericUpDown Classes="TimeSelector"
+                                                   Value="{Binding HistoryMaxItems}"
+                                                   Minimum="0"
+                                                   Maximum="100" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- SERVICES -->
+                            <StackPanel Classes="Group">
+                                <TextBlock Text="Slideshow source" FontWeight="Bold" />
+                                <StackPanel Classes="HorizontalContainer">
+                                    <RadioButton
+                                        GroupName="ChangerGroup"
+                                        Name="NoneToggle"
+                                        IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.None}}"
+                                        Content="None" />
+                                    <RadioButton
+                                        GroupName="ChangerGroup"
+                                        Name="LocalToggle"
+                                        IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Local}}"
+                                        Content="Local" />
+                                    <RadioButton
+                                        GroupName="ChangerGroup"
+                                        Name="WallhavenToggle"
+                                        IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Wallhaven}}"
+                                        Content="Wallhaven" />
+                                    <RadioButton
+                                        GroupName="ChangerGroup"
+                                        Name="BingToggle"
+                                        IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Bing}}"
+                                        Content="Bing" />
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
 
-                        <StackPanel Classes="Group">
-                            <TextBlock Text="Wallpaper folder" FontWeight="Bold" />
-                            <StackPanel Classes="HorizontalChild">
-                                <TextBox Classes="TextBox340"
-                                         Watermark="Folder containing wallpapers"
-                                         Name="FolderPathTextBox"
-                                         Text="{Binding WallpapersFolder}" />
-                                <Button Classes="Medium"
-                                        Content="Browse"
-                                        Click="BrowseFolderClick" />
-                            </StackPanel>
-                        </StackPanel>
-
-                        <StackPanel Classes="Group">
-                            <TextBlock Text="Wallpaper adjustment" FontWeight="Bold" />
-                            <StackPanel Classes="HorizontalChild">
-                                <ComboBox Classes="ComboBox340"
-                                          PlaceholderText="Select adjustment"
-                                          ItemsSource="{Binding Adjustments}"
-                                          SelectedItem="{Binding WallpaperAdjustment}">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding}" />
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
-                                <Button Classes="Medium"
-                                        Content="Save Settings"
-                                        Command="{Binding SaveConfigurationCommand}" />
-                            </StackPanel>
-                        </StackPanel>
-
-                        <!-- HISTORY -->
-                        <StackPanel Classes="Group">
-                            <TextBlock Text="History" FontWeight="Bold" />
-                            <ToggleSwitch
-                                IsChecked="{Binding HistoryEnabled}"
-                                OffContent="History disabled"
-                                OnContent="History enabled" />
-
-                            <StackPanel Classes="Group"
-                                        HorizontalAlignment="Left"
-                                        Width="340"
-                                        IsEnabled="{Binding HistoryEnabled}">
-                                <TextBlock Text="Remember this many wallpapers" FontWeight="Bold" />
-                                <NumericUpDown Classes="TimeSelector"
-                                               Value="{Binding HistoryMaxItems}"
-                                               Minimum="0"
-                                               Maximum="100" />
-                            </StackPanel>
-                        </StackPanel>
-
-                        <!-- SERVICES -->
-                        <StackPanel Classes="Group">
-                            <TextBlock Text="Slideshow source" FontWeight="Bold" />
-                            <StackPanel Classes="HorizontalContainer">
-                                <RadioButton
-                                    GroupName="ChangerGroup"
-                                    Name="NoneToggle"
-                                    IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.None}}"
-                                    Content="None" />
-                                <RadioButton
-                                    GroupName="ChangerGroup"
-                                    Name="LocalToggle"
-                                    IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Local}}"
-                                    Content="Local" />
-                                <RadioButton
-                                    GroupName="ChangerGroup"
-                                    Name="WallhavenToggle"
-                                    IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Wallhaven}}"
-                                    Content="Wallhaven" />
-                                <RadioButton
-                                    GroupName="ChangerGroup"
-                                    Name="BingToggle"
-                                    IsChecked="{Binding ChangerType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:WallpaperChangerType.Bing}}"
-                                    Content="Bing" />
-                            </StackPanel>
-                        </StackPanel>
-                    </StackPanel>
+                        <Button Content="Save settings"
+                                RelativePanel.AlignRightWithPanel="True"
+                                RelativePanel.AlignBottomWithPanel="True"
+                                Command="{Binding SaveConfiguration}" />
+                    </RelativePanel>
                 </Border>
             </TabItem>
 
@@ -171,7 +176,6 @@
                     <views:BingView DataContext="{Binding BingViewModel}" />
                 </Border>
             </TabItem>
-
         </TabControl>
     </Grid>
 </Window>
