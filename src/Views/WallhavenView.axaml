@@ -15,8 +15,9 @@
             <StackPanel>
                 <TextBlock Text="Api key" Classes="Subtitle2" Margin="0,0,0,8" />
                 <TextBox UseFloatingWatermark="True"
-                         Classes="outline dense"
+                         Classes="outline dense revealPasswordButton"
                          Text="{Binding ApiKey}"
+                         PasswordChar="*" 
                          Theme="{StaticResource OutlineTextBox}"
                          p1:TextFieldAssist.Label="Enter your wallhaven API Key" />
             </StackPanel>
