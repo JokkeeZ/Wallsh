@@ -80,16 +80,15 @@ public class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    private void Closing(object? sender, WindowClosingEventArgs e)
+    private static void Closing(object? sender, WindowClosingEventArgs e)
     {
         if (e.CloseReason != WindowCloseReason.WindowClosing)
             return;
 
-        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-            return;
-
         e.Cancel = true;
-        desktop.MainWindow?.Hide();
+
+        var window = sender as MainWindow;
+        window?.Hide();
     }
 
     private static void DisableAvaloniaDataAnnotationValidation()
