@@ -80,7 +80,7 @@
                                              Text="{Binding WallpapersFolder}" />
                                     <Button Classes="Medium"
                                             Content="Browse"
-                                            Click="BrowseFolderClick" />
+                                            Command="{Binding BrowseWallpapersFolderCommand}" />
                                 </StackPanel>
                             </StackPanel>
 
@@ -151,7 +151,7 @@
                         <Button Content="Save settings"
                                 RelativePanel.AlignRightWithPanel="True"
                                 RelativePanel.AlignBottomWithPanel="True"
-                                Command="{Binding SaveConfiguration}" />
+                                Command="{Binding SaveConfigurationCommand}" />
                     </RelativePanel>
                 </Border>
             </TabItem>

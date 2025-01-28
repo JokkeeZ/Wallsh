@@ -1,5 +1,7 @@
-﻿using Avalonia.Controls;
+﻿using System.ComponentModel;
+using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -10,6 +12,7 @@ using Wallsh.Models;
 using Wallsh.Models.Config;
 using Wallsh.Models.Environments;
 using Wallsh.Models.History;
+using Wallsh.Services.System;
 
 namespace Wallsh.ViewModels;
 
@@ -246,6 +249,16 @@ public partial class MainWindowViewModel : ViewModelBase,
                 Messenger.Send(new WallpaperFolderUpdatedMessage(WallpapersFolder));
             break;
         }
+    }
+
+    [RelayCommand]
+    private async Task BrowseWallpapersFolder()
+    {
+        var folderService = Ioc.Default.GetRequiredService<OpenFolderService>();
+        var folder = await folderService.OpenFolderAsync();
+
+        if (folder is not null)
+            WallpapersFolder = folder.TryGetLocalPath() ?? string.Empty;
     }
 
     private async Task CreateNotification(string message, NotificationType type)
