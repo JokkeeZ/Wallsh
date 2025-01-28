@@ -36,7 +36,11 @@ public partial class MainWindowViewModel : ViewModelBase,
     private int _historyMaxItems;
 
     [ObservableProperty]
+    private TimeSpan _interval;
+
+    [ObservableProperty]
     private bool _isNotificationVisible;
+
     [ObservableProperty]
     private string? _notificationText;
 
@@ -49,9 +53,6 @@ public partial class MainWindowViewModel : ViewModelBase,
     [ObservableProperty]
     private string _wallpapersFolder;
 
-    [ObservableProperty]
-    private TimeSpan _interval;
-    
     public LocalViewModel LocalViewModel { get; }
     public WallhavenViewModel WallhavenViewModel { get; }
     public BingViewModel BingViewModel { get; }

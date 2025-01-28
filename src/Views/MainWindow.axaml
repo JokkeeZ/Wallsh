@@ -36,7 +36,11 @@
             </NotificationCard>
         </StackPanel>
 
-        <TabControl Grid.Row="1" Width="500" Padding="5">
+        <TabControl Grid.Row="1"
+                    Width="500"
+                    Padding="5"
+                    AutoScrollToSelectedItem="True"
+                    Theme="{StaticResource ScrollableTabControl}">
             <TabItem Header="General">
                 <StackPanel>
                     <Grid RowDefinitions="*,5,Auto">

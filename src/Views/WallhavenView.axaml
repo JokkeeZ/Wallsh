@@ -53,7 +53,7 @@
                         Classes="outline dense"
                         p1:ComboBoxAssist.Label="Select a resolution"
                         ItemsSource="{Binding AvailableResolutions}"
-                        SelectedItem="{Binding Path=Resolution}">
+                        SelectedItem="{Binding Resolution}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding}" />
@@ -103,8 +103,8 @@
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <CheckBox IsChecked="{Binding PuritySfw}" Width="80" Content="SFW" />
                         <CheckBox IsChecked="{Binding PuritySketchy}" Width="80" Content="Sketchy" />
-                        <CheckBox IsChecked="{Binding PurityNsfw}" Width="80" IsEnabled="{Binding CanEnableNsfw}"
-                                  Content="NSFW" />
+                        <CheckBox IsChecked="{Binding PurityNsfw}" Width="80" Content="NSFW"
+                                  IsEnabled="{Binding CanEnableNsfw}" />
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
