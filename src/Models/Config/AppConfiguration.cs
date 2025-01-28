@@ -10,8 +10,8 @@ public class AppConfiguration : IJsonFile
     public TimeSpan Interval { get; set; } = new(0, 0, 10, 0);
     public string WallpapersFolder { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
     public string? WallpaperAdjustment { get; set; }
-    public WallhavenConfiguration Wallhaven { get; } = new();
-    public BingConfiguration Bing { get; } = new();
+    public WallhavenConfiguration Wallhaven { get; init; } = new();
+    public BingConfiguration Bing { get; init; } = new();
 
     [JsonIgnore]
     public string? FilePath { get; set; }
