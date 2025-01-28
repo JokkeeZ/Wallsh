@@ -2,7 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Wallsh.App"
              xmlns:local="using:Wallsh"
+             x:DataType="viewModels:ApplicationViewModel"
              xmlns:converters="clr-namespace:Wallsh.Converters"
+             xmlns:viewModels="clr-namespace:Wallsh.ViewModels"
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -15,21 +17,19 @@
 
     <TrayIcon.Icons>
         <TrayIcons>
-            <TrayIcon Icon="/Assets/Wallsh.ico"
-                      ToolTipText="Wallsh - Wallpaper Slideshow Handler">
+            <TrayIcon Icon="/Assets/Wallsh.ico" ToolTipText="Wallsh">
                 <TrayIcon.Menu>
                     <NativeMenu>
                         <NativeMenuItem Header="Wallsh" IsEnabled="False" Icon="/Assets/Wallsh.ico" />
                         <NativeMenuItemSeparator />
-                        <NativeMenuItem Header="Show"
-                                        Command="{x:Static local:App.ShowAppFromTray}" />
-                        <NativeMenuItem Header="Open website"
-                                        Command="{x:Static local:App.OpenWebsiteFromTray}" />
-                        <NativeMenuItem Header="Open wallpaper folder"
-                                        Command="{x:Static local:App.OpenWallpapersFolderFromTray}" />
+                        <NativeMenuItem Header="Open Wallsh"
+                                        Command="{Binding ShowAppFromTrayCommand}" />
+                        <NativeMenuItem Header="Open Website"
+                                        Command="{Binding OpenWebsiteFromTrayCommand}" />
+                        <NativeMenuItem Header="Open Wallpaper Folder"
+                                        Command="{Binding OpenWallpapersFolderFromTrayCommand}" />
                         <NativeMenuItemSeparator />
-                        <NativeMenuItem Header="Quit"
-                                        Command="{x:Static local:App.ExitAppFromTray}" />
+                        <NativeMenuItem Header="Quit Wallsh" Command="{Binding ExitCommand}" />
                     </NativeMenu>
                 </TrayIcon.Menu>
             </TrayIcon>

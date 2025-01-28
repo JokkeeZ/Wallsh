@@ -1,12 +1,9 @@
-using System.Diagnostics;
-using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Wallsh.Changers;
@@ -24,54 +21,11 @@ namespace Wallsh;
 
 public class App : Application
 {
-    public static ICommand OpenWallpapersFolderFromTray =>
-        new RelayCommand(() =>
-        {
-            var cfg = Ioc.Default.GetRequiredService<AppConfiguration>();
-
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = cfg.WallpapersFolder,
-                UseShellExecute = true
-            });
-        });
-
-    public static ICommand OpenWebsiteFromTray =>
-        new RelayCommand(() =>
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "https://github.com/JokkeeZ/Wallsh",
-                UseShellExecute = true
-            }));
-
-    public static ICommand ShowAppFromTray =>
-        new RelayCommand(() =>
-        {
-            if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime
-                {
-                    MainWindow: not null
-                } desktop)
-                return;
-
-            if (!desktop.MainWindow.IsVisible)
-                desktop.MainWindow.Show();
-            else
-                desktop.MainWindow.Activate();
-        });
-
-    public static ICommand ExitAppFromTray =>
-        new RelayCommand(() =>
-        {
-            if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime
-                {
-                    MainWindow: not null
-                } desktop)
-                return;
-
-            desktop.Shutdown();
-        });
-
-    public override void Initialize() => AvaloniaXamlLoader.Load(this);
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+        DataContext = new ApplicationViewModel();
+    }
 
     public static ILogger<T> CreateLogger<T>() => Ioc.Default.GetRequiredService<ILoggerFactory>().CreateLogger<T>();
 
