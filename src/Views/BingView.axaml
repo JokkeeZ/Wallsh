@@ -9,7 +9,7 @@
              x:Class="Wallsh.Views.BingView"
              x:DataType="vm:BingViewModel">
 
-    <Grid RowDefinitions="Auto,10,Auto">
+    <Grid RowDefinitions="Auto,5,Auto">
         <Border Classes="TabContent" Padding="10" Grid.Row="0">
             <StackPanel Classes="Container">
                 <TextBlock Text="Orientation and Resolution" Classes="Subtitle2" Margin="0,0,0,8" />

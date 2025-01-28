@@ -9,7 +9,7 @@
         MinWidth="500"
         MinHeight="560"
         Width="500"
-        Height="570"
+        Height="560"
         CanResize="False"
         mc:Ignorable="d" d:DesignWidth="500"
         x:Class="Wallsh.Views.MainWindow"
@@ -39,7 +39,7 @@
         <TabControl Grid.Row="1" Width="500" Padding="5">
             <TabItem Header="General">
                 <StackPanel>
-                    <Grid RowDefinitions="*,10,Auto">
+                    <Grid RowDefinitions="*,5,Auto">
                         <Border Classes="TabContent" Padding="10" Grid.Row="0">
                             <StackPanel Spacing="7">
                                 <StackPanel>

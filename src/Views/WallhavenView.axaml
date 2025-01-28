@@ -9,7 +9,7 @@
              x:Class="Wallsh.Views.WallhavenView"
              x:DataType="vm:WallhavenViewModel">
 
-    <Grid RowDefinitions="Auto,10,Auto,10,Auto">
+    <Grid RowDefinitions="Auto,5,Auto,5,Auto">
 
         <Border Classes="TabContent" Padding="10" Grid.Row="0">
             <StackPanel>
