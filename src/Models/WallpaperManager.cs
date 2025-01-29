@@ -17,8 +17,9 @@ public class WallpaperManager : IDisposable
 
     private readonly IWpEnvironment _wpEnvironment;
     private IWallpaperChanger _changer;
-
-    public AppConfiguration Config { get; set; }
+    private Task? _timerTask = Task.CompletedTask;
+    
+    public AppConfiguration Config { get; init; }
 
     public WallpaperManager(IWpEnvironment env)
     {
@@ -29,19 +30,27 @@ public class WallpaperManager : IDisposable
         _changer = sp.GetRequiredKeyedService<IWallpaperChanger>(Config.ChangerType);
 
         _timer = new(Config.Interval);
-        _timer.Elapsed += OnTimerElapsed;
+        _timer.Elapsed += (_, _) => Task.Run(async () => await RunChangerAsync());
     }
 
     public void Dispose()
     {
         _timer.Dispose();
+        _timerTask?.Dispose();
+        
         GC.SuppressFinalize(this);
     }
 
-    private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+    public async Task RunChangerAsync()
     {
-        Task.Run(async () => await _changer.OnChange(this));
-        _log.LogDebug("OnTimerElapsed completed.");
+        if (_timerTask is { IsCompleted: false })
+        {
+            _log.LogDebug("Waiting for ongoing task to finish");
+            await _timerTask.WaitAsync(TimeSpan.FromSeconds(2));
+        }
+        
+        _timerTask = _changer.OnChange(this).ContinueWith(_ => _log.LogDebug("OnTimerElapsed completed."));
+        await _timerTask;
     }
 
     public void Stop()

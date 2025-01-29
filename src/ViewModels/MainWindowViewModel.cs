@@ -230,6 +230,15 @@ public partial class MainWindowViewModel : ViewModelBase,
     }
 
     [RelayCommand]
+    private async Task InstantRefreshWallpaperAsync()
+    {
+        if (!await IsValidConfiguration())
+            return;
+
+        await _wallpaperManager.RunChangerAsync();
+    }
+    
+    [RelayCommand]
     private async Task BrowseWallpapersFolder()
     {
         var folderService = Ioc.Default.GetRequiredService<OpenFolderService>();

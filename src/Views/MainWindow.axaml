@@ -120,9 +120,12 @@
                                     </StackPanel>
                                 </StackPanel>
 
-                                <Button Content="Save all settings"
-                                        HorizontalAlignment="Right"
-                                        Command="{Binding SaveConfigurationCommand}" />
+                                <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Right">
+                                    <Button Content="New WP"
+                                            Command="{Binding InstantRefreshWallpaperCommand}" />
+                                    <Button Content="Save all settings"
+                                            Command="{Binding SaveConfigurationCommand}" />
+                                </StackPanel>
                             </StackPanel>
                         </Border>
                     </Grid>
