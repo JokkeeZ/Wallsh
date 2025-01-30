@@ -9,7 +9,7 @@ parser.add_argument('--version', type=str, help='specify new version for the pro
 
 args = parser.parse_args()
 
-if not args.path and not args.version and not os.path.exists(args.path):
+if not args.path or not args.version or not os.path.exists(args.path):
     parser.print_usage()
     exit()
 
