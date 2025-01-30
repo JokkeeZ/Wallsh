@@ -4,7 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <Version>0.2.3</Version>
+        <Version>0.2.4</Version>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <ApplicationIcon>./Assets/Wallsh.ico</ApplicationIcon>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
