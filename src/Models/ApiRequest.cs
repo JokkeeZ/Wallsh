@@ -21,9 +21,14 @@ public abstract class ApiRequest<TConfig> where TConfig : class, new()
 
             return fileStream.Name;
         }
+        catch (Exception ex) when (ex is HttpRequestException or InvalidOperationException or UriFormatException)
+        {
+            _log.LogError("Wallpaper download request failed: {Error}", ex.Message);
+            return null;
+        }
         catch (Exception e)
         {
-            _log.LogError("Error downloading wallpaper: {Error}", e.Message);
+            _log.LogError("Exception was thrown: {Error}", e.ToString());
             return null;
         }
     }
@@ -53,9 +58,14 @@ public abstract class ApiRequest<TConfig> where TConfig : class, new()
 
             return await response.Content.ReadFromJsonAsync<T>();
         }
+        catch (Exception ex) when (ex is HttpRequestException or InvalidOperationException or UriFormatException)
+        {
+            _log.LogError("Wallpaper fetch request failed: {Error}", ex.Message);
+            return null;
+        }
         catch (Exception e)
         {
-            _log.LogError("Failed to request wallpapers. Exception message: {Message}", e.Message);
+            _log.LogError("Exception was thrown: {Error}", e.ToString());
             return null;
         }
     }
