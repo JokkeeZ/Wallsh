@@ -27,38 +27,34 @@ public class WallhavenConfiguration
 
     public int Page { get; set; } = 1;
 
-    public string PurityToString() =>
-        string.Join(string.Empty,
-            PuritySfw ? '1' : '0',
-            PuritySketchy ? '1' : '0',
-            PurityNsfw ? '1' : '0'
-        );
+    public string PurityToString() => string.Join(string.Empty,
+        PuritySfw ? '1' : '0',
+        PuritySketchy ? '1' : '0',
+        PurityNsfw ? '1' : '0'
+    );
 
-    public string CategoriesToString() =>
-        string.Join(string.Empty,
-            General ? '1' : '0',
-            Anime ? '1' : '0',
-            People ? '1' : '0'
-        );
+    public string CategoriesToString() => string.Join(string.Empty,
+        General ? '1' : '0',
+        Anime ? '1' : '0',
+        People ? '1' : '0'
+    );
 
-    public string RatioToString() =>
-        Ratio switch
-        {
-            WallhavenRatio.RatioUltrawide => "Ultrawide",
-            WallhavenRatio.Ratio16X9 => "16x9",
-            WallhavenRatio.Ratio16X10 => "16x10",
-            WallhavenRatio.Ratio5X4 => "5x4",
-            WallhavenRatio.Ratio4X3 => "4x3",
-            _ => throw new("Unknown ratio")
-        };
+    public string RatioToString() => Ratio switch
+    {
+        WallhavenRatio.RatioUltrawide => "Ultrawide",
+        WallhavenRatio.Ratio16X9 => "16x9",
+        WallhavenRatio.Ratio16X10 => "16x10",
+        WallhavenRatio.Ratio5X4 => "5x4",
+        WallhavenRatio.Ratio4X3 => "4x3",
+        _ => throw new("Unknown ratio")
+    };
 
-    public string SortingToString() =>
-        Sorting switch
-        {
-            WallhavenSorting.Top => "toplist",
-            WallhavenSorting.Views => "views",
-            WallhavenSorting.Random => "random",
-            WallhavenSorting.Date => "date_added",
-            _ => throw new("Unknown sorting")
-        };
+    public string SortingToString() => Sorting switch
+    {
+        WallhavenSorting.Top => "toplist",
+        WallhavenSorting.Views => "views",
+        WallhavenSorting.Random => "random",
+        WallhavenSorting.Date => "date_added",
+        _ => throw new("Unknown sorting")
+    };
 }

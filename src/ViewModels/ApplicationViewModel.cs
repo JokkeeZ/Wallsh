@@ -30,12 +30,11 @@ public partial class ApplicationViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void OpenWebsiteFromTray() =>
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = "https://github.com/JokkeeZ/Wallsh",
-            UseShellExecute = true
-        });
+    private void OpenWebsiteFromTray() => Process.Start(new ProcessStartInfo
+    {
+        FileName = "https://github.com/JokkeeZ/Wallsh",
+        UseShellExecute = true
+    });
 
     [RelayCommand]
     private void ShowAppFromTray()

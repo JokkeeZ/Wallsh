@@ -4,7 +4,7 @@ namespace Wallsh.Services.Wallhaven;
 
 public class WallhavenRequest : ApiRequest<WallhavenConfiguration>
 {
-    protected WallhavenApiResponse? LatestResponse;
+    protected WallhavenApiResponse? LatestResponse { get; set; }
 
     protected override UriBuilder BuildRequestUri(WallhavenConfiguration cfg)
     {

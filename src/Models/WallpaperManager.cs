@@ -1,4 +1,3 @@
-using System.Timers;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +17,7 @@ public class WallpaperManager : IDisposable
     private readonly IWpEnvironment _wpEnvironment;
     private IWallpaperChanger _changer;
     private Task? _timerTask = Task.CompletedTask;
-    
+
     public AppConfiguration Config { get; init; }
 
     public WallpaperManager(IWpEnvironment env)
@@ -37,7 +36,7 @@ public class WallpaperManager : IDisposable
     {
         _timer.Dispose();
         _timerTask?.Dispose();
-        
+
         GC.SuppressFinalize(this);
     }
 
@@ -45,11 +44,11 @@ public class WallpaperManager : IDisposable
     {
         if (_timerTask is { IsCompleted: false })
         {
-            _log.LogDebug("Waiting for ongoing task to finish");
+            _log.LogDebug("Waiting for ongoing changer to finish");
             await _timerTask.WaitAsync(TimeSpan.FromSeconds(2));
         }
-        
-        _timerTask = _changer.OnChange(this).ContinueWith(_ => _log.LogDebug("OnTimerElapsed completed."));
+
+        _timerTask = _changer.OnChange(this);
         await _timerTask;
     }
 

@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Wallsh.Models;
 
+public interface IApiResponse;
+
 public abstract class ApiRequest<TConfig> where TConfig : class, new()
 {
     private readonly ILogger<ApiRequest<TConfig>> _log = App.CreateLogger<ApiRequest<TConfig>>();

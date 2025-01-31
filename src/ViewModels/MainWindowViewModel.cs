@@ -237,7 +237,7 @@ public partial class MainWindowViewModel : ViewModelBase,
 
         await _wallpaperManager.RunChangerAsync();
     }
-    
+
     [RelayCommand]
     private async Task BrowseWallpapersFolder()
     {
