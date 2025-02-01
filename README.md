@@ -8,7 +8,7 @@
 Wallsh is a cross-platform C#/.NET desktop application for slideshow wallpapers. Optionally downloads and sets wallpapers from different sources, such as wallhaven.cc and Bing wallpaper of the day. See currently supported sources [below](#supported-sources).
 
 > [!CAUTION]
-> Currently only works with GNOME and Windows 10/11.
+> Currently, only GNOME and Windows 8 and later are supported
 >
 > **Tested with Ubuntu 24.04 (GNOME Shell 46) and Windows 11**
 
