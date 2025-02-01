@@ -29,15 +29,16 @@ public partial class HistoryWindowViewModel : ViewModelBase,
     }
 
     [RelayCommand]
-    private static void ViewWallpaper(string? path)
+    private static void ViewWallpaper(string path) => Process.Start(new ProcessStartInfo
     {
-        if (path is null)
-            return;
-
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = path,
-            UseShellExecute = true
-        });
-    }
+        FileName = path,
+        UseShellExecute = true
+    });
+    
+    [RelayCommand]
+    private static void OpenWallpaperUrl(string url) => Process.Start(new ProcessStartInfo
+    {
+        FileName = url,
+        UseShellExecute = true
+    });
 }

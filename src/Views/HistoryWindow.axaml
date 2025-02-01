@@ -45,11 +45,17 @@
                                 <TextBlock Classes="Subtitle2" Text="{Binding Url}" />
                             </StackPanel>
 
-                            <Button
-                                HorizontalAlignment="Right"
-                                Command="{Binding $parent[ListBox].((vm:HistoryWindowViewModel)DataContext).ViewWallpaperCommand}"
-                                CommandParameter="{Binding Path}"
-                                Content="View wallpaper" />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
+                                <Button
+                                    IsVisible="{Binding Url, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                    Command="{Binding $parent[ListBox].((vm:HistoryWindowViewModel)DataContext).OpenWallpaperUrlCommand}"
+                                    CommandParameter="{Binding Url}"
+                                    Content="Visit url" />
+                                <Button
+                                    Command="{Binding $parent[ListBox].((vm:HistoryWindowViewModel)DataContext).ViewWallpaperCommand}"
+                                    CommandParameter="{Binding Path}"
+                                    Content="View wallpaper" />
+                            </StackPanel>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
