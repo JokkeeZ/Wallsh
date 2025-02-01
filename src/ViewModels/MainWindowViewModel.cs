@@ -1,4 +1,6 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Notifications;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -12,6 +14,7 @@ using Wallsh.Models.Config;
 using Wallsh.Models.Environments;
 using Wallsh.Models.History;
 using Wallsh.Services.System;
+using Wallsh.Views;
 
 namespace Wallsh.ViewModels;
 
@@ -246,6 +249,17 @@ public partial class MainWindowViewModel : ViewModelBase,
 
         if (folder is not null)
             WallpapersFolder = folder.TryGetLocalPath() ?? string.Empty;
+    }
+
+    [RelayCommand]
+    private async Task OpenHistoryWindow()
+    {
+        var historyWindow = new HistoryWindow();
+        var viewModel = Ioc.Default.GetRequiredService<HistoryWindowViewModel>();
+        historyWindow.DataContext = viewModel;
+
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            await historyWindow.ShowDialog(desktop.MainWindow!);
     }
 
     private async Task CreateNotification(string message, NotificationType type)

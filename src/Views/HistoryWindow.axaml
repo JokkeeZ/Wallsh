@@ -1,0 +1,59 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Wallsh.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="600"
+        Width="700"
+        Height="600"
+        x:DataType="vm:HistoryWindowViewModel"
+        x:Class="Wallsh.Views.HistoryWindow"
+        Title="Wallsh - History">
+
+    <ScrollViewer>
+        <DockPanel Margin="20">
+            <TextBlock Margin="0 5"
+                       Classes="Subtitle2"
+                       Text="Wallpaper history"
+                       DockPanel.Dock="Top" />
+            <ListBox ItemsSource="{Binding Wallpapers}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Spacing="20">
+                            <StackPanel Spacing="5"
+                                        IsVisible="{Binding Path, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                <TextBlock Classes="Subtitle1" Text="Wallpaper path:" />
+                                <TextBlock Classes="Subtitle2" Text="{Binding Path}" />
+                            </StackPanel>
+
+                            <StackPanel Spacing="5"
+                                        IsVisible="{Binding Resolution, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                <TextBlock Classes="Subtitle1" Text="Wallpaper resolution:" />
+                                <TextBlock Classes="Subtitle2" Text="{Binding Resolution}" />
+                            </StackPanel>
+
+                            <StackPanel Spacing="5"
+                                        IsVisible="{Binding Copyright, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                <TextBlock Classes="Subtitle1" Text="Wallpaper copyright:" />
+                                <TextBlock Classes="Subtitle2" Text="{Binding Copyright}" />
+
+                            </StackPanel>
+
+                            <StackPanel Spacing="5"
+                                        IsVisible="{Binding Url, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                <TextBlock Classes="Subtitle1" Text="Wallpaper url:" />
+                                <TextBlock Classes="Subtitle2" Text="{Binding Url}" />
+                            </StackPanel>
+
+                            <Button
+                                HorizontalAlignment="Right"
+                                Command="{Binding $parent[ListBox].((vm:HistoryWindowViewModel)DataContext).ViewWallpaperCommand}"
+                                CommandParameter="{Binding Path}"
+                                Content="View wallpaper" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+    </ScrollViewer>
+</Window>

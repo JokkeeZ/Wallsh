@@ -120,12 +120,20 @@
                                     </StackPanel>
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Right">
+                                <RelativePanel>
+                                    <Button Content="History"
+                                            x:Name="HistoryBtn"
+                                            RelativePanel.AlignLeftWithPanel="True"
+                                            Command="{Binding OpenHistoryWindowCommand}" />
                                     <Button Content="New WP"
+                                            Margin="10 0 0 0"
+                                            Classes="accent"
+                                            RelativePanel.RightOf="HistoryBtn"
                                             Command="{Binding InstantRefreshWallpaperCommand}" />
                                     <Button Content="Save all settings"
+                                            RelativePanel.AlignRightWithPanel="True"
                                             Command="{Binding SaveConfigurationCommand}" />
-                                </StackPanel>
+                                </RelativePanel>
                             </StackPanel>
                         </Border>
                     </Grid>

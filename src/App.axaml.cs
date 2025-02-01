@@ -58,6 +58,7 @@ public class App : Application
             .AddKeyedSingleton<IWallpaperChanger, WallhavenWallpaperChanger>(WallpaperChangerType.Wallhaven)
             .AddKeyedSingleton<IWallpaperChanger, BingWallpaperChanger>(WallpaperChangerType.Bing)
             .AddTransient<MainWindowViewModel>()
+            .AddTransient<HistoryWindowViewModel>()
             .AddTransient<LocalViewModel>()
             .AddTransient<WallhavenViewModel>()
             .AddTransient<BingViewModel>()
