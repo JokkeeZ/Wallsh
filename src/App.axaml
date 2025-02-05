@@ -18,7 +18,7 @@
 
     <TrayIcon.Icons>
         <TrayIcons>
-            <TrayIcon Icon="/Assets/Wallsh.ico" ToolTipText="Wallsh">
+            <TrayIcon Icon="/Assets/Wallsh.ico" ToolTipText="Wallsh" Command="{Binding ShowAppFromTrayCommand}">
                 <TrayIcon.Menu>
                     <NativeMenu>
                         <NativeMenuItem Header="Wallsh" IsEnabled="False" Icon="/Assets/Wallsh.ico" />
