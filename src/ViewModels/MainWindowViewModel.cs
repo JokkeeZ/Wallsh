@@ -129,6 +129,9 @@ public partial class MainWindowViewModel : ViewModelBase,
         _cfg.WallpapersFolder = WallpapersFolder;
         _cfg.WallpaperAdjustment = WallpaperAdjustment;
 
+        // Local config
+        _cfg.IncludeFolders = LocalViewModel.AdditionalWallpaperFolders.Select(f => f.Path).ToList();
+
         // Wallhaven config
         _cfg.Wallhaven.ApiKey = WallhavenViewModel.ApiKey;
         _cfg.Wallhaven.General = WallhavenViewModel.CategoryGeneral;

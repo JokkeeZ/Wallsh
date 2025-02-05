@@ -3,12 +3,45 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Wallsh.ViewModels"
+             xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
              mc:Ignorable="d" d:DesignWidth="500"
              x:Class="Wallsh.Views.LocalView"
              x:DataType="vm:LocalViewModel">
 
-    <StackPanel Classes="Container">
-        <TextBlock>Some settings later</TextBlock>
-    </StackPanel>
+    <Grid RowDefinitions="Auto,5,Auto,5,Auto">
+
+        <Border Classes="TabContent" Padding="10" Grid.Row="0">
+            <StackPanel>
+                <TextBlock Text="Include additional wallpaper folders" Classes="Subtitle2" Margin="0,0,0,8" />
+                <Button
+                    Content="Browse folder"
+                    Command="{Binding BrowseWallpaperFolderCommand}" />
+            </StackPanel>
+        </Border>
+        
+        <Border Grid.Row="2" Classes="TabContent" IsVisible="{Binding !!AdditionalWallpaperFolders.Count}">
+            <ItemsControl ItemsSource="{Binding AdditionalWallpaperFolders}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="5">
+                            <Grid ColumnDefinitions="*,5,Auto">
+                                <TextBox Grid.Column="0" UseFloatingWatermark="True"
+                                         Text="{Binding Path}"
+                                         IsEnabled="False"
+                                         assists:TextFieldAssist.Label="Folder path"
+                                         Classes="outline dense" />
+                                <Button Grid.Column="2" Content="Remove"
+                                        Height="40"
+                                        Command="{Binding $parent[ItemsControl].((vm:LocalViewModel)DataContext).RemoveFolderCommand}"
+                                        CommandParameter="{Binding}"
+                                        VerticalAlignment="Bottom" />
+                            </Grid>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+        
+    </Grid>
 
 </UserControl>

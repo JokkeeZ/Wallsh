@@ -12,7 +12,10 @@ public class LocalWallpaperChanger(IWpEnvironment env) : GenericWallpaperChanger
 
     public override async Task OnChange(WallpaperManager manager)
     {
-        if (!SetRandomWallpaperFromFolder(manager, manager.Config.WallpapersFolder, out var wpPath))
+        var folders = manager.Config.IncludeFolders.Append(manager.Config.WallpapersFolder).ToList();
+        var randomFolder = folders[Random.Shared.Next(folders.Count)];
+
+        if (!SetRandomWallpaperFromFolder(manager, randomFolder, out var wpPath))
         {
             _log.LogError("Could not set random wallpaper from disk. Requesting stop.");
             manager.RequestStop();

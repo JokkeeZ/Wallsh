@@ -13,6 +13,8 @@ public class AppConfiguration : IJsonFile
     public WallhavenConfiguration Wallhaven { get; init; } = new();
     public BingConfiguration Bing { get; init; } = new();
 
+    public List<string> IncludeFolders { get; set; } = [];
+
     [JsonIgnore]
     public string? FilePath { get; set; }
 }
