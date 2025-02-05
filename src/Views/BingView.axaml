@@ -40,7 +40,7 @@
         </Border>
 
         <Border Classes="TabContent" Padding="10" Grid.Row="2">
-            <StackPanel Classes="Container">
+            <StackPanel Spacing="10">
                 <TextBlock Text="Number of wallpapers to download" Margin="0,0,0,8" Classes="Subtitle2" />
                 <StackPanel>
                     <Slider IsSnapToTickEnabled="True"

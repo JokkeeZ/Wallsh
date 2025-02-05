@@ -24,11 +24,11 @@
         </Border>
 
         <Border Classes="TabContent" Padding="10" Grid.Row="2">
-            <StackPanel Classes="Container">
+            <StackPanel Spacing="10">
                 <TextBlock Text="Resolution and Ascept Ratio" Classes="Subtitle2" Margin="0,0,0,8" />
                 <StackPanel>
                     <TextBlock Text="Ascept Ratio" Classes="Subtitle2" />
-                    <StackPanel Classes="HorizontalGroup">
+                    <StackPanel Spacing="10" Orientation="Horizontal">
                         <RadioButton GroupName="WallhavenRatioGroup"
                                      IsChecked="{Binding Ratio, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static wallhaven1:WallhavenRatio.RatioUltrawide}}"
                                      Content="Ultrawide" />
