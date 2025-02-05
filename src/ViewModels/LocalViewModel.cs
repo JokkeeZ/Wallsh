@@ -11,8 +11,8 @@ namespace Wallsh.ViewModels;
 
 public class ListBoxFolderItem
 {
-    public string Path { get; set; }
-    public int Index { get; set; }
+    public required string Path { get; set; }
+    public required int Index { get; set; }
 }
 
 public partial class LocalViewModel : ViewModelBase, IWpChangerConfigValidator
