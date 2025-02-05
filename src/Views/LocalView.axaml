@@ -18,7 +18,7 @@
                     Command="{Binding BrowseWallpaperFolderCommand}" />
             </StackPanel>
         </Border>
-        
+
         <Border Grid.Row="2" Classes="TabContent" IsVisible="{Binding !!AdditionalWallpaperFolders.Count}">
             <ItemsControl ItemsSource="{Binding AdditionalWallpaperFolders}">
                 <ItemsControl.ItemTemplate>
@@ -41,7 +41,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Border>
-        
+
     </Grid>
 
 </UserControl>

@@ -34,7 +34,7 @@ public partial class HistoryWindowViewModel : ViewModelBase,
         FileName = path,
         UseShellExecute = true
     });
-    
+
     [RelayCommand]
     private static void OpenWallpaperUrl(string url) => Process.Start(new ProcessStartInfo
     {

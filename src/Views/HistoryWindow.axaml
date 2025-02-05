@@ -16,50 +16,52 @@
                        Classes="Subtitle2"
                        Text="Wallpaper history"
                        DockPanel.Dock="Top" />
-            <ListBox ItemsSource="{Binding Wallpapers}">
-                <ListBox.ItemTemplate>
+            <ItemsControl ItemsSource="{Binding Wallpapers}">
+                <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Spacing="20">
-                            <StackPanel Spacing="5"
-                                        IsVisible="{Binding Path, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-                                <TextBlock Classes="Subtitle1" Text="Wallpaper path:" />
-                                <TextBlock Classes="Subtitle2" Text="{Binding Path}" />
-                            </StackPanel>
+                        <Border Classes="TabContent" Margin="0 5 0 5">
+                            <StackPanel Spacing="10">
+                                <StackPanel Spacing="5"
+                                            IsVisible="{Binding Path, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                    <TextBlock Classes="Subtitle1" Text="Wallpaper path:" />
+                                    <TextBlock Classes="Subtitle2" Text="{Binding Path}" />
+                                </StackPanel>
 
-                            <StackPanel Spacing="5"
-                                        IsVisible="{Binding Resolution, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-                                <TextBlock Classes="Subtitle1" Text="Wallpaper resolution:" />
-                                <TextBlock Classes="Subtitle2" Text="{Binding Resolution}" />
-                            </StackPanel>
+                                <StackPanel Spacing="5"
+                                            IsVisible="{Binding Resolution, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                    <TextBlock Classes="Subtitle1" Text="Wallpaper resolution:" />
+                                    <TextBlock Classes="Subtitle2" Text="{Binding Resolution}" />
+                                </StackPanel>
 
-                            <StackPanel Spacing="5"
-                                        IsVisible="{Binding Copyright, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-                                <TextBlock Classes="Subtitle1" Text="Wallpaper copyright:" />
-                                <TextBlock Classes="Subtitle2" Text="{Binding Copyright}" />
+                                <StackPanel Spacing="5"
+                                            IsVisible="{Binding Copyright, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                    <TextBlock Classes="Subtitle1" Text="Wallpaper copyright:" />
+                                    <TextBlock Classes="Subtitle2" Text="{Binding Copyright}" />
 
-                            </StackPanel>
+                                </StackPanel>
 
-                            <StackPanel Spacing="5"
-                                        IsVisible="{Binding Url, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-                                <TextBlock Classes="Subtitle1" Text="Wallpaper url:" />
-                                <TextBlock Classes="Subtitle2" Text="{Binding Url}" />
-                            </StackPanel>
+                                <StackPanel Spacing="5"
+                                            IsVisible="{Binding Url, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                    <TextBlock Classes="Subtitle1" Text="Wallpaper url:" />
+                                    <TextBlock Classes="Subtitle2" Text="{Binding Url}" />
+                                </StackPanel>
 
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
-                                <Button
-                                    IsVisible="{Binding Url, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                                    Command="{Binding $parent[ListBox].((vm:HistoryWindowViewModel)DataContext).OpenWallpaperUrlCommand}"
-                                    CommandParameter="{Binding Url}"
-                                    Content="Visit url" />
-                                <Button
-                                    Command="{Binding $parent[ListBox].((vm:HistoryWindowViewModel)DataContext).ViewWallpaperCommand}"
-                                    CommandParameter="{Binding Path}"
-                                    Content="View wallpaper" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
+                                    <Button
+                                        IsVisible="{Binding Url, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                        Command="{Binding $parent[ListBox].((vm:HistoryWindowViewModel)DataContext).OpenWallpaperUrlCommand}"
+                                        CommandParameter="{Binding Url}"
+                                        Content="Visit url" />
+                                    <Button
+                                        Command="{Binding $parent[ListBox].((vm:HistoryWindowViewModel)DataContext).ViewWallpaperCommand}"
+                                        CommandParameter="{Binding Path}"
+                                        Content="View wallpaper" />
+                                </StackPanel>
                             </StackPanel>
-                        </StackPanel>
+                        </Border>
                     </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </DockPanel>
     </ScrollViewer>
 </Window>
