@@ -16,6 +16,12 @@
                        Classes="Subtitle2"
                        Text="Wallpaper history"
                        DockPanel.Dock="Top" />
+            <TextBlock
+                IsVisible="{Binding !Wallpapers.Count}"
+                DockPanel.Dock="Top"
+                HorizontalAlignment="Center"
+                Text="No history available." />
+
             <ItemsControl ItemsSource="{Binding Wallpapers}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -37,7 +43,12 @@
                                             IsVisible="{Binding Copyright, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                                     <TextBlock Classes="Subtitle1" Text="Wallpaper copyright:" />
                                     <TextBlock Classes="Subtitle2" Text="{Binding Copyright}" />
+                                </StackPanel>
 
+                                <StackPanel Spacing="5"
+                                            IsVisible="{Binding Timestamp, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                                    <TextBlock Classes="Subtitle1" Text="Wallpaper timestamp:" />
+                                    <TextBlock Classes="Subtitle2" Text="{Binding Timestamp}" />
                                 </StackPanel>
 
                                 <StackPanel Spacing="5"
@@ -52,6 +63,10 @@
                                         Command="{Binding $parent[ItemsControl].((vm:HistoryWindowViewModel)DataContext).OpenWallpaperUrlCommand}"
                                         CommandParameter="{Binding Url}"
                                         Content="Visit url" />
+                                    <Button
+                                        Command="{Binding $parent[ItemsControl].((vm:HistoryWindowViewModel)DataContext).SetWallpaperCommand}"
+                                        CommandParameter="{Binding Path}"
+                                        Content="Set as wallpaper" />
                                     <Button
                                         Command="{Binding $parent[ItemsControl].((vm:HistoryWindowViewModel)DataContext).ViewWallpaperCommand}"
                                         CommandParameter="{Binding Path}"

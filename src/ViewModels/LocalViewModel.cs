@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using Wallsh.Models;
 using Wallsh.Models.Config;
 using Wallsh.Services.System;
@@ -17,7 +16,6 @@ public class ListBoxFolderItem
 
 public partial class LocalViewModel : ViewModelBase, IWpChangerConfigValidator
 {
-    
     public ObservableCollection<ListBoxFolderItem> AdditionalWallpaperFolders { get; set; }
 
     public LocalViewModel(AppConfiguration cfg)

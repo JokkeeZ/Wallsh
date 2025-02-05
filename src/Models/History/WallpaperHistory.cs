@@ -10,6 +10,7 @@ public class WallpaperInfo
     public string? Url { get; init; }
     public string? Resolution { get; init; }
     public bool IsLocal { get; init; }
+    public string? Timestamp { get; init; }
 }
 
 public class WallpaperHistory : IJsonFile

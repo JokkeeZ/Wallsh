@@ -28,4 +28,14 @@ public class LocalWallpaperChanger(IWpEnvironment env) : GenericWallpaperChanger
         _log.LogDebug("Set random wallpaper from disk completed.");
         await Task.CompletedTask;
     }
+
+    public void ManuallySetWallpaperFromPath(string path)
+    {
+        WpEnvironment.SetWallpaperFromPath(path);
+
+        SaveWallpaperToHistory(path!, isLocal: true);
+        WeakReferenceMessenger.Default.Send(new WallpaperUpdatedMessage());
+
+        _log.LogDebug("Wallpaper set manually from the disk.");
+    }
 }

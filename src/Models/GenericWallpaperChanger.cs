@@ -53,7 +53,8 @@ public abstract class GenericWallpaperChanger(IWpEnvironment env) : IWallpaperCh
             Path = filePath,
             Copyright = copyright,
             Url = url,
-            IsLocal = isLocal
+            IsLocal = isLocal,
+            Timestamp = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")
         });
 
         JsonFile.SerializeAndWrite(history);
