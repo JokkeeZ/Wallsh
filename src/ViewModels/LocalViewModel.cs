@@ -17,12 +17,11 @@ public class ListBoxFolderItem
 
 public partial class LocalViewModel : ViewModelBase, IWpChangerConfigValidator
 {
+    
     public ObservableCollection<ListBoxFolderItem> AdditionalWallpaperFolders { get; set; }
 
     public LocalViewModel(AppConfiguration cfg)
     {
-        Messenger.RegisterAll(this);
-
         AdditionalWallpaperFolders = [];
 
         for (var i = 0; i < cfg.IncludeFolders.Count; i++)
